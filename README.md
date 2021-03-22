@@ -2,6 +2,9 @@ Table of Contents
 =================
 * [Introduction](#introduction)
 * [Using the modified image](#using-the-modified-image)
+* [Credentials](#credentials)
+   * [LUKS password](#luks-password)
+   * [User credentials](#user-credentials)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
    * [Prerequisites](#prerequisites)
    * [Downloading the stock image](#downloading-the-stock-image)
@@ -57,11 +60,11 @@ Copy the image to the `SD card`:
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress"
 ```
 
-## Credentials
-### LUKS password
+# Credentials
+## LUKS password
 Password: `raspberry`
 
-### User credentials
+## User credentials
 Username: `pi`
 Password: `raspberry`
 
