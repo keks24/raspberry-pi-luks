@@ -1,3 +1,25 @@
+Table of Contents
+=================
+* [Table of Contents](#table-of-contents)
+* [Introduction](#introduction)
+* [Using the modified image](#using-the-modified-image)
+* [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
+   * [Prerequisites](#prerequisites)
+   * [Downloading the stock image](#downloading-the-stock-image)
+   * [Configuration](#configuration)
+      * [Preparation](#preparation)
+      * [Encrypting the root partition](#encrypting-the-root-partition)
+      * [Entering the chroot](#entering-the-chroot)
+         * [Installing necessary packages in order to build an initramfs](#installing-necessary-packages-in-order-to-build-an-initramfs)
+         * [Configuration](#configuration-1)
+         * [Generating the initramfs](#generating-the-initramfs)
+         * [Exiting the chroot](#exiting-the-chroot)
+* [Installing the modified image](#installing-the-modified-image)
+* [Cleanup](#cleanup)
+* [Additional information](#additional-information)
+   * [Opening the root partition from the image](#opening-the-root-partition-from-the-image)
+   * [Changing the LUKS password](#changing-the-luks-password)
+
 # Introduction
 This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite`; currently `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`. The instructions should be adaptable for other Raspberry Pi revisions as well.
 
