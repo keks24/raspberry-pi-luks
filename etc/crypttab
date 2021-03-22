@@ -15,5 +15,4 @@
 #############################################################################
 
 # <target name>	<source device>		<key file>	<options>
-# custom - 20210320 - rfischer: mount "cryptroot"
 cryptroot UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f none luks

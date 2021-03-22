@@ -31,8 +31,6 @@
 # cryptsetup initramfs integration.
 #
 
-#CRYPTSETUP=
-# custom - 20210320 - rfischer: include "cryptsetup" in the initramfs
 CRYPTSETUP="y"
 
 #
