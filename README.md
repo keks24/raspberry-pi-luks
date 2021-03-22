@@ -89,7 +89,7 @@ $ sha256sum --check "2021-01-11-raspios-buster-armhf-lite.zip.sha256"
 
 ## Configuration
 ### Preparation
-Clone the repository in the current working directory:
+Clone the repository to the current working directory:
 ```bash
 $ git clone "https://codeberg.org/keks24/raspberry-pi-luks.git"
 ```
