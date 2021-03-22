@@ -14,7 +14,6 @@ Table of Contents
          * [Generating the initramfs](#generating-the-initramfs)
          * [Exiting the chroot](#exiting-the-chroot)
 * [Installing the modified image](#installing-the-modified-image)
-* [Cleanup](#cleanup)
 * [Further steps](#further-steps)
    * [Updating all installed packages](#updating-all-installed-packages)
 * [Optional steps](#optional-steps)
