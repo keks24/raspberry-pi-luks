@@ -414,12 +414,6 @@ Please unlock disk cryptroot: raspberry
 
 After entering the password, the system should start.
 
-# Cleanup
-Clean up unnecessary files:
-```bash
-$ rm --recursive "raspberry-pi-luks" "root_backup" "2021-01-11-raspios-buster-armhf-lite.zip" "2021-01-11-raspios-buster-armhf-lite.zip.sha256" "2021-01-11-raspios-buster-armhf-lite.img"
-```
-
 # Further steps
 ## Updating all installed packages
 ```bash
