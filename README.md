@@ -48,8 +48,8 @@ util-linux
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 * `qemu-arm-static` is needed, if one is working on a `non-ARM operating system`.
 
-# Download the image
-Download the `Raspberry Pi OS Lite` image from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum:
+# Download the stock image
+Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum:
 
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-01-12/2021-01-11-raspios-buster-armhf-lite.zip"
