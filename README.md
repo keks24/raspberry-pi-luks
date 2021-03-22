@@ -17,9 +17,15 @@ $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --fo
     "https://srv-store6.gofile.io/download/48Rnkz/4a2f7d2a2895bbf8ab72933afc9de0e6/README.md"
 ```
 
-Unarchive `raspberrypi_sd_card_backup.img.xz`:
+Check the `data integrity` and `verify` the signature:
 ```bash
-$ pixz -d "raspberrypi_sd_card_backup.img.xz"
+$ b2sum --check "raspberrypi_sd_card_backup.img.b2"
+raspberrypi_sd_card_backup.img: OK
+$ gpg --verify "raspberrypi_sd_card_backup.img.asc" "raspberrypi_sd_card_backup.img"
+gpg: Signature made Mon Mar 22 06:16:43 2021 CET
+gpg:                using RSA key 598398DA5F4DA46438FDCF87155BE26413E699BF
+gpg: Good signature from "Ramon Fischer (ramon@sharkoon) <RamonFischer24@googlemail.com>" [ultimate]
+gpg:                 aka "Ramon Fischer (ramon@sharkoon) <Ramon_Fischer@hotmail.de>" [ultimate]
 ```
 
 Copy the image to the `SD card`:
