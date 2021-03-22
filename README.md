@@ -33,7 +33,8 @@ Copy the image to the `SD card`:
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress"
 ```
 
-# Prerequisites
+# Encrypting the `root partition` manually
+## Prerequisites
 * The following packages are installed:
 ```no-highlight
 aria2c
@@ -48,7 +49,7 @@ util-linux
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 * `qemu-arm-static` is needed, if one is working on a `non-ARM operating system`.
 
-# Download the stock image
+## Downloading the stock image
 Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum:
 
 ```bash
@@ -62,8 +63,8 @@ $ sha256sum --check "2021-01-11-raspios-buster-armhf-lite.zip.sha256"
 2021-01-11-raspios-buster-armhf-lite.zip: OK
 ```
 
-# Configuration
-## Preparation
+## Configuration
+### Preparation
 Clone the repository in the current working directory:
 ```bash
 $ git clone "https://codeberg.org/keks24/raspberry-pi-luks.git"
@@ -145,7 +146,7 @@ After that unmount `/mnt/`:
 $ umount "/mnt/"
 ```
 
-## Encrypt the `root` partition
+### Encrypting the `root partition`
 Since the preparation is done, the `root partition` can now be `formatted and encrypted` via `cryptsetup`:
 ```bash
 $ cryptsetup --cipher="aes-xts-plain64" --key-size="512" luksFormat "/dev/loop2"
@@ -242,7 +243,7 @@ Finally, mount the `boot partition` to `/mnt/boot/`:
 $ mount "/dev/loop1" "/mnt/boot/"
 ```
 
-## Chroot
+### Entering the `chroot`
 Once this is done, it is time to go into a `chroot` environment.
 
 Prepare the `chroot` environment:
@@ -265,14 +266,14 @@ $ export PS1="(chroot) ${PS1}"
 (chroot) $ cd
 ```
 
-### Install necessary packages in order to build an initramfs
+#### Installing necessary packages in order to build an initramfs
 An `initramfs` is needed in order to decrypt the `root partition`. The following packages will provide all tools to build it:
 ```bash
 (chroot) $ apt update
 (chroot) $ apt install busybox cryptsetup initramfs-tools
 ```
 
-### Configuration
+#### Configuration
 The binary `cryptsetup` must be included in the `initramfs`. This can be configured in `/etc/cryptsetup-initramfs/conf-hook`:
 ```bash
 (chroot) $ vi "/etc/cryptsetup-initramfs/conf-hook"
@@ -332,7 +333,7 @@ Adapt the file `/etc/fstab`, so the `root partition` will be mounted automatical
 /dev/mapper/cryptroot  /               ext4    defaults,noatime  0       1
 ```
 
-### Generate the initramfs
+#### Generating the initramfs
 There are two ways to generate the `initramfs`.
 
 1. Either reinstall the package `raspberrypi-kernel`, which will install all kernels and then execute the `hook scripts` in `/etc/kernel/postinst.d/`:
@@ -353,7 +354,7 @@ Make sure, that the binary `cryptsetup` is present in the file `initrd.img`:
 usr/sbin/cryptsetup
 ```
 
-## Exit the `chroot`
+#### Exiting the `chroot`
 Exit the `chroot`, unmount the `boot partition` and all `pseudo filesystems`:
 ```bash
 (chroot) $ exit
@@ -375,7 +376,7 @@ $ losetup --detach "/dev/loop1"
 $ losetup --detach "/dev/loop2"
 ```
 
-# Install the modified image
+# Installing the modified image
 The image is now prepared and can be copied to the `SD card`:
 ```bash
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" && sync
@@ -411,7 +412,7 @@ $ apt upgrade
 ```
 
 # Additional information
-## Open the root partition from the image
+## Opening the root partition from the image
 The encrypted `root partition` can be opened via `cryptsetup` as follows:
 ```bash
 $ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
@@ -420,7 +421,7 @@ Enter passphrase for /dev/loop2: raspberry
 $ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ```
 
-## Change the `LUKS` password
+## Changing the `LUKS` password
 Changing the password within the image:
 ```bash
 $ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
