@@ -1,0 +1,1 @@
+console=tty1 root=/dev/mapper/cryptroot cryptdevice=UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f:cryptroot rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait

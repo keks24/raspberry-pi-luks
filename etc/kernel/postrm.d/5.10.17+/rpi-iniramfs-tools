@@ -1,0 +1,76 @@
+#!/bin/sh -e
+#############################################################################
+# Copyright 2021 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+version="$1"
+bootopt=""
+
+[ -x /usr/sbin/update-initramfs ] || exit 0
+
+# passing the kernel version is required
+if [ -z "${version}" ]; then
+    echo >&2 "W: initramfs-tools: ${DPKG_MAINTSCRIPT_PACKAGE:-kernel package} did not pass a version number"
+    exit 0
+fi
+
+# exit if custom kernel does not need an initramfs
+if [ "$RPI_INITRD" = 'No' ]; then
+    # comment initramfs entries in /boot/config.txt
+    if [ -f "/boot/config.txt" ]
+    then
+        /bin/sed --in-place "s/^initramfs /#initramfs /" "/boot/config.txt"
+    else
+        echo -e "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
+        exit 1
+    fi
+
+    exit 0
+fi
+
+# absolute file name of kernel image may be passed as a second argument;
+# create the initrd in the same directory
+if [ -n "$2" ]; then
+    bootdir=$(dirname "$2")
+    bootopt="-b ${bootdir}"
+fi
+
+# avoid running multiple times
+if [ -n "$DEB_MAINT_PARAMS" ]; then
+    eval set -- "$DEB_MAINT_PARAMS"
+    if [ -z "$1" ] || [ "$1" != "remove" ]; then
+        exit 0
+    fi
+fi
+
+# delete initramfs
+# shellcheck disable=SC2086
+INITRAMFS_TOOLS_KERNEL_HOOK=1 update-initramfs -d -k "${version}" ${bootopt} >&2
+
+# comment the entry "initramfs" in "/boot/config.txt"
+if [ -f "/boot/config.txt" ]
+then
+    /bin/sed --in-place "s/^initramfs /#initramfs /" "/boot/config.txt"
+else
+    echo -e "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
+    exit 1
+fi
+
+# remove the initramfs file
+if [ -f "/boot/initrd.img" ]
+then
+    # remove initramfs files
+    /bin/rm --force "/boot/initrd.img"
+fi
