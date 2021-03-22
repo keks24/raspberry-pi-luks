@@ -453,7 +453,7 @@ bookmark
 dropbear
 
 # Additional information
-## Opening the root partition from the image
+## Decrypting the root partition from the image
 The encrypted `root partition` can be opened via `cryptsetup` as follows:
 ```bash
 $ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
