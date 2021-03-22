@@ -24,6 +24,7 @@ Table of Contents
 * [Additional information](#additional-information)
    * [Opening the root partition from the image](#opening-the-root-partition-from-the-image)
    * [Changing the LUKS password](#changing-the-luks-password)
+   * [Changing the user password](#changing-the-user-password)
 
 # Introduction
 This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite`; currently `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`. The instructions should be adaptable for other Raspberry Pi revisions as well.
@@ -73,15 +74,7 @@ Username: `pi`
 
 Password: `raspberry`
 
-When logged in as the user `pi`, change the password as follows:
-```bash
-$ passwd
-Changing password for pi.
-Current password: raspberry
-New password: <some_strong_personal_password>
-Retype new password: <some_strong_personal_password>
-passwd: password updated successfully
-```
+See also [Changing the user password](#changing-the-user-password).
 
 # Encrypting the `root partition` manually
 ## Prerequisites
@@ -470,7 +463,7 @@ $ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ```
 
 ## Changing the `LUKS` password
-Changing the password within the image:
+The password of the `root partition` can be changed like so:
 ```bash
 $ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
 $ cryptsetup luksChangeKey "/dev/loop2"
@@ -479,10 +472,21 @@ Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
 ```
 
-Changing the password on the `Raspberry Pi`:
+This is also possible on the `Raspberry Pi` itself:
 ```bash
 $ cryptsetup luksChangeKey "/dev/mmcblk0p2"
 Enter passphrase to be changed: raspberry
 Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
+```
+
+## Changing the user password
+When logged in as the user `pi`, change the password as follows:
+```bash
+$ passwd
+Changing password for pi.
+Current password: raspberry
+New password: <some_strong_personal_password>
+Retype new password: <some_strong_personal_password>
+passwd: password updated successfully
 ```
