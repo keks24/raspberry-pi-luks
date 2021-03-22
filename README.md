@@ -61,12 +61,26 @@ $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progres
 ```
 
 # Credentials
+It is **highly recommended** to change these passwords!
+
 ## LUKS password
 Password: `raspberry`
+
+See also [Changing the LUKS password](#changing-the-luks-password).
 
 ## User credentials
 Username: `pi`
 Password: `raspberry`
+
+When logged in as the user `pi`, change the password as follows:
+```bash
+$ passwd
+Changing password for pi.
+Current password: raspberry
+New password: <some_strong_personal_password>
+Retype new password: <some_strong_personal_password>
+passwd: password updated successfully
+```
 
 # Encrypting the `root partition` manually
 ## Prerequisites
