@@ -57,6 +57,14 @@ Copy the image to the `SD card`:
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress"
 ```
 
+## Credentials
+### LUKS password
+Password: `raspberry`
+
+### User credentials
+Username: `pi`
+Password: `raspberry`
+
 # Encrypting the `root partition` manually
 ## Prerequisites
 * The following packages are installed:
