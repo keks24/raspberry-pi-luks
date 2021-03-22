@@ -458,14 +458,14 @@ Changing the password within the image:
 $ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
 $ cryptsetup luksChangeKey "/dev/loop2"
 Enter passphrase to be changed: raspberry
-Enter new passphrase: 1234
-Verify passphrase: 1234
+Enter new passphrase: <some_strong_personal_password>
+Verify passphrase: <some_strong_personal_password>
 ```
 
 Changing the password on the `Raspberry Pi`:
 ```bash
 $ cryptsetup luksChangeKey "/dev/mmcblk0p2"
 Enter passphrase to be changed: raspberry
-Enter new passphrase: 1234
-Verify passphrase: 1234
+Enter new passphrase: <some_strong_personal_password>
+Verify passphrase: <some_strong_personal_password>
 ```
