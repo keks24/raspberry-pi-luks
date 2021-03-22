@@ -386,7 +386,7 @@ Adapt the file `/etc/fstab`, so the `root partition` will be mounted automatical
 #### Generating the initramfs
 There are two ways to generate the `initramfs`.
 
-1. Either reinstall the package `raspberrypi-kernel`, which will install all kernels and then execute the `hook scripts` in `/etc/kernel/postinst.d/`:
+1. Either reinstall the package `raspberrypi-kernel`, which will install all `Raspberry Pi kernels` and then executes the `hook scripts` in `/etc/kernel/postinst.d/`:
 ```bash
 (chroot) $ apt install raspberrypi-kernel --reinstall
 ```
