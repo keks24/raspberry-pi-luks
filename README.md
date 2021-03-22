@@ -350,6 +350,8 @@ Raspberry Pi 3      | `<kernel_version>-v7`                | `kernel7.img`   | `
 Raspberry Pi 3+     | `<kernel_version>-v7`                | `kernel7.img`   | `initrd.img-<kernel_version>-v7`
 Raspberry Pi 4      | `<kernel_version>-v7l`               | `kernel7l.img`  | `initrd.img-<kernel_version>-v7l`
 
+[Source](https://www.raspberrypi.org/documentation/linux/kernel/building.md).
+
 Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot` environment!**:
 ```bash
 $ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-iniramfs-tools" "/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools"
