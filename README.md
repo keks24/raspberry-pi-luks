@@ -299,7 +299,7 @@ $ export PS1="(chroot) ${PS1}"
 ```
 
 #### Installing necessary packages in order to build an initramfs
-An `initramfs` is needed in order to decrypt the `root partition`. The following packages will provide all tools to build it:
+An `initramfs` is needed in order to decrypt the `root partition` on boot. The following packages will provide all tools to build it:
 ```bash
 (chroot) $ apt update
 (chroot) $ apt install busybox cryptsetup initramfs-tools
@@ -318,7 +318,7 @@ The `initramfs` should always be generated, when a new kernel was installed. Ena
 RPI_INITRD=Yes
 ```
 
-As of writing the package `rpi-initramfs-tools` is not available, yet. So `custom hook scripts` have to be used for this.
+As of writing, the package `rpi-initramfs-tools` is not available, yet. So `custom hook scripts` have to be used for this.
 
 The next commands contain the kernel version `5.10.17+`. Replace the version according to the `Raspberry Pi revision` (`grep "Model" "/proc/cpuinfo"`) and the current kernel version (`uname --release`):
 
@@ -344,7 +344,7 @@ install: creating directory '/mnt/etc/kernel/postrm.d/5.10.17+'
 
 Be aware, that the directory `/etc/kernel/postinst.d/5.10.17+/` must always match the `kernel version`, which is currently in use. Otherwise, generating the `initramfs` will fail.
 
-Get the `UUID` of `/dev/loop2`, which will be used later on:
+Next, get the `UUID` of `/dev/loop2`, which will be used later on:
 ```bash
 $ blkid "/dev/loop2"
 /dev/loop2: UUID="1fd31646-340c-47ed-8c66-8efb2e730d0f" TYPE="crypto_LUKS"
