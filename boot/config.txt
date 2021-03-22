@@ -56,12 +56,12 @@
 #sdtv_mode=2
 
 #uncomment to overclock the arm. 700 MHz is the default.
-arm_freq=1000
+#arm_freq=800
 
 # Uncomment some or all of these to enable the optional hardware interfaces
-dtparam=i2c_arm=off
+#dtparam=i2c_arm=on
 #dtparam=i2s=on
-dtparam=spi=off
+#dtparam=spi=on
 
 # Uncomment this to enable infrared communication.
 #dtoverlay=gpio-ir,gpio_pin=17
@@ -79,12 +79,4 @@ max_framebuffers=2
 
 [all]
 #dtoverlay=vc4-fkms-v3d
-start_x=0
-enable_uart=0
-core_freq=500
-sdram_freq=600
-over_voltage=6
-gpu_mem=16
-
-# custom - 20210320 - rfischer: use an initramfs, to decrypt "cryptroot"
 initramfs initrd.img followkernel
