@@ -304,11 +304,9 @@ Type                | Kernel version naming convention | Kernel filename | Initr
 Raspberry Pi 1      | <kernel_version>+                | `kernel.img`    | `initrd.img-<kernel_version>+`
 Raspberry Pi Zero   | <kernel_version>+                | `kernel.img`    | `initrd.img-<kernel_version>+`
 Raspberry Pi Zero W | <kernel_version>+                | `kernel.img`    | `initrd.img-<kernel_version>+`
-                                      |   |
 Raspberry Pi 2      | <kernel_version>-v7              | `kernel7.img`   | `initrd.img-<kernel_version>-v7`
 Raspberry Pi 3      | <kernel_version>-v7              | `kernel7.img`   | `initrd.img-<kernel_version>-v7`
 Raspberry Pi 3+     | <kernel_version>-v7              | `kernel7.img`   | `initrd.img-<kernel_version>-v7`
-                                      |   |
 Raspberry Pi 4      | <kernel_version>-v7l             | `kernel7l.img`  | `initrd.img-<kernel_version>-v7l`
 
 Be aware, that the directory `/etc/kernel/postinst.d/5.10.17+/` must always match the `kernel version`, which is currently in use. Otherwise, generating the `initramfs` will fail.
