@@ -417,6 +417,13 @@ Clean up unnecessary files:
 $ rm --recursive "raspberry-pi-luks" "root_backup" "2021-01-11-raspios-buster-armhf-lite.zip" "2021-01-11-raspios-buster-armhf-lite.zip.sha256" "2021-01-11-raspios-buster-armhf-lite.img"
 ```
 
+# Further steps
+## Updating all installed packages
+```bash
+$ apt update
+$ apt upgrade
+```
+
 # Optional steps
 ## Decrypt the `root partition` via `SSH`
 bookmark
@@ -427,12 +434,6 @@ bookmark
 bookmark
 bookmark
 dropbear
-
-## Update the system
-```bash
-$ apt update
-$ apt upgrade
-```
 
 # Additional information
 ## Opening the root partition from the image
