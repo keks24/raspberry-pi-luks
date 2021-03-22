@@ -425,7 +425,7 @@ $ apt upgrade
 ```
 
 # Optional steps
-## Decrypt the `root partition` via `SSH`
+## Decrypting the `root partition` via `SSH`
 bookmark
 bookmark
 bookmark
