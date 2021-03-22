@@ -313,17 +313,7 @@ RPI_INITRD=Yes
 
 As of writing the package `rpi-initramfs-tools` is not available, yet. So `custom hook scripts` have to be used for this.
 
-Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot` environment!**:
-```bash
-$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-iniramfs-tools" "/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools"
-install: creating directory '/mnt/etc/kernel/postinst.d/5.10.17+'
-'raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-iniramfs-tools' -> '/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools'
-$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-iniramfs-tools" "/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools"
-install: creating directory '/mnt/etc/kernel/postrm.d/5.10.17+'
-'raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-iniramfs-tools' -> '/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools'
-```
-
-Replace the kernel version `5.10.17+` corresponding to the `Raspberry Pi revision` (`grep "Model" "/proc/cpuinfo"`) and the current Kernel version (`uname --release`):
+The next commands contain the kernel version `5.10.17+`. Replace the version according to the `Raspberry Pi revision` (`grep "Model" "/proc/cpuinfo"`) and the current kernel version (`uname --release`):
 
 Type                | Kernel version naming convention   | Kernel filename   | Initramfs filename
 ------------------- | ---------------------------------- | ----------------- |  -----------------
@@ -334,6 +324,16 @@ Raspberry Pi 2      | `<kernel_version>-v7`                | `kernel7.img`   | `
 Raspberry Pi 3      | `<kernel_version>-v7`                | `kernel7.img`   | `initrd.img-<kernel_version>-v7`
 Raspberry Pi 3+     | `<kernel_version>-v7`                | `kernel7.img`   | `initrd.img-<kernel_version>-v7`
 Raspberry Pi 4      | `<kernel_version>-v7l`               | `kernel7l.img`  | `initrd.img-<kernel_version>-v7l`
+
+Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot` environment!**:
+```bash
+$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-iniramfs-tools" "/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools"
+install: creating directory '/mnt/etc/kernel/postinst.d/5.10.17+'
+'raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-iniramfs-tools' -> '/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools'
+$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-iniramfs-tools" "/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools"
+install: creating directory '/mnt/etc/kernel/postrm.d/5.10.17+'
+'raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-iniramfs-tools' -> '/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools'
+```
 
 Be aware, that the directory `/etc/kernel/postinst.d/5.10.17+/` must always match the `kernel version`, which is currently in use. Otherwise, generating the `initramfs` will fail.
 
