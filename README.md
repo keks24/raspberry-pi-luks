@@ -70,6 +70,7 @@ See also [Changing the LUKS password](#changing-the-luks-password).
 
 ## User credentials
 Username: `pi`
+
 Password: `raspberry`
 
 When logged in as the user `pi`, change the password as follows:
