@@ -172,7 +172,7 @@ old_desc_blocks = 1, new_desc_blocks = 4
 The filesystem on /dev/mapper/cryptroot is now 7720844 (4k) blocks long.
 ```
 
-Note, that it still indicates the partition size of `7720844 Bytes (~8 GB)`.
+Note, that the partition size of `7720844 Bytes (~8 GB)` is still indicated.
 
 ### Rebooting and verifying
 After rebooting, all changes are applied properly:
