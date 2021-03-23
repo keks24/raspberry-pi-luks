@@ -593,7 +593,7 @@ $ mkinitramfs -o "/boot/initrd.img"
 ```
 
 #### Rebooting
-After rebooting the `Raspberry Pi`, `dropbear-initramfs` will now display a fancy `ASCII banner`:
+After rebooting the `Raspberry Pi`, `dropbear-initramfs` will now display a `fancy ASCII banner`:
 ```bash
 $ ssh -i 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/id_rsa"
        __                           __                           __                   __
@@ -676,7 +676,7 @@ Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
 ```
 
-## Changing the user password
+## Changing the `user` password
 When logged in as the user `pi`, change the password as follows:
 ```bash
 $ passwd
