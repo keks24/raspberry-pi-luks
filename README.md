@@ -579,7 +579,7 @@ $ echo "" >> "/etc/dropbear-initramfs/ssh_banner.net"
 ```
 
 There are also websites to generate some fancy ASCII art:
-* http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
+* http://patorjk.com/software/taag
 * http://www.network-science.de/ascii/
 
 After that, implement the `ASCII banner` by using a `custom hook script` for `initramfs-tools`. One is already prepared in the repository:
