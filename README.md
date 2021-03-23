@@ -75,24 +75,121 @@ Copy the image to the `SD card`:
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
 ```
 
-# Credentials
-It is **highly recommended** to change these passwords!
+## Resizing the root partition
+When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~8 GiB`. Therefore it needs to be `extended` in order to use the `unused free space`.
 
-## LUKS password
-Password: `raspberry`
+### Creating a backup of the SD card
+Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
+```bash
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512b" status="progress" conv="fdatasync"
+```
 
-The `American keyboard layout` applies here.
+After that, boot into `Raspbian` and check the partition structure via `parted`:
+```bash
+$ parted --list
+Model: Linux device-mapper (crypt) (dm)
+Disk /dev/mapper/cryptroot: 7659MB
+Sector size (logical/physical): 512B/512B
+Partition Table: loop
+Disk Flags:
 
-See also [Changing the LUKS password](#changing-the-luks-password).
+Number  Start  End     Size    File system  Flags
+ 1      0.00B  7659MB  7659MB  ext4
 
-## User credentials
-Username: `pi`
 
-Password: `raspberry`
+Model: SD SC32G (sd/mmc)
+Disk /dev/mmcblk0: 31.9GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
 
-The `American keyboard layout` applies here.
+Number  Start   End     Size    Type     File system  Flags
+ 1      4194kB  273MB   268MB   primary  fat32        lba
+ 2      273MB   7948MB  7676MB  primary
+```
 
-See also [Changing the user password](#changing-the-user-password).
+This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `7676 MB`, but the SD card is `31.9 GB`.
+
+In order to `extend` the `second partition`, execute the following commands:
+```bash
+$ parted "/dev/mmcblk0"
+GNU Parted 3.2
+Using /dev/mmcblk0
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) print
+Model: SD SC32G (sd/mmc)
+Disk /dev/mmcblk0: 31.9GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      4194kB  273MB   268MB   primary  fat32        lba
+ 2      273MB   7948MB  7676MB  primary
+
+(parted) resizepart
+Partition number? 2
+End?  [7948MB]? -1
+(parted) print
+Model: SD SC32G (sd/mmc)
+Disk /dev/mmcblk0: 31.9GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      4194kB  273MB   268MB   primary  fat32        lba
+ 2      273MB   31.9GB  31.6GB  primary
+
+(parted) quit
+```
+
+The command `resizepart` will be used to `extend` the partition, where `-1` defines the very end of the SD card.
+
+After `extending` the partition via `parted`, the `LUKS partition` needs to be `extended` via `cryptsetup` as well:
+```bash
+$ cryptsetup resize cryptroot
+Enter passphrase for /dev/mmcblk0p2: raspberry
+```
+
+Once this is done, use `resize2fs` to apply the changes:
+```bash
+$ resize2fs /dev/mapper/cryptroot
+resize2fs 1.44.5 (15-Dec-2018)
+Filesystem at /dev/mapper/cryptroot is mounted on /; on-line resizing required
+old_desc_blocks = 1, new_desc_blocks = 4
+The filesystem on /dev/mapper/cryptroot is now 7720844 (4k) blocks long.
+```
+
+Note, that it still indicates the partition size of `7720844 Bytes (~8 GB)`.
+
+After rebooting, all changes are applied properly:
+```bash
+$ reboot
+$ cryptsetup status cryptroot
+/dev/mapper/cryptroot is active and is in use.
+  type:    LUKS2
+  cipher:  aes-xts-plain64
+  keysize: 512 bits
+  key location: keyring
+  device:  /dev/mmcblk0p2
+  sector size:  512
+  offset:  32768 sectors
+  size:    61766752 sectors
+  mode:    read/write
+```
+
+To check, if the values are correct, the following formula can be used:
+```no-highlight
+(sector_size * size) / 1024^3 = size_in_gib
+```
+
+That is:
+```no-highlight
+(512 Bytes * 61766752) / 1024^3 = 29.45 GiB
+```
+
+The result differs slightly from the output of `parted`, since it is `Gibibyte (Base 2)` and not `Gigabyte (Base 10)`.
 
 # Encrypting the root partition manually
 ## Prerequisites
