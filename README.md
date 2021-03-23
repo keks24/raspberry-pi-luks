@@ -264,7 +264,7 @@ Copy the image `2021-01-11-raspios-buster-armhf-lite.img` to the `SD card`:
 $ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
 ```
 
-Boot into `Raspbian` once, so the `root partition` is extended to its full capacity. Then, log in with the username `pi` and the password `raspberry`.
+Boot into `Raspbian` once, so the `root partition` is extended to its full capacity. Then, log in with the [predefined credentials](#user-credentials).
 
 Take notes of the following commands and shutdown the `Raspberry Pi`. These are important for later:
 ```bash
