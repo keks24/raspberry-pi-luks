@@ -46,6 +46,7 @@ The entire setup was done on a `Banana Pi Pro` with [`Armbian Buster (mainline b
 # Using the modified image
 The `SD card` must be bigger than `8 GiB`.
 
+## Downloading the image
 Either download the files manually from the [release page](https://codeberg.org/keks24/raspberry-pi-luks/releases) or download them via `direct links`:
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential \
@@ -68,6 +69,7 @@ gpg: Good signature from "Ramon Fischer (ramon@sharkoon) <RamonFischer24@googlem
 gpg:                 aka "Ramon Fischer (ramon@sharkoon) <Ramon_Fischer@hotmail.de>" [ultimate]
 ```
 
+## Copying the image to the SD card
 Copy the image to the `SD card`:
 ```bash
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
