@@ -630,6 +630,8 @@ $ gzip --decompress "initrd.img.gz"
 
 Once this is done, the file is still compressed as `ASCII cpio archive`, which can be unarchived like so:
 ```bash
+$ file "initrd.img"
+initrd.img: ASCII cpio archive (SVR4 with no CRC)
 $ apt install cpio
 $ cpio --extract --make-directories --preserve-modification-time --verbose < "initrd.img"
 .
