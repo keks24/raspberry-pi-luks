@@ -264,9 +264,14 @@ Copy the image `2021-01-11-raspios-buster-armhf-lite.img` to the `SD card`:
 $ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
 ```
 
-Boot into `Raspbian` once, so the `root partition` is extended to its full capacity. Then, log in with the [predefined credentials](#user-credentials).
+Boot into `Raspbian`, so the `root partition` is extended to its full capacity. Then, log in with the [predefined user credentials](#user-credentials) and update the kernel:
+```bash
+$ sudo apt update
+$ sudo apt install raspberrypi-kernel --only-upgrade
+$ reboot
+```
 
-Take notes of the following commands and shutdown the `Raspberry Pi`. These are important for later:
+After logging in again, take notes of the following output. These information are important for later:
 ```bash
 $ uname --release
 5.10.17+
