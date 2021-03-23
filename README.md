@@ -6,6 +6,10 @@ Table of Contents
    * [Copying the image to the SD card](#copying-the-image-to-the-sd-card)
    * [Resizing the root partition](#resizing-the-root-partition)
       * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card)
+      * [Analysing the root partition](#analysing-the-root-partition)
+      * [Extending the root partition](#extending-the-root-partition)
+      * [Calculating new LUKS partition size](#calculating-new-luks-partition-size)
+      * [Rebooting and verifying](#rebooting-and-verifying)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
    * [Prerequisites](#prerequisites)
    * [Downloading the stock image](#downloading-the-stock-image)
@@ -88,6 +92,7 @@ Before doing any changes, create a `backup` of the SD card, since the following 
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512b" status="progress" conv="fdatasync"
 ```
 
+### Analysing the root partition
 After that, boot into `Raspbian` and check the partition structure via `parted`:
 ```bash
 $ parted --list
@@ -114,6 +119,7 @@ Number  Start   End     Size    Type     File system  Flags
 
 This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `7676 MB`, but the SD card is `31.9 GB`.
 
+### Extending the root partition
 In order to `extend` the `second partition`, execute the following commands:
 ```bash
 $ parted "/dev/mmcblk0"
@@ -150,13 +156,14 @@ Number  Start   End     Size    Type     File system  Flags
 
 The command `resizepart` will be used to `extend` the partition, where `-1` defines the very end of the SD card.
 
-After `extending` the partition via `parted`, the `LUKS partition` needs to be `extended` via `cryptsetup` as well:
+### Calculating new LUKS partition size
+After `extending` the partition via `parted`, the new `LUKS partition size` needs to be `calculated` via `cryptsetup` as well:
 ```bash
 $ cryptsetup resize cryptroot
 Enter passphrase for /dev/mmcblk0p2: raspberry
 ```
 
-Once this is done, use `resize2fs` to apply the changes:
+Once this is done, use `resize2fs` to `resize` the partition:
 ```bash
 $ resize2fs /dev/mapper/cryptroot
 resize2fs 1.44.5 (15-Dec-2018)
@@ -167,6 +174,7 @@ The filesystem on /dev/mapper/cryptroot is now 7720844 (4k) blocks long.
 
 Note, that it still indicates the partition size of `7720844 Bytes (~8 GB)`.
 
+### Rebooting and verifying
 After rebooting, all changes are applied properly:
 ```bash
 $ reboot
