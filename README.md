@@ -70,7 +70,7 @@ gpg:                 aka "Ramon Fischer (ramon@sharkoon) <Ramon_Fischer@hotmail.
 
 Copy the image to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
 ```
 
 # Credentials
@@ -134,8 +134,7 @@ Archive:  2021-01-11-raspios-buster-armhf-lite.zip
 
 Copy the image `2021-01-11-raspios-buster-armhf-lite.img` to the `SD card`:
 ```bash
-$ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512b" status="progress"
-$ sync
+$ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
 ```
 
 Boot into `Raspbian` once, so the `root partition` is extended to its full capacity. Then, log in with the username `pi` and the password `raspberry`.
@@ -151,7 +150,7 @@ $ sudo poweroff
 
 After that, create a `backup` of the `SD card`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" status="progress" && sync
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" status="progress" conv="fdatasync"
 ```
 
 Analyse the image for its partition `startsectors` and the `logical sector size`:
@@ -436,7 +435,7 @@ $ losetup --detach "/dev/loop2"
 # Installing the modified image
 The image is now prepared and can be copied to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" && sync
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
 ```
 
 On boot there should be a message to decrypt the `root partition`:
