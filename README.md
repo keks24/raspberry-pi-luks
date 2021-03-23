@@ -609,9 +609,8 @@ Please unlock disk cryptroot:
 # Debugging
 The `initramfs` can be unarchived on the system in order to analyse its content.
 
-First, copy the initramfs `initrd.img` to a temporary location:
+First, copy the initramfs `initrd.img` to the current working directory:
 ```bash
-$ cd "$(mktemp --directory)"
 $ cp --archive "/boot/initrd.img" .
 ```
 
