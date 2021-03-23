@@ -2,6 +2,7 @@ Table of Contents
 =================
 * [Introduction](#introduction)
 * [Using the modified image](#using-the-modified-image)
+   * [Prerequisites](#prerequisites)
    * [Downloading the image](#downloading-the-image)
    * [Copying the image to the SD card](#copying-the-image-to-the-sd-card)
    * [Resizing the root partition](#resizing-the-root-partition)
@@ -11,7 +12,7 @@ Table of Contents
       * [Calculating new LUKS partition size](#calculating-new-luks-partition-size)
       * [Rebooting and verifying](#rebooting-and-verifying)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
-   * [Prerequisites](#prerequisites)
+   * [Prerequisites](#prerequisites-1)
    * [Downloading the stock image](#downloading-the-stock-image)
    * [Configuration](#configuration)
       * [Preparation](#preparation)
@@ -52,7 +53,18 @@ This repository shall describe all necessary steps in order to encrypt the `root
 The entire setup was done on a `Banana Pi Pro` with [`Armbian Buster (mainline based kernel 5.10.y)`](https://www.armbian.com/banana-pi-pro/).
 
 # Using the modified image
-The `SD card` must be bigger than `8 GiB`.
+## Prerequisites
+* The following packages are installed:
+```no-highlight
+aria2c
+coreutils
+cryptsetup
+e2fsprogs
+gnupg
+parted
+util-linux
+```
+* The `SD card` must be bigger than `8 GiB`.
 
 ## Downloading the image
 Either download the files manually from the [release page](https://codeberg.org/keks24/raspberry-pi-luks/releases) or download them via `direct links`:
