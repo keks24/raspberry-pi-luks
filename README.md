@@ -79,12 +79,16 @@ It is **highly recommended** to change these passwords!
 ## LUKS password
 Password: `raspberry`
 
+The `American keyboard layout` applies here.
+
 See also [Changing the LUKS password](#changing-the-luks-password).
 
 ## User credentials
 Username: `pi`
 
 Password: `raspberry`
+
+The `American keyboard layout` applies here.
 
 See also [Changing the user password](#changing-the-user-password).
 
