@@ -655,7 +655,26 @@ etc/console-setup
 This unarchives the entire `initramfs` into the current working directory.
 
 # Additional information
-## Decrypting the `root partition` from the image
+## Credentials
+It is **highly recommended** to change these passwords!
+
+### LUKS password
+Password: `raspberry`
+
+The `American keyboard layout` applies here.
+
+See also [Changing the LUKS password](#changing-the-luks-password).
+
+### User credentials
+Username: `pi`
+
+Password: `raspberry`
+
+The `American keyboard layout` applies here.
+
+See also [Changing the user password](#changing-the-user-password).
+
+## Decrypting the root partition from the image
 The encrypted `root partition` can be opened via `cryptsetup` as follows:
 ```bash
 $ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
