@@ -526,7 +526,7 @@ This will set the `private Class C IP address` to `192.168.1.80` and the `subnet
 Make sure, that the `Raspberry Pi` and the `host` from which the partition should be decrypted, are in the same network.
 
 ### Rebuilding the initramfs
-To adapt all changes, the `initramfs` must be `rebuilt`:
+`Rebuild` the `initramfs` to adapt all changes:
 ```bash
 $ mkinitramfs -o "/boot/initrd.img"
 ```
@@ -564,7 +564,7 @@ $ vi "/etc/dropbear-initramfs/config"
 $ DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
 ```
 
-Leaving out the `leading slash` is important, since the `initramfs` does not have a directory `/`.
+Leaving out the `leading slash` is important, since the `initramfs` does not have the directory `/`.
 
 #### Generating a fancy ASCII banner
 Then, generate a `fancy ASCII banner` via `figlet` and safe it to `/etc/dropbear-initramfs/ssh_banner.net`:
@@ -579,7 +579,7 @@ There are also websites to generate some fancy ASCII art:
 * http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
 * http://www.network-science.de/ascii/
 
-After that, to implement the `ASCII banner`, a `custom hook script` has to be created for `initramfs-tools`. One is already prepared in the repository:
+After that, implement the `ASCII banner` by using a `custom hook script` for `initramfs-tools`. One is already prepared in the repository:
 ```bash
 $ git clone "https://codeberg.org/keks24/raspberry-pi-luks.git"
 $ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/initramfs-tools/hooks/dropbear" "/etc/initramfs-tools/hooks/dropbear"
@@ -587,7 +587,7 @@ $ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-
 ```
 
 #### Rebuilding the initramfs
-Finally, the `initramfs` has to be `rebuilt`:
+Finally, rebuild the `initramfs`:
 ```bash
 $ mkinitramfs -o "/boot/initrd.img"
 ```
