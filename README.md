@@ -516,7 +516,7 @@ In order to make the `initramfs` available in the network on boot, set a `static
 ip=192.168.1.80:::255.255.255.0
 ```
 
-The syntax of the kernel parameter `ip` has the following structure:
+The kernel parameter `ip` has the following syntax:
 ```no-highlight
 ip=<client_ip>:<server_ip>:<gateway_ip>:<netmask>:<hostname>:<network_interface>:<autoconf>:<dns0_ip>:<dns1_ip>:<ntp0_ip>
 ```
