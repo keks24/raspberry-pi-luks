@@ -92,7 +92,7 @@ gpg:                 aka "Ramon Fischer (ramon@sharkoon) <Ramon_Fischer@hotmail.
 ## Copying the image to the SD card
 Copy the image to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fdatasync" status="progress"
 ```
 
 ## Resizing the root partition
@@ -101,7 +101,7 @@ When copying the image to another SD card with a `higher capacity`, the `encrypt
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512b" status="progress" conv="fdatasync"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512b" conv="fdatasync" status="progress"
 ```
 
 ### Analysing the root partition
@@ -261,7 +261,7 @@ Archive:  2021-01-11-raspios-buster-armhf-lite.zip
 
 Copy the image `2021-01-11-raspios-buster-armhf-lite.img` to the `SD card`:
 ```bash
-$ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
+$ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512b" conv="fdatasync" status="progress"
 ```
 
 Boot into `Raspbian`, so the `root partition` is extended to its full capacity. Then, log in with the [predefined user credentials](#user-credentials) and update the kernel:
@@ -282,7 +282,7 @@ $ sudo poweroff
 
 After that, create a `backup` of the `SD card`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" status="progress" conv="fdatasync"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" conv="fdatasync" status="progress"
 ```
 
 Analyse the image for its partition `startsectors` and the `logical sector size`:
@@ -567,7 +567,7 @@ $ losetup --detach "/dev/loop2"
 # Installing the modified image
 The image is now prepared and can be copied to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" status="progress" conv="fdatasync"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fdatasync" status="progress"
 ```
 
 On boot there should be a message to decrypt the `root partition`:
