@@ -612,7 +612,7 @@ The `initramfs` can be unarchived on the system in order to analyse its content.
 First, copy the initramfs `initrd.img` to a temporary location:
 ```bash
 $ cd "$(mktemp --directory)"
-$ cp -a "/boot/initrd.img" .
+$ cp --archive "/boot/initrd.img" .
 ```
 
 Then, analyse which type of compression was used:
