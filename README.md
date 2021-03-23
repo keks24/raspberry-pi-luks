@@ -441,16 +441,186 @@ $ apt update
 $ apt upgrade
 ```
 
-# Optional steps
-## Decrypting the `root partition` via `SSH`
-bookmark
-bookmark
-bookmark
-bookmark
-bookmark
-bookmark
-bookmark
-dropbear
+## Optional steps
+### Decrypting the `root partition` via `SSH`
+In order to decrypt the `root partition` via `SSH`, further configuration is needed. `dropbear` suits here well, since it does not require much memory.
+
+### Install `dropbear-initramfs`
+Log into the `Raspberry Pi` and install the package `dropbear-initramfs`:
+```bash
+$ apt install dropbear-initramfs
+```
+
+### Configure `dropbear-initramfs`
+All configuration files can be found at `/etc/dropbear-initramfs/` and are self-explained.
+
+Next, configure `dropbear-initramfs` by editing `/etc/dropbear-initramfs/config`:
+```bash
+$ vi "/etc/dropbear-initramfs/config"
+DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk"
+```
+
+This sets the `SSH port` to `22222`, sets the `idle timeout` to `60 seconds` and disables `logins via password`, `local port forwarding` and `remote port forwarding`.
+
+Further information can be looked up at `man 8 dropbear`.
+
+Before adding the public key, the file `authorized_keys` should be created like so:
+```bash
+$ touch "/etc/dropbear-initramfs/authorized_keys"
+$ chmod 600 "/etc/dropbear-initramfs/authorized_keys"
+```
+
+`dropbear` does not seem to support `ed25519` keys, yet; so a strong `RSA 8192` key should be generated on the `host` from which the partition should be decrypted:
+```bash
+$ ssh-keygen -t rsa -b 8192
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ramon/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/ramon/.ssh/id_rsa
+Your public key has been saved in /home/ramon/.ssh/id_rsa.pub
+The key fingerprint is:
+SHA256:XaASDCS2YOFPyNQzO7IalEvMC8EE7ZZhrpzPFRymwjI ramon@sharkoon
+The key's randomart image is:
++---[RSA 8192]----+
+[...]
++----[SHA256]-----+
+```
+
+Copy the contents of the `SSH public key` `/home/<some_username>/.ssh/id_rsa.pub` to the `Raspberry Pi` to `/etc/dropbear-initramfs/authorized_keys` with the following `SSHD options`:
+```bash
+no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-rsa [...]
+```
+
+The option `command` restricts the logged in user `root` to only execute the command `/usr/bin/cryptroot-unlock` within the `initramfs`. All other options should be self-explained, but can be looked up at `man 8 sshd`.
+
+Removing all options will grant access to the `busybox` as user `root`.
+
+Make sure, that `SSH public key` is copied correctly, since `logins via password` are disabled.
+
+### Configuring kernel parameters
+In order to make the `initramfs` available in the network on boot, set a `static IP address` via kernel parameters. Append the following line in `/boot/cmdline.txt`:
+```bash
+ip=192.168.1.80:::255.255.255.0
+```
+
+The syntax of the kernel parameter `ip` has the following structure:
+```no-highlight
+ip=<client_ip>:<server_ip>:<gateway_ip>:<netmask>:<hostname>:<network_interface>:<autoconf>:<dns0_ip>:<dns1_ip>:<ntp0_ip>
+```
+
+This will set the `private Class C IP address` to `192.168.1.80` and the `subnet mask` to `255.255.255.0`; these values may differ depending on the network infrastructure. The `initramfs` does not have any connection to the `internet`, since no `gateway IP address` is set.
+
+Make sure, that the `Raspberry Pi` and the `host` from which the partition should be decrypted, are in the same network.
+
+### Rebuilding the initramfs
+To adapt all changes, the `initramfs` must be `rebuilt`:
+```bash
+$ mkinitramfs -o "/boot/initrd.img"
+```
+
+### Reboot
+After that, `reboot` the `Raspberry Pi`:
+```bash
+$ reboot
+```
+
+### Testing remote decryption
+The `initramfs` should be now accessable via `SSH` on `port 22222`, which can be accessed like so:
+```bash
+$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/id_rsa"
+```
+
+The following message should appear:
+```no-highlight
+Please unlock disk cryptroot:
+```
+
+After entering the correct password, the `SSH connection` will cut off and the `Raspberry Pi` will boot:
+```no-highlight
+cryptsetup: cryptroot set up successfully
+Shared connection to 192.168.1.80 closed.
+```
+
+### Optional fancy `SSH` ASCII banner
+`dropbear-initramfs` allows to set a custom `ASCII banner`, which is shown, when logging into the `initramfs`.
+
+#### Configuring `dropbear-initramfs`
+To do this, the configuration file `/etc/dropbear-initramfs/config` has to be adapted:
+```bash
+$ vi "/etc/dropbear-initramfs/config"
+$ DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
+```
+
+Leaving out the `leading slash` is important, since the `initramfs` does not have a directory `/`.
+
+#### Generating a fancy ASCII banner
+Then, generate a `fancy ASCII banner` via `figlet` and safe it to `/etc/dropbear-initramfs/ssh_banner.net`:
+```bash
+$ apt update
+$ apt install figlet
+$ figlet -w 100 -f slant "decrypt cryptroot" > "/etc/dropbear-initramfs/ssh_banner.net"
+$ echo "" >> "/etc/dropbear-initramfs/ssh_banner.net"
+```
+
+There are also websites to generate some fancy ASCII art:
+* http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
+* http://www.network-science.de/ascii/
+
+After that, to implement the `ASCII banner`, a `custom hook script` has to be created for `initramfs-tools`. One is already prepared in the repository:
+```bash
+$ git clone "https://codeberg.org/keks24/raspberry-pi-luks.git"
+$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/initramfs-tools/hooks/dropbear" "/etc/initramfs-tools/hooks/dropbear"
+'raspberry-pi-luks/etc/initramfs-tools/hooks/dropbear' -> '/etc/initramfs-tools/hooks/dropbear'
+```
+
+#### Rebuilding the initramfs
+Finally, the `initramfs` has to be `rebuilt`:
+```bash
+$ mkinitramfs -o "/boot/initrd.img"
+```
+
+# Debugging
+The `initramfs` can be unarchived on the system in order to analyse its content.
+
+First, copy the initramfs `initrd.img` to a temporary location:
+```bash
+$ cd "$(mktemp --directory)"
+$ cp -a "/boot/initrd.img" .
+```
+
+Then, analyse which type of compression was used:
+```bash
+$ file "initrd.img"
+/boot/initrd.img: gzip compressed data, last modified: Tue Mar 23 00:35:15 2021, from Unix, original size 24183808
+```
+
+To unarchive it, `gzip` is required and the suffix `.gz` needs to be appended as well:
+```bash
+$ apt update
+$ apt install gzip
+$ mv initrd.img{,.gz}
+$ gzip --decompress "initrd.img.gz"
+```
+
+Once this is done, the file is still compressed as `ASCII cpio archive`, which can be unarchived like so:
+```bash
+$ apt install cpio
+$ cpio --extract --make-directories --preserve-modification-time --verbose < "initrd.img"
+.
+bin
+conf
+conf/arch.conf
+conf/conf.d
+conf/initramfs.conf
+cryptroot
+cryptroot/crypttab
+etc
+etc/console-setup
+[...]
+```
+
+This unarchives the entire `initramfs` into the current working directory.
 
 # Additional information
 ## Decrypting the `root partition` from the image
