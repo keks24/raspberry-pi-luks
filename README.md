@@ -25,12 +25,13 @@ Table of Contents
       * [Configure dropbear-initramfs](#configure-dropbear-initramfs)
       * [Configuring kernel parameters](#configuring-kernel-parameters)
       * [Rebuilding the initramfs](#rebuilding-the-initramfs)
-      * [Reboot](#reboot)
+      * [Rebooting](#rebooting)
       * [Testing remote decryption](#testing-remote-decryption)
       * [Optional fancy SSH ASCII banner](#optional-fancy-ssh-ascii-banner)
          * [Configuring dropbear-initramfs](#configuring-dropbear-initramfs)
          * [Generating a fancy ASCII banner](#generating-a-fancy-ascii-banner)
          * [Rebuilding the initramfs](#rebuilding-the-initramfs-1)
+         * [Rebooting](#rebooting-1)
 * [Debugging](#debugging)
 * [Additional information](#additional-information)
    * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
@@ -530,7 +531,7 @@ To adapt all changes, the `initramfs` must be `rebuilt`:
 $ mkinitramfs -o "/boot/initrd.img"
 ```
 
-### Reboot
+### Rebooting
 After that, `reboot` the `Raspberry Pi`:
 ```bash
 $ reboot
