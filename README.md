@@ -236,7 +236,7 @@ Download the image `Raspberry Pi OS Lite` from the [official page](https://www.r
 
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-01-12/2021-01-11-raspios-buster-armhf-lite.zip"
-$ echo "d49d6fab1b8e533f7efc40416e98ec16019b9c034bc89c59b83d0921c2aefeef" > "2021-01-11-raspios-buster-armhf-lite.zip.sha256"
+$ echo "d49d6fab1b8e533f7efc40416e98ec16019b9c034bc89c59b83d0921c2aefeef  2021-01-11-raspios-buster-armhf-lite.zip" > "2021-01-11-raspios-buster-armhf-lite.zip.sha256"
 ```
 
 Verify the checksum of the archive:
