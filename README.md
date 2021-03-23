@@ -329,7 +329,7 @@ The `initramfs` should always be generated, when a new kernel was installed. Ena
 RPI_INITRD=Yes
 ```
 
-As of writing, the package `rpi-initramfs-tools` is not available, yet. So `custom hook scripts` have to be used for this.
+As of writing, the package `rpi-initramfs-tools` is not available, yet. So `custom hook scripts` have to be created for this.
 
 The next commands contain the kernel version `5.10.17+`. Replace the version according to the `Raspberry Pi revision` (`grep "Model" "/proc/cpuinfo"`) and the current kernel version (`uname --release`):
 
