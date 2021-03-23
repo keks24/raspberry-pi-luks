@@ -92,7 +92,7 @@ The `American keyboard layout` applies here.
 
 See also [Changing the user password](#changing-the-user-password).
 
-# Encrypting the `root partition` manually
+# Encrypting the root partition manually
 ## Prerequisites
 * The following packages are installed:
 ```no-highlight
@@ -204,7 +204,7 @@ After that unmount `/mnt/`:
 $ umount "/mnt/"
 ```
 
-### Encrypting the `root partition`
+### Encrypting the root partition
 Since the preparation is done, the `root partition` can now be `formatted and encrypted` via `cryptsetup`:
 ```bash
 $ cryptsetup --cipher="aes-xts-plain64" --key-size="512" luksFormat "/dev/loop2"
@@ -301,7 +301,7 @@ Finally, mount the `boot partition` to `/mnt/boot/`:
 $ mount "/dev/loop1" "/mnt/boot/"
 ```
 
-### Entering the `chroot`
+### Entering the chroot
 Once this is done, it is time to go into a `chroot` environment.
 
 Prepare the `chroot` environment:
@@ -414,7 +414,7 @@ Make sure, that the binary `cryptsetup` is present in the file `initrd.img`:
 usr/sbin/cryptsetup
 ```
 
-#### Exiting the `chroot`
+#### Exiting the chroot
 Exit the `chroot`, unmount the `boot partition` and all `pseudo filesystems`:
 ```bash
 (chroot) $ exit
@@ -457,16 +457,16 @@ $ apt upgrade
 ```
 
 ## Optional steps
-### Decrypting the `root partition` via `SSH`
+### Decrypting the root partition via SSH
 In order to decrypt the `root partition` via `SSH`, further configuration is needed. `dropbear` suits here well, since it does not require much memory.
 
-### Install `dropbear-initramfs`
+### Install dropbear-initramfs
 Log into the `Raspberry Pi` and install the package `dropbear-initramfs`:
 ```bash
 $ apt install dropbear-initramfs
 ```
 
-### Configure `dropbear-initramfs`
+### Configure dropbear-initramfs
 All configuration files can be found at `/etc/dropbear-initramfs/` and are self-explained.
 
 Next, configure `dropbear-initramfs` by editing `/etc/dropbear-initramfs/config`:
@@ -557,10 +557,10 @@ cryptsetup: cryptroot set up successfully
 Shared connection to 192.168.1.80 closed.
 ```
 
-### Optional fancy `SSH` ASCII banner
+### Optional fancy SSH ASCII banner
 `dropbear-initramfs` allows to set a custom `ASCII banner`, which is shown, when logging into the `initramfs`.
 
-#### Configuring `dropbear-initramfs`
+#### Configuring dropbear-initramfs
 To do this, the configuration file `/etc/dropbear-initramfs/config` has to be adapted:
 ```bash
 $ vi "/etc/dropbear-initramfs/config"
@@ -662,7 +662,7 @@ Enter passphrase for /dev/loop2: raspberry
 $ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ```
 
-## Changing the `LUKS` password
+## Changing the LUKS password
 The password of the `root partition` can be changed like so:
 ```bash
 $ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
@@ -680,7 +680,7 @@ Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
 ```
 
-## Changing the `user` password
+## Changing the user password
 When logged in as the user `pi`, change the password as follows:
 ```bash
 $ passwd
