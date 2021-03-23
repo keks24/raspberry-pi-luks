@@ -591,6 +591,20 @@ Finally, the `initramfs` has to be `rebuilt`:
 $ mkinitramfs -o "/boot/initrd.img"
 ```
 
+#### Rebooting
+After rebooting the `Raspberry Pi`, `dropbear-initramfs` will now display a fancy `ASCII banner`:
+```bash
+$ ssh -i 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/id_rsa"
+       __                           __                           __                   __
+  ____/ /__  ____________  ______  / /_   ____________  ______  / /__________  ____  / /_
+ / __  / _ \/ ___/ ___/ / / / __ \/ __/  / ___/ ___/ / / / __ \/ __/ ___/ __ \/ __ \/ __/
+/ /_/ /  __/ /__/ /  / /_/ / /_/ / /_   / /__/ /  / /_/ / /_/ / /_/ /  / /_/ / /_/ / /_
+\__,_/\___/\___/_/   \__, / .___/\__/   \___/_/   \__, / .___/\__/_/   \____/\____/\__/
+                    /____/_/                     /____/_/
+
+Please unlock disk cryptroot:
+```
+
 # Debugging
 The `initramfs` can be unarchived on the system in order to analyse its content.
 
