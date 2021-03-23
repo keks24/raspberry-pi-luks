@@ -128,7 +128,7 @@ $ sync
 
 Boot into `Raspbian` once, so the `root partition` is extended to its full capacity. Then, log in with the username `pi` and the password `raspberry`.
 
-Take notes of the following commands and shutdown the system. These are important for later:
+Take notes of the following commands and shutdown the `Raspberry Pi`. These are important for later:
 ```bash
 $ uname --release
 5.10.17+
@@ -355,7 +355,7 @@ install: creating directory '/mnt/etc/kernel/postrm.d/5.10.17+'
 'raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-iniramfs-tools' -> '/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools'
 ```
 
-Be aware, that the directory `/etc/kernel/postinst.d/5.10.17+/` must always match the `kernel version`, which is currently in use. Otherwise, generating the `initramfs` will fail and renders the system unbootable.
+Be aware, that the directory `/etc/kernel/postinst.d/5.10.17+/` must always match the `kernel version`, which is currently in use. Otherwise, generating the `initramfs` will fail and renders the `Raspberry Pi` unbootable.
 
 Next, get the `UUID` of `/dev/loop2`, which will be used later on:
 ```bash
@@ -432,7 +432,7 @@ On boot there should be a message to decrypt the `root partition`:
 Please unlock disk cryptroot: raspberry
 ```
 
-After entering the password, the system should start.
+After entering the password, the `Raspberry Pi` should boot.
 
 # Further steps
 ## Updating all installed packages
