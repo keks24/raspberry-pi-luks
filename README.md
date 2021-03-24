@@ -546,6 +546,8 @@ Make sure, that the binary `cryptsetup` is present in the file `initrd.img`:
 usr/sbin/cryptsetup
 ```
 
+Detailed debugging is explained [below](#debugging).
+
 #### Exiting the chroot
 Exit the `chroot`, unmount the `boot partition` and all `pseudo filesystems`:
 ```bash
