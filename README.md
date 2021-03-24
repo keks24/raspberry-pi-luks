@@ -746,7 +746,7 @@ There is a tool, called `lsinitramfs`, which can output the content of an compre
 $ lsinitramfs "/boot/initrd.img" | less
 ```
 
-This is useful, when one wants to check the recent-built `initramfs` in a quick way.
+This is useful, when one wants to check a recent-built `initramfs` in a quick way.
 
 ## Unarchiving the initramfs
 The `initramfs` can be unarchived on the system in order to analyse its content.
