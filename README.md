@@ -584,8 +584,8 @@ $ apt update
 $ apt upgrade
 ```
 
-## Optional steps
-### Decrypting the root partition via SSH
+# Optional steps
+## Decrypting the root partition via SSH
 In order to decrypt the `root partition` via `SSH`, further configuration is needed. `dropbear` suits here well, since it does not require much memory.
 
 ### Install dropbear-initramfs
