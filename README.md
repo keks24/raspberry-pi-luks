@@ -687,7 +687,7 @@ $ reboot
 ### Testing remote decryption
 The `initramfs` should be now accessable via `SSH` on `port 22222`, which can be accessed like so:
 ```bash
-$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/id_rsa"
+$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
 ```
 
 The following message should appear:
@@ -705,7 +705,7 @@ Shared connection to 192.168.1.80 closed.
 `dropbear-initramfs` allows to set a custom `ASCII banner`, which is shown, when logging into the `initramfs`.
 
 #### Configuring dropbear-initramfs
-To do this, the configuration file `/etc/dropbear-initramfs/config` has to be adapted:
+To do this, the parameter `-b` has to be appended to the configuration file `/etc/dropbear-initramfs/config`:
 ```bash
 $ vi "/etc/dropbear-initramfs/config"
 $ DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
@@ -742,7 +742,7 @@ $ mkinitramfs -o "/boot/initrd.img"
 #### Rebooting
 After rebooting the `Raspberry Pi`, `dropbear-initramfs` will now display a `fancy ASCII banner`:
 ```bash
-$ ssh -i 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/id_rsa"
+$ ssh -i 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
        __                           __                           __                   __
   ____/ /__  ____________  ______  / /_   ____________  ______  / /__________  ____  / /_
  / __  / _ \/ ___/ ___/ / / / __ \/ __/  / ___/ ___/ / / / __ \/ __/ ___/ __ \/ __ \/ __/
