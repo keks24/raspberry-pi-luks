@@ -24,5 +24,4 @@
 # Uncomment the following line to enable generation of
 # /boot/initrd(7).img files (requires rpi-initramfs-tools)
 
-#RPI_INITRD=Yes
 RPI_INITRD=Yes
