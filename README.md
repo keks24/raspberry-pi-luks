@@ -631,7 +631,7 @@ Enter same passphrase again:
 Your identification has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192
 Your public key has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192.pub
 The key fingerprint is:
-SHA256:XaASDCS2YOFPyNQzO7IalEvMC8EE7ZZhrpzPFRymwjI ramon@sharkoon
+SHA256:XaASDCS2YOFPyNQzO7IalEvMC8EE7ZZhrpzPFRymwjI <some_username>@<some_hostname>
 The key's randomart image is:
 +---[RSA 8192]----+
 |           o++.  |
