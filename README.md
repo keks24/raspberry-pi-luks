@@ -96,7 +96,7 @@ $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fdatasync
 ```
 
 ## Resizing the root partition
-When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~8 GiB`. Therefore it needs to be `extended` in order to use the `unused free space`.
+When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~8 GiB`. Therefore, it needs to be `extended` in order to use the `unused free space`.
 
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
