@@ -230,8 +230,8 @@ qemu-arm-static
 unzip
 util-linux
 ```
-* Free space of at least `1.5 times` the capactiy of the `SD card`
 * `qemu-arm-static` is needed, if one is working on a `non-ARM operating system`.
+* Free space of at least `1.5 times` the capactiy of the `SD card`
 
 ## Downloading the stock image
 Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum:
