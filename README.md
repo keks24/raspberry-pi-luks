@@ -129,7 +129,7 @@ Number  Start   End     Size    Type     File system  Flags
  2      273MB   7948MB  7676MB  primary
 ```
 
-This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `7676 MB`, but the SD card is `31.9 GB`.
+This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `7676 MB`, but the SD card's total capacity is `31.9 GB`.
 
 ### Extending the root partition
 In order to `extend` the `second partition`, execute the following commands:
