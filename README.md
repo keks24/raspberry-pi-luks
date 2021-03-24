@@ -698,7 +698,7 @@ $ DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
 Leaving out the `leading slash` is important, since the `initramfs` does not have the directory `/`.
 
 #### Generating a fancy ASCII banner
-Then, generate a `fancy ASCII banner` via `figlet` and safe it to `/etc/dropbear-initramfs/ssh_banner.net`:
+Then, generate a `fancy ASCII banner` via `figlet` and save it to `/etc/dropbear-initramfs/ssh_banner.net`:
 ```bash
 $ apt update
 $ apt install figlet
