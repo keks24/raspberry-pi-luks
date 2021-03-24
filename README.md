@@ -39,6 +39,8 @@ Table of Contents
          * [Rebuilding the initramfs](#rebuilding-the-initramfs-1)
          * [Rebooting](#rebooting-1)
 * [Debugging](#debugging)
+   * [Examining the initramfs](#examining-the-initramfs)
+   * [Unarchiving the initramfs](#unarchiving-the-initramfs)
 * [Additional information](#additional-information)
    * [Credentials](#credentials)
       * [LUKS password](#luks-password)
@@ -635,7 +637,7 @@ Copy the contents of the `SSH public key` `/home/<some_username>/.ssh/id_rsa.pub
 no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-rsa [...]
 ```
 
-The option `command` restricts the logged in user `root` to only execute the command `/usr/bin/cryptroot-unlock` within the `initramfs`. All other options should be self-explained, but can be looked up at `man 8 sshd`. The path to the binary can be determined by [unarchiving and analysing the content of the `initramfs`](#debugging).
+The option `command` restricts the logged in user `root` to only execute the command `/usr/bin/cryptroot-unlock` within the `initramfs`. All other options should be self-explained, but can be looked up at `man 8 sshd`. The path to the binary can be determined by [examining](#examining-the-initramfs) or [unarchiving the content of the `initramfs`](#unarchiving-the-initramfs).
 
 Removing all options will grant access to the `busybox` as user `root`.
 
