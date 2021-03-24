@@ -585,6 +585,7 @@ After entering the password, the `Raspberry Pi` should boot.
 
 # Further steps
 ## Updating all installed packages
+As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:
 ```bash
 $ apt update
 $ apt list --upgradable
