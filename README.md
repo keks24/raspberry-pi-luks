@@ -399,7 +399,7 @@ Digests:
                     cb 5b 14 ae 38 87 7a f0 0a 21 1b a7 8a a0 28 86
 ```
 
-Other `encryption methods` are supported as well and can be looked up [here (CIPHER AND HASH SPECIFICATION REGISTRY)](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf).
+Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#Cipher%20and%20Hash%20specification%20registry).
 
 Now, open/decrypt the encrypted `root partition` and format it via `mkfs.ext4`:
 ```bash
