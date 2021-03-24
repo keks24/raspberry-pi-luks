@@ -518,7 +518,7 @@ root=/dev/mapper/cryptroot cryptdevice=UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f
 cryptroot UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f none luks
 ```
 
-Adapt the file `/etc/fstab`, so the `root partition` will be mounted automatically:
+Adapt the file `/etc/fstab`, so the `decrypted root partition` will be mounted automatically:
 ```bash
 (chroot) $ vi "/etc/fstab"
 #PARTUUID=e8af6eb2-02  /               ext4    defaults,noatime  0       1
