@@ -215,7 +215,7 @@ That is:
 (512 Bytes * 61766752) / 1024^3 = 29.45 GiB
 ```
 
-The result differs slightly from the output of `parted`, since the unit is `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
+The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
 
 # Encrypting the root partition manually
 ## Prerequisites
