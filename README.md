@@ -623,22 +623,30 @@ $ chmod 600 "/etc/dropbear-initramfs/authorized_keys"
 
 `dropbear` does not seem to support `ed25519` keys, yet; so a strong `RSA 8192` key should be generated on the `host` from which the partition should be decrypted:
 ```bash
-$ ssh-keygen -t rsa -b 8192
+$ ssh-keygen -t rsa -b 8192 -f "/home/<some_username>/.ssh/dropbear_root_rsa8192"
 Generating public/private rsa key pair.
-Enter file in which to save the key (/home/ramon/.ssh/id_rsa):
+Enter file in which to save the key (/home/<some_username>/.ssh/dropbear_root_rsa8192):
 Enter passphrase (empty for no passphrase):
 Enter same passphrase again:
-Your identification has been saved in /home/ramon/.ssh/id_rsa
-Your public key has been saved in /home/ramon/.ssh/id_rsa.pub
+Your identification has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192
+Your public key has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192.pub
 The key fingerprint is:
 SHA256:XaASDCS2YOFPyNQzO7IalEvMC8EE7ZZhrpzPFRymwjI ramon@sharkoon
 The key's randomart image is:
 +---[RSA 8192]----+
-[...]
+|           o++.  |
+|          o.. . .|
+|         o+= o o |
+|         o=+O o +|
+|        S.oO o o+|
+|          =o+. ..|
+|         .+.+Boo |
+|        .o =.o@  |
+|        .. .=E.. |
 +----[SHA256]-----+
 ```
 
-Copy the contents of the `SSH public key` `/home/<some_username>/.ssh/id_rsa.pub` to the `Raspberry Pi` to `/etc/dropbear-initramfs/authorized_keys` with the following `SSHD options`:
+Copy the contents of the `SSH public key` `/home/<some_username>/.ssh/dropbear_root_rsa8192.pub` to the `Raspberry Pi` to `/etc/dropbear-initramfs/authorized_keys` with the following `SSHD options`:
 ```bash
 no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-rsa [...]
 ```
