@@ -452,7 +452,7 @@ $ export PS1="(chroot) ${PS1}"
 (chroot) $ cd
 ```
 
-#### Installing necessary packages in order to build an initramfs
+#### Installing necessary tools
 An `initramfs` is needed in order to decrypt the `root partition` on boot. The following packages will provide all tools to build it:
 ```bash
 (chroot) $ apt update
