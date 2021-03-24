@@ -837,6 +837,17 @@ $ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ## Changing the LUKS password
 The password of the `root partition` can be changed like so:
 ```bash
+$ fdisk --list "raspberrypi_sd_card_backup.img"
+Disk raspberry_pi_sd_card_backup.img: 7.41 GiB, 7948206080 bytes, 15523840 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x2cf0beee
+
+Device                           Boot  Start      End  Sectors  Size Id Type
+raspberry_pi_sd_card_backup.img1        8192   532479   524288  256M  c W95 FAT32 (LBA)
+raspberry_pi_sd_card_backup.img2      532480 15523839 14991360  7.2G 83 Linux
 $ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
 $ cryptsetup luksChangeKey "/dev/loop2"
 Enter passphrase to be changed: raspberry
