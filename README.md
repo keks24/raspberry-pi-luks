@@ -18,7 +18,7 @@ Table of Contents
       * [Preparation](#preparation)
       * [Encrypting the root partition](#encrypting-the-root-partition)
       * [Entering the chroot](#entering-the-chroot)
-         * [Installing necessary packages in order to build an initramfs](#installing-necessary-packages-in-order-to-build-an-initramfs)
+         * [Installing necessary tools](#installing-necessary-tools)
          * [Configuration](#configuration-1)
          * [Generating the initramfs](#generating-the-initramfs)
          * [Exiting the chroot](#exiting-the-chroot)
