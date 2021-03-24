@@ -554,7 +554,7 @@ Exit the `chroot`, unmount the `boot partition` and all `pseudo filesystems`:
 (chroot) $ exit
 $ cd
 $ umount "/mnt/boot/"
-$ umount --lazy --recursive "/mnt/proc" "/mnt/sys/" "/mnt/dev/"
+$ umount --lazy --recursive /mnt/{proc/,sys/,dev/}
 ```
 
 Remove `qemu-arm-static` from `/mnt/usr/bin/`:
