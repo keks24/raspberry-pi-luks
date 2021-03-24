@@ -66,7 +66,7 @@ gnupg
 parted
 util-linux
 ```
-* The `SD card` must be bigger than `8 GiB`.
+* The capacity of the `SD card` must be greater than `8 GiB`.
 
 ## Downloading the image
 Either download the files manually from the [release page](https://codeberg.org/keks24/raspberry-pi-luks/releases) or download them via `direct links`:
