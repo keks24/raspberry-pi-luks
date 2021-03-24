@@ -639,7 +639,7 @@ The option `command` restricts the logged in user `root` to only execute the com
 
 Removing all options will grant access to the `busybox` as user `root`.
 
-Make sure, that `SSH public key` is copied correctly, since `logins via password` are disabled.
+Make sure, that the `SSH public key` is copied correctly, since `logins via password` are disabled.
 
 ### Configuring kernel parameters
 In order to make the `initramfs` available in the network on boot, set a `static IP address` via kernel parameters. Append the following line in `/boot/cmdline.txt`:
