@@ -321,7 +321,7 @@ NAME       SIZELIMIT    OFFSET AUTOCLEAR RO BACK-FILE                           
 /dev/loop2         0 272629760         0  0 /root/tmp/raspberrypi_sd_card_backup.img   0     512
 ```
 
-Using `losetup` here is important, since it is necessary for the `chroot` later on. Using `mount --offset` might return the error `overlapping loop device exists`.
+Using `losetup` here is important, since it is necessary for the `chroot` later on. Using `mount -o offset` might return the error `overlapping loop device exists`.
 
 Mount and create a `backup` of the `root partition` before encrypting it. The `trailing slash` for the `rsync` command is important here!:
 ```bash
