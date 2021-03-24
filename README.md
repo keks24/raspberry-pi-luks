@@ -738,6 +738,15 @@ Please unlock disk cryptroot:
 ```
 
 # Debugging
+## Examining the initramfs
+There is a tool, called `lsinitramfs`, which can output the content of an compressed `initramfs` to `stdout`:
+```bash
+$ lsinitramfs "/boot/initrd.img" | less
+```
+
+This is useful, when one wants to check the recent-built `initramfs` in a quick way.
+
+## Unarchiving the initramfs
 The `initramfs` can be unarchived on the system in order to analyse its content.
 
 First, copy the initramfs `initrd.img` to the current working directory:
