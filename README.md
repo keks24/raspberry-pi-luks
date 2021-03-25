@@ -76,8 +76,7 @@ $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --fo
     "https://srv-store4.gofile.io/download/48Rnkz/c57f476a29378ae9ce21dff9e3c8120c/raspberrypi_sd_card_backup.img.asc" \
     "https://srv-store4.gofile.io/download/48Rnkz/2e907656ce9f9c30c31058a1d0e06091/raspberrypi_sd_card_backup.img.b2" \
     "https://srv-store4.gofile.io/download/48Rnkz/26dccd90de56da6cfdf4d00df63291e6/raspberrypi_sd_card_backup.img.sha256" \
-    "https://srv-store6.gofile.io/download/48Rnkz/588be43ada286493bab2fd309bc9eb99/LICENSE" \
-    "https://srv-store6.gofile.io/download/48Rnkz/4a2f7d2a2895bbf8ab72933afc9de0e6/README.md"
+    "https://srv-store1.gofile.io/download/48Rnkz/fa7c7877a25f02d9071eb712971917ad/LICENSE" \
 ```
 
 Check the `data integrity` and `verify` the signature:
