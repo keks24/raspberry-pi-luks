@@ -710,7 +710,7 @@ $ vi "/etc/dropbear-initramfs/config"
 $ DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
 ```
 
-Leaving out the `leading slash` is important, since the `initramfs` does not have the directory `/`.
+Leaving out the `leading slash` is important.
 
 #### Generating a fancy ASCII banner
 Then, generate a `fancy ASCII banner` via `figlet` and save it to `/etc/dropbear-initramfs/ssh_banner.net`:
