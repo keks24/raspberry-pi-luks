@@ -423,20 +423,20 @@ After that, it is possible to mount the encrypted partition `/dev/mapper/cryptro
 $ mount "/dev/mapper/cryptroot" "/mnt/"
 ```
 
-Next, restore the backup:
+Finally, restore the backup:
 ```bash
 $ rsync --archive --hard-links --acls --xattrs --one-file-system --numeric-ids --info="progress2" "root_backup/" "/mnt/"
-```
-
-Finally, mount the `boot partition` to `/mnt/boot/`:
-```bash
-$ mount "/dev/loop1" "/mnt/boot/"
 ```
 
 ### Entering the chroot
 Once this is done, it is time to go into a `chroot` environment.
 
-Prepare the `chroot` environment:
+Before doing so, mount the `boot partition` to `/mnt/boot/`:
+```bash
+$ mount "/dev/loop1" "/mnt/boot/"
+```
+
+Then, prepare the `chroot` environment:
 ```bash
 $ mount --types proc "/proc/" "/mnt/proc/"
 $ mount --rbind "/sys" "/mnt/sys/"
