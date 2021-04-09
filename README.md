@@ -677,6 +677,20 @@ Make sure, that the `Raspberry Pi` and the `host` from which the partition shoul
 $ mkinitramfs -o "/boot/initrd.img"
 ```
 
+Make sure, that the binary `dropbear` and its `configuration files` are present in the file `initrd.img`:
+```bash
+$ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "dropbear|authorized_keys"
+etc/dropbear
+etc/dropbear/config
+etc/dropbear/dropbear_dss_host_key
+etc/dropbear/dropbear_ecdsa_host_key
+etc/dropbear/dropbear_rsa_host_key
+root-0sldnV/.ssh/authorized_keys
+scripts/init-bottom/dropbear
+scripts/init-premount/dropbear
+usr/sbin/dropbear
+```
+
 ### Rebooting
 After that, `reboot` the `Raspberry Pi`:
 ```bash
