@@ -289,17 +289,16 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" conv="fdatasync
 
 Analyse the image for its partition `start sectors` and the `logical sector size`:
 ```bash
-$ fdisk --list "raspberrypi_sd_card_backup.img"
-Disk raspberry_pi_sd_card_backup.img: 7.41 GiB, 7948206080 bytes, 15523840 sectors
-Units: sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disklabel type: dos
-Disk identifier: 0x2cf0beee
+$ parted "raspberrypi_sd_card_backup.img" "unit s print"
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
 
-Device                           Boot  Start      End  Sectors  Size Id Type
-raspberry_pi_sd_card_backup.img1        8192   532479   524288  256M  c W95 FAT32 (LBA)
-raspberry_pi_sd_card_backup.img2      532480 15523839 14991360  7.2G 83 Linux
+Number  Start    End        Size       Type     File system  Flags
+ 1      8192s    532479s    524288s    primary  fat32        lba
+ 2      532480s  15523839s  14991360s  primary  ext4
 ```
 
 In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 532480`. The `logical sector size` is `512 bytes`.
@@ -828,17 +827,16 @@ See also [Changing the user password](#changing-the-user-password).
 ## Decrypting the root partition from the image
 The encrypted `root partition` can be opened via `cryptsetup` as follows:
 ```bash
-$ fdisk --list "raspberrypi_sd_card_backup.img"
-Disk raspberry_pi_sd_card_backup.img: 7.41 GiB, 7948206080 bytes, 15523840 sectors
-Units: sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disklabel type: dos
-Disk identifier: 0x2cf0beee
+$ parted "raspberrypi_sd_card_backup.img" "unit s print"
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
 
-Device                           Boot  Start      End  Sectors  Size Id Type
-raspberry_pi_sd_card_backup.img1        8192   532479   524288  256M  c W95 FAT32 (LBA)
-raspberry_pi_sd_card_backup.img2      532480 15523839 14991360  7.2G 83 Linux
+Number  Start    End        Size       Type     File system  Flags
+ 1      8192s    532479s    524288s    primary  fat32        lba
+ 2      532480s  15523839s  14991360s  primary
 $ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ cryptsetup open "/dev/loop2" cryptsdcard
 Enter passphrase for /dev/loop2: raspberry
@@ -848,17 +846,16 @@ $ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ## Changing the LUKS password
 The password of the `root partition` can be changed like so:
 ```bash
-$ fdisk --list "raspberrypi_sd_card_backup.img"
-Disk raspberry_pi_sd_card_backup.img: 7.41 GiB, 7948206080 bytes, 15523840 sectors
-Units: sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disklabel type: dos
-Disk identifier: 0x2cf0beee
+$ parted "raspberrypi_sd_card_backup.img" "unit s print"
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
 
-Device                           Boot  Start      End  Sectors  Size Id Type
-raspberry_pi_sd_card_backup.img1        8192   532479   524288  256M  c W95 FAT32 (LBA)
-raspberry_pi_sd_card_backup.img2      532480 15523839 14991360  7.2G 83 Linux
+Number  Start    End        Size       Type     File system  Flags
+ 1      8192s    532479s    524288s    primary  fat32        lba
+ 2      532480s  15523839s  14991360s  primary
 $ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
 $ cryptsetup luksChangeKey "/dev/loop2"
 Enter passphrase to be changed: raspberry
