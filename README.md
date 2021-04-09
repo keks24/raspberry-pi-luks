@@ -287,7 +287,7 @@ After that, create a `backup` of the `SD card`:
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" conv="fdatasync" status="progress"
 ```
 
-Analyse the image for its partition `startsectors` and the `logical sector size`:
+Analyse the image for its partition `start sectors` and the `logical sector size`:
 ```bash
 $ fdisk --list "raspberrypi_sd_card_backup.img"
 Disk raspberry_pi_sd_card_backup.img: 7.41 GiB, 7948206080 bytes, 15523840 sectors
@@ -302,7 +302,7 @@ raspberry_pi_sd_card_backup.img1        8192   532479   524288  256M  c W95 FAT3
 raspberry_pi_sd_card_backup.img2      532480 15523839 14991360  7.2G 83 Linux
 ```
 
-In this case, the `first partition (boot)` starts at `startsector 8192 bytes` and the `second partition (root)` at `startsector 532480 bytes`. The `logical sector size` is `512 bytes`.
+In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 532480`. The `logical sector size` is `512 bytes`.
 
 These values can be used to mount the partitions from the image.
 
