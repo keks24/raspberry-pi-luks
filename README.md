@@ -225,11 +225,11 @@ busybox
 coreutils
 cryptsetup
 e2fsprogs
-qemu-arm-static
+qemu-user-static
 unzip
 util-linux
 ```
-* `qemu-arm-static` is needed, if one is working on a `non-ARM operating system`.
+* `qemu-user-static` is needed, if one is working on a `non-ARM operating system`.
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
 ## Downloading the stock image
