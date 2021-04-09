@@ -71,7 +71,7 @@ util-linux
 ## Downloading the image
 Either download the files manually from the [release page](https://codeberg.org/keks24/raspberry-pi-luks/releases) or download them via `direct links`:
 ```bash
-$ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential \
+$ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential="true" \
     "https://srv-store4.gofile.io/download/48Rnkz/ee3a464731dc8453f7d9b214cdc445dc/raspberrypi_sd_card_backup.img" \
     "https://srv-store4.gofile.io/download/48Rnkz/c57f476a29378ae9ce21dff9e3c8120c/raspberrypi_sd_card_backup.img.asc" \
     "https://srv-store4.gofile.io/download/48Rnkz/2e907656ce9f9c30c31058a1d0e06091/raspberrypi_sd_card_backup.img.b2" \
