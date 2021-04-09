@@ -541,7 +541,7 @@ For the initial setup, the first method is preferred.
 
 Make sure, that the binary `cryptsetup` is present in the file `initrd.img`:
 ```bash
-(chroot) $ lsinitramfs "/boot/initrd.img" | grep "sbin/cryptsetup"
+(chroot) $ lsinitramfs "/boot/initrd.img" | grep --fixed-strings "sbin/cryptsetup"
 usr/sbin/cryptsetup
 ```
 
