@@ -225,6 +225,7 @@ busybox
 coreutils
 cryptsetup
 e2fsprogs
+parted
 qemu-user-static
 unzip
 util-linux
