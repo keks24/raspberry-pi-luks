@@ -169,7 +169,7 @@ Number  Start   End     Size    Type     File system  Flags
 (parted) quit
 ```
 
-The command `resizepart` will be used to `extend` the partition, where `-1` defines the very end of the SD card.
+The command `resizepart` will be used to `extend` the partition, where `-1` defines the last sector of the SD card.
 
 ### Calculating new LUKS partition size
 After `extending` the partition via `parted`, the new `LUKS partition size` needs to be `calculated` via `cryptsetup` as well:
