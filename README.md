@@ -48,11 +48,14 @@ Table of Contents
    * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
    * [Changing the LUKS password](#changing-the-luks-password)
    * [Changing the user password](#changing-the-user-password)
+* [Known issues](#known-issues)
 
 # Introduction
 This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite`; currently `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`. The instructions are adaptable for other Raspberry Pi revisions as well.
 
 The entire setup was done on a `Banana Pi Pro` with [`Armbian Buster (mainline based kernel 5.10.y)`](https://www.armbian.com/banana-pi-pro/).
+
+**Please read [Known issues](#known-issues) first before following any of the instructions!**
 
 # Using the modified image
 ## Prerequisites
@@ -898,3 +901,10 @@ New password: <some_strong_personal_password>
 Retype new password: <some_strong_personal_password>
 passwd: password updated successfully
 ```
+
+# Known issues
+**Note: For some reason, following the instructions [Encrypting the root partition manually](#encrypting-the-root-partition-manually) will provide an image file, which is **only compatible** with the Raspberry Pi revision, on which the `root partition` was resized.**
+
+So, using an image, where the `root partition` was previously resized on a `Raspberry Pi Model B Rev 2` is **incompatible** with a `Raspberry Pi 4 Model B Rev 1.4`.
+
+It will boot into the `initramfs`, but the `root partition` cannot be decrypted. Skipping [Resizing the root partition](#resizing-the-root-partition) will also preserve the partition size and its `UUID`, but it still will not work.
