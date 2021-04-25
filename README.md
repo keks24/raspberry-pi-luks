@@ -547,7 +547,11 @@ There are three ways to generate the `initramfs`.
 
 3. Or execute `update-initramfs` and rename the file `initrd.img-5.10.17+` manually:
 ```bash
-(chroot) $ update-initramfs -uk 5.10.17+
+(chroot) $ update-initramfs -vuk 5.10.17+
+update-initramfs: Generating /boot/initrd.img-5.10.17-v7l+
+Copying module directory kernel/drivers/usb/dwc2
+Adding module /lib/modules/5.10.17-v7l+/kernel/drivers/usb/roles/roles.ko
+[...]
 (chroot) $ mv /boot/initrd.img{-5.10.17+,}
 ```
 
