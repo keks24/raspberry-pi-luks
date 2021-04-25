@@ -784,7 +784,46 @@ This is useful, when one wants to check a recent-built `initramfs` in a quick wa
 ## Unarchiving the initramfs
 The `initramfs` can be unarchived on the system in order to analyse its content.
 
-First, copy the initramfs `initrd.img` to the current working directory:
+### Easy method
+The following command `unarchives` the `initramfs` directly to the current working directory:
+```bash
+$ unmkinitramfs -v "/boot/initrd.img" .
+.
+bin
+conf
+conf/arch.conf
+conf/conf.d
+conf/initramfs.conf
+cryptroot
+cryptroot/crypttab
+etc
+etc/console-setup
+[...]
+```
+
+It is also possible to directly unarchive it to a custom directory:
+```bash
+$ unmkinitramfs -v "/boot/initrd.img" "initramfs/"
+.
+bin
+conf
+conf/arch.conf
+conf/conf.d
+conf/initramfs.conf
+cryptroot
+cryptroot/crypttab
+etc
+etc/console-setup
+[...]
+```
+
+Note, that this method comes with a caveat (`man 8 unmkinitramfs`):
+```no-highlight
+unmkinitramfs cannot deal with multiple-segmented initramfs images, except where an early (uncompressed) initramfs with system firmware is prepended to the regular compressed initramfs.
+```
+
+### Elaborated method
+Copy the initramfs `initrd.img` to the current working directory:
 ```bash
 $ cp --archive "/boot/initrd.img" .
 ```
