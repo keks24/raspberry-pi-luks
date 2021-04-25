@@ -41,6 +41,8 @@ Table of Contents
 * [Debugging](#debugging)
    * [Examining the initramfs](#examining-the-initramfs)
    * [Unarchiving the initramfs](#unarchiving-the-initramfs)
+      * [Easy method](#easy-method)
+      * [Elaborated method](#elaborated-method)
 * [Additional information](#additional-information)
    * [Credentials](#credentials)
       * [LUKS password](#luks-password)
