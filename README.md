@@ -533,19 +533,25 @@ Adapt the file `/etc/fstab`, so the `decrypted root partition` will be mounted a
 ```
 
 #### Generating the initramfs
-There are two ways to generate the `initramfs`.
+There are three ways to generate the `initramfs`.
 
 1. Either reinstall the package `raspberrypi-kernel`, which will install all `Raspberry Pi kernels` and then executes the `hook scripts` in `/etc/kernel/postinst.d/`:
 ```bash
 (chroot) $ apt install raspberrypi-kernel --reinstall
 ```
 
-2. Or execute the command `mkinitramfs` manually:
+2. Execute the command `mkinitramfs` manually:
 ```bash
 (chroot) $ mkinitramfs -o "/boot/initrd.img" 5.10.17+
 ```
 
-For the initial setup, the first method is preferred.
+3. Or execute `update-initramfs` and rename the file `initrd.img-5.10.17+` manually:
+```bash
+(chroot) $ update-initramfs -uk 5.10.17+
+(chroot) $ mv /boot/initrd.img{-5.10.17+,}
+```
+
+For this setup, the first method is preferred in order to test the `postinst.d` and `postrm.d` scripts.
 
 Make sure, that the binary `cryptsetup` is present in the file `initrd.img`:
 ```bash
