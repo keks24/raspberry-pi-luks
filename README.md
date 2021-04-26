@@ -576,6 +576,12 @@ $ (chroot) tail --lines="3" "/boot/config.txt"
 initramfs initrd.img followkernel
 ```
 
+Also, the file `/boot/initrd.img` should be updated:
+```bash
+$ stat "/boot/initrd.img" | grep "Modify"
+Modify: 2021-04-10 22:59:16.000000000 +0100
+```
+
 Make sure, that the binary `cryptsetup` and the kernel object file `adiantum.ko` are present in the file `initrd.img`:
 ```bash
 (chroot) $ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "adiantum.ko|sbin/cryptsetup"
