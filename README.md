@@ -65,12 +65,14 @@ The entire setup was done on a `Banana Pi Pro` with [`Armbian Buster (mainline b
 ```no-highlight
 aria2c
 coreutils
-cryptsetup
+cryptsetup-2.0.6 or higher
 e2fsprogs
 gnupg
+linux-image-5.0 or higher
 parted
 util-linux
 ```
+* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`
 * The capacity of the `SD card` must be greater than `8 GiB`.
 
 ## Downloading the image
@@ -201,8 +203,8 @@ $ reboot
 $ cryptsetup status cryptroot
 /dev/mapper/cryptroot is active and is in use.
   type:    LUKS2
-  cipher:  aes-xts-plain64
-  keysize: 512 bits
+  cipher:  xchacha20,aes-adiantum-plain64
+  keysize: 256 bits
   key location: keyring
   device:  /dev/mmcblk0p2
   sector size:  512
@@ -228,16 +230,17 @@ The result differs slightly from the output of `parted`, since the unit is in `G
 * The following packages are installed:
 ```no-highlight
 aria2c
-busybox
 coreutils
-cryptsetup
+cryptsetup-2.0.6 or higher
 e2fsprogs
 parted
 qemu-user-static
+raspberrypi-kernel-1.20200527-1 or higher
 unzip
 util-linux
 ```
 * `qemu-user-static` is needed, if one is working on a `non-ARM operating system`.
+* `raspberrypi-kernel-1.20200527-1 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
 ## Downloading the stock image
@@ -344,7 +347,7 @@ $ umount "/mnt/"
 ### Encrypting the root partition
 Since the preparation is done, the `root partition` can now be `formatted and encrypted` via `cryptsetup`:
 ```bash
-$ cryptsetup --cipher="aes-xts-plain64" --key-size="512" luksFormat "/dev/loop2"
+$ cryptsetup --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" luksFormat "/dev/loop2"
 WARNING: Device /dev/loop2 already contains a 'ext4' superblock signature.
 
 WARNING!
@@ -356,57 +359,59 @@ Enter passphrase for /dev/loop2: raspberry
 Verify passphrase: raspberry
 ```
 
-Make absolutely sure, that the `key size` is `at least 512 Bytes`, [since `XTS` splits the key size in half](https://wiki.archlinux.org/index.php/dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode).
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES`.
 
 The `LUKS header information` looks like so:
 ```bash
 $ cryptsetup luksDump "/dev/loop2"
 LUKS header information
-Version:        2
-Epoch:          3
-Metadata area:  16384 [bytes]
-Keyslots area:  16744448 [bytes]
-UUID:           1fd31646-340c-47ed-8c66-8efb2e730d0f
-Label:          (no label)
-Subsystem:      (no subsystem)
-Flags:          (no flags)
+Version:       	2
+Epoch:         	3
+Metadata area: 	16384 [bytes]
+Keyslots area: 	16744448 [bytes]
+UUID:          	4b1b525d-da43-4316-83a3-39a67b8403db
+Label:         	(no label)
+Subsystem:     	(no subsystem)
+Flags:       	(no flags)
 
 Data segments:
   0: crypt
-        offset: 16777216 [bytes]
-        length: (whole device)
-        cipher: aes-xts-plain64
-        sector: 512 [bytes]
+	offset: 16777216 [bytes]
+	length: (whole device)
+	cipher: xchacha20,aes-adiantum-plain64
+	sector: 512 [bytes]
 
 Keyslots:
   0: luks2
-        Key:        512 bits
-        Priority:   normal
-        Cipher:     aes-xts-plain64
-        Cipher key: 512 bits
-        PBKDF:      argon2i
-        Time cost:  4
-        Memory:     45128
-        Threads:    2
-        Salt:       45 b9 b2 2f 2d 8a 8d e2 26 63 fa 2d 2f cd d0 1d
-                    05 de 0a da 84 1e c2 93 ad 86 b7 d0 ec 13 69 4e
-        AF stripes: 4000
-        AF hash:    sha256
-        Area offset:32768 [bytes]
-        Area length:258048 [bytes]
-        Digest ID:  0
+	Key:        256 bits
+	Priority:   normal
+	Cipher:     xchacha20,aes-adiantum-plain64
+	Cipher key: 256 bits
+	PBKDF:      argon2i
+	Time cost:  4
+	Memory:     190840
+	Threads:    4
+	Salt:       f4 e7 c8 63 26 ee 0d ae 2b dc 8a 25 bc cd 62 a5
+	            6f d4 ea 91 da c0 a9 b4 1a 4b 6a 04 ee b8 d5 92
+	AF stripes: 4000
+	AF hash:    sha256
+	Area offset:32768 [bytes]
+	Area length:131072 [bytes]
+	Digest ID:  0
 Tokens:
 Digests:
   0: pbkdf2
-        Hash:       sha256
-        Iterations: 7816
-        Salt:       bc fd f1 88 bf 9f 4c 24 d9 98 c2 49 cc 2d 20 7b
-                    05 d5 2f c4 5b c3 b6 de a9 2a a9 d6 73 bc cc 88
-        Digest:     22 8e 63 90 ec 64 9d 0a b8 62 50 06 80 ca e0 90
-                    cb 5b 14 ae 38 87 7a f0 0a 21 1b a7 8a a0 28 86
+	Hash:       sha256
+	Iterations: 68124
+	Salt:       11 23 2d 69 d3 3a e6 b3 1b b0 78 1a 78 b5 4c 3e
+	            68 6d ec cc 65 69 4b 61 fd ee 51 eb a1 01 58 f4
+	Digest:     d7 bd 62 df ba 94 d2 b6 ec 10 6a 7d 93 9b d1 5d
+	            08 56 1c 92 fb e7 6a 48 37 64 73 7d 61 e9 8c 0f
 ```
 
 Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#Cipher%20and%20Hash%20specification%20registry).
+
+If the encryption method `aes-xts-plain64` is preferred, make absolutely sure, that the `key size` is `at least 512 Bytes`, [since `XTS` splits the key size in half](https://wiki.archlinux.org/index.php/dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode).
 
 Now, open/decrypt the encrypted `root partition` and format it via `mkfs.ext4`:
 ```bash
@@ -557,9 +562,10 @@ Adding module /lib/modules/5.10.17+/kernel/drivers/usb/roles/roles.ko
 
 For this setup, the first method is preferred in order to test the `postinst.d` and `postrm.d` scripts.
 
-Make sure, that the binary `cryptsetup` is present in the file `initrd.img`:
+Make sure, that the binary `cryptsetup` and the kernel object file `adiantum.ko` are present in the file `initrd.img`:
 ```bash
-(chroot) $ lsinitramfs "/boot/initrd.img" | grep --fixed-strings "sbin/cryptsetup"
+(chroot) $ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "adiantum.ko|sbin/cryptsetup"
+usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
 usr/sbin/cryptsetup
 ```
 
