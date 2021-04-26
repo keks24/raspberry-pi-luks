@@ -568,6 +568,14 @@ Adding module /lib/modules/5.10.17+/kernel/drivers/usb/roles/roles.ko
 
 For this setup, the first method is preferred in order to test the `postinst.d` and `postrm.d` scripts.
 
+After the reinstallation has been completed, there should be the entry `initramfs initrd.img followkernel` in the configuration file `/boot/config.txt`:
+```bash
+$ (chroot) tail --lines="3" "/boot/config.txt"
+[all]
+#dtoverlay=vc4-fkms-v3d
+initramfs initrd.img followkernel
+```
+
 Make sure, that the binary `cryptsetup` and the kernel object file `adiantum.ko` are present in the file `initrd.img`:
 ```bash
 (chroot) $ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "adiantum.ko|sbin/cryptsetup"
