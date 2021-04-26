@@ -527,7 +527,13 @@ Edit the kernel parameters in `/boot/cmdline.txt` and add an entry in `/etc/cryp
 (chroot) $ vi "/boot/cmdline.txt"
 root=/dev/mapper/cryptroot cryptdevice=UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f:cryptroot
 (chroot) $ vi "/etc/crypttab"
-cryptroot UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f none luks
+cryptroot UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f none luks,initramfs
+```
+
+Note, that adding the option `initramfs` is very important here. Otherwise, the following error might occur and the file `cryptroot/crypttab` within the `initramfs` might be empty; rendering the system unbootable:
+```no-highlight
+cryptsetup: WARNING: target '<some_target>' not found in /etc/crypttab
+cryptsetup: ERROR: cryptroot: Source mismatch
 ```
 
 Adapt the file `/etc/fstab`, so the `decrypted root partition` will be mounted automatically:
