@@ -47,9 +47,16 @@ Table of Contents
    * [Credentials](#credentials)
       * [LUKS password](#luks-password)
       * [User credentials](#user-credentials)
+      * [Changing the user password](#changing-the-user-password)
    * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
    * [Changing the LUKS password](#changing-the-luks-password)
-   * [Changing the user password](#changing-the-user-password)
+   * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
+      * [Prerequisites](#prerequisites-2)
+      * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1)
+      * [Configuring the Bootloader](#configuring-the-bootloader)
+      * [Adapting the changes](#adapting-the-changes)
+      * [Re-encrypting the partition](#re-encrypting-the-partition)
+      * [Verify the new cipher](#verify-the-new-cipher)
 * [Known issues](#known-issues)
 
 # Introduction
@@ -984,15 +991,69 @@ Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
 ```
 
-## Changing the user password
-When logged in as the user `pi`, change the password as follows:
+## Re-encrypting the root partition
+There might be the case to apply a `new cipher method` to the `root partition`. This can only be done `offline` and **not** `on-the-fly`. Further configuration is needed for this.
+
+### Prerequisites
+* Raspberry Pi 4
+* Bootable USB stick with `Raspbian`, which is accessable via `SSH`
+    * cryptsetup-2.0.6 or higher
+
+### Creating a backup of the SD card
+Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
-$ passwd
-Changing password for pi.
-Current password: raspberry
-New password: <some_strong_personal_password>
-Retype new password: <some_strong_personal_password>
-passwd: password updated successfully
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512b" conv="fdatasync" status="progress"
+```
+
+If one does not use a `Raspberry Pi 4` with `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please skip to [Re-encrypting the partition](#re-encrypting-the-partition).
+
+### Configuring the Bootloader
+Boot into `Raspbian` of the Raspberry Pi, where the `root partition` should be re-encrypted and change its `boot order`:
+```bash
+$ rpi-eeprom-config --edit
+#BOOT_ORDER=0xf41
+# change boot order to "USB (0x4)", "SD (0x1)", "RESTART (0xf)"
+BOOT_ORDER=0xf14
+```
+
+[Source](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711_bootloader_config.md)
+
+### Adapting the changes
+Connect the USB stick to the Raspberry Pi and and `adapt all changes` of the bootloader by `rebooting` the system:
+```bash
+$ reboot
+```
+
+### Re-encrypting the partition
+The Raspberry Pi should now boot from the USB stick. Connect to it via `SSH` and `re-encrypt` the `root-partition`:
+```bash
+$ cryptsetup-reencrypt --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" "/dev/mmcblk0p2"
+```
+
+This may take up to `30 minutes`.
+
+After that, `revert the boot order` of the bootloader and `reboot` to apply all changes:
+```bash
+$ rpi-eeprom-config --edit
+BOOT_ORDER=0xf41
+$ reboot
+```
+
+### Verify the new cipher
+Finally, verify, if the re-encryption was successful:
+```bash
+$ cryptsetup status cryptroot
+root@raspberrypi:~# cryptsetup status cryptroot
+/dev/mapper/cryptroot is active and is in use.
+  type:    LUKS2
+  cipher:  xchacha20,aes-adiantum-plain64
+  keysize: 256 bits
+  key location: keyring
+  device:  /dev/mmcblk0p2
+  sector size:  512
+  offset:  32768 sectors
+  size:    61766752 sectors
+  mode:    read/write
 ```
 
 # Known issues
