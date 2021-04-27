@@ -1000,6 +1000,8 @@ There might be the case to apply a `new cipher method` to the `root partition`. 
 * Bootable USB stick with `Raspbian`, which is accessable via `SSH`
     * `cryptsetup-2.0.6` or higher
 
+If the `LUKS` partition version is `1`, please refer to these instructions: [Upgrade LUKS](https://gist.github.com/kravietz/d7ea4d98c5ffb79fc7a1b3d98be4de94/revisions?short_path=b04fd3a#diff-b04fd3af6e99fb8beb441ef7cc96d1b29994a2ccc70d7519259537f1fca890dc).
+
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
