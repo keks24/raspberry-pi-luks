@@ -582,12 +582,15 @@ $ stat "/boot/initrd.img" | grep "Modify"
 Modify: 2021-04-10 22:59:16.000000000 +0100
 ```
 
-Make sure, that the binary `cryptsetup` and the kernel object file `adiantum.ko` are present in the file `initrd.img`:
+Make sure, that the following important files are present in the file `initrd.img`:
 ```bash
-(chroot) $ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "adiantum.ko|sbin/cryptsetup"
+(chroot) $ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "adiantum.ko|crypttab|sbin/cryptsetup"
+cryptroot/crypttab
 usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
 usr/sbin/cryptsetup
 ```
+
+Also make sure, that the content of `cryptroot/crypttab` is correct.
 
 Detailed debugging is explained [below](#debugging).
 
