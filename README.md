@@ -1039,7 +1039,7 @@ BOOT_ORDER=0xf41
 $ reboot
 ```
 
-### Verify the new cipher method
+### Verifying the new cipher method
 Finally, verify, if the re-encryption was successful:
 ```bash
 $ cryptsetup status cryptroot
