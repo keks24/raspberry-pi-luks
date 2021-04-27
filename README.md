@@ -997,7 +997,7 @@ There might be the case to apply a `new cipher method` to the `root partition`. 
 ### Prerequisites
 * Raspberry Pi 4
 * Bootable USB stick with `Raspbian`, which is accessable via `SSH`
-    * cryptsetup-2.0.6 or higher
+    * `cryptsetup-2.0.6` or higher
 
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
