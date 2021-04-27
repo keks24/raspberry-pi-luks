@@ -711,6 +711,8 @@ The kernel parameter `ip` has the following syntax:
 ip=<client_ip>:<server_ip>:<gateway_ip>:<netmask>:<hostname>:<network_interface>:<autoconf>:<dns0_ip>:<dns1_ip>:<ntp0_ip>
 ```
 
+[Source](https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt)
+
 This will set the `private Class C IP address` to `192.168.1.80` and the `subnet mask` to `255.255.255.0`; these values may differ depending on the network infrastructure. The `initramfs` does not have any connection to the `internet`, since no `gateway IP address` is set.
 
 Make sure, that the `Raspberry Pi` and the `host` from which the partition should be decrypted, are in the same network.
