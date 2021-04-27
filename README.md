@@ -1046,7 +1046,6 @@ $ reboot
 Finally, verify, if the re-encryption was successful:
 ```bash
 $ cryptsetup status cryptroot
-root@raspberrypi:~# cryptsetup status cryptroot
 /dev/mapper/cryptroot is active and is in use.
   type:    LUKS2
   cipher:  xchacha20,aes-adiantum-plain64
