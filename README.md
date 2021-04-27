@@ -926,6 +926,17 @@ The `American keyboard layout` applies here.
 
 See also [Changing the user password](#changing-the-user-password).
 
+### Changing the user password
+When logged in as the user `pi`, change the password as follows:
+```bash
+$ passwd
+Changing password for pi.
+Current password: raspberry
+New password: <some_strong_personal_password>
+Retype new password: <some_strong_personal_password>
+passwd: password updated successfully
+```
+
 ## Decrypting the root partition from the image
 The encrypted `root partition` can be opened via `cryptsetup` as follows:
 ```bash
