@@ -56,7 +56,7 @@ Table of Contents
       * [Configuring the Bootloader](#configuring-the-bootloader)
       * [Adapting the changes](#adapting-the-changes)
       * [Re-encrypting the partition](#re-encrypting-the-partition)
-      * [Verify the new cipher](#verify-the-new-cipher)
+      * [Verify the new cipher method](#verify-the-new-cipher-method)
 * [Known issues](#known-issues)
 
 # Introduction
@@ -1039,7 +1039,7 @@ BOOT_ORDER=0xf41
 $ reboot
 ```
 
-### Verify the new cipher
+### Verify the new cipher method
 Finally, verify, if the re-encryption was successful:
 ```bash
 $ cryptsetup status cryptroot
