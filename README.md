@@ -995,6 +995,7 @@ Verify passphrase: <some_strong_personal_password>
 There might be the case to apply a `new cipher method` to the `root partition`. This can only be done `offline` and **not** `on-the-fly`. Further configuration is needed for this.
 
 ### Prerequisites
+* `LUKS` partition `version 2` (`cryptsetup luksDump "/dev/sdx#" | grep "Version"`)
 * Raspberry Pi 4
 * Bootable USB stick with `Raspbian`, which is accessable via `SSH`
     * `cryptsetup-2.0.6` or higher
