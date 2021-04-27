@@ -79,7 +79,7 @@ linux-image-5.0 or higher
 parted
 util-linux
 ```
-* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`
+* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES`.
 * The capacity of the `SD card` must be greater than `8 GiB`.
 
 ## Downloading the image
