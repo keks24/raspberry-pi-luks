@@ -762,7 +762,7 @@ $ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rs
 
 The following message should appear:
 ```no-highlight
-Please unlock disk cryptroot:
+Please unlock disk cryptroot: raspberry
 ```
 
 After entering the correct password, the `SSH connection` will cut off and the `Raspberry Pi` will boot:
@@ -820,7 +820,7 @@ $ ssh -i 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rs
 \__,_/\___/\___/_/   \__, / .___/\__/   \___/_/   \__, / .___/\__/_/   \____/\____/\__/
                     /____/_/                     /____/_/
 
-Please unlock disk cryptroot:
+Please unlock disk cryptroot: raspberry
 ```
 
 # Debugging
