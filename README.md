@@ -1027,8 +1027,10 @@ Connect the USB stick to the Raspberry Pi and and `adapt all changes` of the boo
 $ reboot
 ```
 
+The Raspberry Pi should now boot from the `USB stick`. Connect to it via `SSH` and proceed with the next step.
+
 ### Re-encrypting the partition
-The Raspberry Pi should now boot from the USB stick. Connect to it via `SSH` and `re-encrypt` the `root-partition`:
+`Re-encrypt` the `root-partition` via `cryptsetup-reencrypt`:
 ```bash
 $ cryptsetup-reencrypt --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" "/dev/mmcblk0p2"
 Enter passphrase for key slot 0: raspberry
