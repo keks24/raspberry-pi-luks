@@ -267,7 +267,7 @@ $ sha256sum --check "2021-01-11-raspios-buster-armhf-lite.zip.sha256"
 
 ## Configuration
 ### Preparation
-Clone the repository to the current working directory:
+Clone the repository to the `current working directory`:
 ```bash
 $ git clone "https://codeberg.org/keks24/raspberry-pi-luks.git"
 ```
@@ -836,7 +836,7 @@ This is useful, when one wants to check a recent-built `initramfs` in a quick wa
 The `initramfs` can be unarchived on the system in order to analyse its content.
 
 ### Easy method
-The following command `unarchives` the `initramfs` directly to the current working directory:
+The following command `unarchives` the `initramfs` directly to the `current working directory`:
 ```bash
 $ unmkinitramfs -v "/boot/initramfs.cpio.gz" .
 .
@@ -874,7 +874,7 @@ unmkinitramfs cannot deal with multiple-segmented initramfs images, except where
 ```
 
 ### Elaborated method
-Copy the initramfs `initramfs.cpio.gz` to the current working directory:
+Copy the initramfs `initramfs.cpio.gz` to the `current working directory`:
 ```bash
 $ cp --archive "/boot/initramfs.cpio.gz" .
 ```
@@ -885,14 +885,14 @@ $ file "initramfs.cpio.gz"
 /boot/initramfs.cpio.gz: gzip compressed data, last modified: Tue Mar 23 00:35:15 2021, from Unix, original size 24183808
 ```
 
-To unarchive it, `gzip` and the suffix `.gz` is required:
+To unarchive it, `gzip` is required and the file must have the suffix `.gz`:
 ```bash
 $ apt update
 $ apt install gzip
 $ gzip --decompress "initramfs.cpio.gz"
 ```
 
-Once this is done, the file is still compressed as `ASCII cpio archive`, which can be unarchived like so:
+Once this is done, the file is still compressed as `ASCII cpio archive`, which can be unarchived to the `current working directory` like so:
 ```bash
 $ file "initramfs.cpio"
 initramfs.cpio: ASCII cpio archive (SVR4 with no CRC)
@@ -910,8 +910,6 @@ etc
 etc/console-setup
 [...]
 ```
-
-This unarchives the entire `initramfs` into the current working directory.
 
 # Additional information
 ## Credentials
