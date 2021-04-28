@@ -995,7 +995,7 @@ There might be the case to apply a `new cipher method` to the `root partition`. 
 ### Prerequisites
 * `LUKS` partition `version 2` (`cryptsetup luksDump "/dev/sdx#" | grep "Version"`)
 * Raspberry Pi 4
-* Bootable USB stick with `Raspbian`, which is accessable via `SSH`
+* Bootable `USB stick` with `Raspbian`, which is accessable via `SSH`
     * `cryptsetup-2.0.6` or higher
 
 If the `LUKS` partition version is `1`, please refer to these instructions: [Upgrade LUKS](https://gist.github.com/kravietz/d7ea4d98c5ffb79fc7a1b3d98be4de94/revisions?short_path=b04fd3a#diff-b04fd3af6e99fb8beb441ef7cc96d1b29994a2ccc70d7519259537f1fca890dc).
@@ -1019,8 +1019,8 @@ BOOT_ORDER=0xf14
 
 [Source](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711_bootloader_config.md)
 
-### Adapting the changes
-Connect the USB stick to the Raspberry Pi and and `adapt all changes` of the bootloader by `rebooting` the system:
+### Adapting the changes of the bootloader
+Connect the `USB stick` to the Raspberry Pi and and `adapt all changes` of the bootloader by `rebooting` the system:
 ```bash
 $ reboot
 ```
@@ -1061,6 +1061,8 @@ $ cryptsetup status cryptroot
   size:    61766752 sectors
   mode:    read/write
 ```
+
+The `USB stick` can now be disconnected.
 
 # Known issues
 **Note: For some reason, following the instructions [Encrypting the root partition manually](#encrypting-the-root-partition-manually) will provide an image file, which is **only compatible** with the Raspberry Pi revision, on which the `root partition` was resized.**
