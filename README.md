@@ -955,25 +955,6 @@ Disk Flags:
 Number  Start    End        Size       Type     File system  Flags
  1      8192s    532479s    524288s    primary  fat32        lba
  2      532480s  15523839s  14991360s  primary
-$ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/dev/loop2" cryptsdcard
-Enter passphrase for /dev/loop2: raspberry
-$ mount "/dev/mapper/cryptsdcard" "/mnt/"
-```
-
-## Changing the LUKS password
-The password of the `root partition` can be changed like so:
-```bash
-$ parted "raspberrypi_sd_card_backup.img" "unit s print"
-Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
-Sector size (logical/physical): 512B/512B
-Partition Table: msdos
-Disk Flags:
-
-Number  Start    End        Size       Type     File system  Flags
- 1      8192s    532479s    524288s    primary  fat32        lba
- 2      532480s  15523839s  14991360s  primary
 $ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
 $ cryptsetup luksChangeKey "/dev/loop2"
 Enter passphrase to be changed: raspberry
@@ -987,6 +968,29 @@ $ cryptsetup luksChangeKey "/dev/mmcblk0p2"
 Enter passphrase to be changed: raspberry
 Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
+```
+
+## Decrypting the root partition from the image
+The encrypted `root partition` can be opened via `cryptsetup` as follows:
+```bash
+$ parted "raspberrypi_sd_card_backup.img" "unit s print"
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start    End        Size       Type     File system  Flags
+ 1      8192s    532479s    524288s    primary  fat32        lba
+ 2      532480s  15523839s  14991360s  primary
+$ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
+$ cryptsetup open "/dev/loop2" cryptsdcard
+Enter passphrase for /dev/loop2: raspberry
+```
+
+After that, mount it like so:
+```bash
+$ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ```
 
 ## Re-encrypting the root partition
