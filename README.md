@@ -554,7 +554,7 @@ Adapt the file `/etc/fstab`, so the `decrypted root partition` will be mounted a
 #### Generating the initramfs
 There are three ways to generate the `initramfs`.
 
-1. Either reinstall the package `raspberrypi-kernel`, which will install all `Raspberry Pi kernels` and then executes the `hook scripts` in `/etc/kernel/postinst.d/`:
+1. Either reinstall the package `raspberrypi-kernel`, which will install all `Raspberry Pi kernels` and then executes the `hook scripts` in `/etc/kernel/postrm.d/` and `/etc/kernel/postinst.d/`:
 ```bash
 (chroot) $ apt install raspberrypi-kernel --reinstall
 ```
