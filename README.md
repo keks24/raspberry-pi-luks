@@ -508,6 +508,7 @@ Raspberry Pi 2      | `<kernel_version>-v7`              | `kernel7.img`     | `
 Raspberry Pi 3      | `<kernel_version>-v7`              | `kernel7.img`     | `initrd.img-<kernel_version>-v7`
 Raspberry Pi 3+     | `<kernel_version>-v7`              | `kernel7.img`     | `initrd.img-<kernel_version>-v7`
 Raspberry Pi 4      | `<kernel_version>-v7l`             | `kernel7l.img`    | `initrd.img-<kernel_version>-v7l`
+Raspberry Pi 4      | `<kernel_version>-v7l+`            | `kernel7l.img`    | `initrd.img-<kernel_version>-v7l+`
 
 [Source](https://www.raspberrypi.org/documentation/linux/kernel/building.md)
 
