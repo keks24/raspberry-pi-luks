@@ -514,12 +514,12 @@ Raspberry Pi 4      | `<kernel_version>-v7l+`            | `kernel7l.img`    | `
 
 Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot` environment!**:
 ```bash
-$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-iniramfs-tools" "/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools"
+$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools" "/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools"
 install: creating directory '/mnt/etc/kernel/postinst.d/5.10.17+'
-'raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-iniramfs-tools' -> '/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools'
-$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-iniramfs-tools" "/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools"
+'raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools' -> '/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools'
+$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools" "/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools"
 install: creating directory '/mnt/etc/kernel/postrm.d/5.10.17+'
-'raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-iniramfs-tools' -> '/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools'
+'raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools' -> '/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools'
 ```
 
 Be aware, that the directory `/etc/kernel/postinst.d/5.10.17+/` must always match the `kernel version`, which is currently in use. Otherwise, generating the `initramfs` will fail and renders the `Raspberry Pi` unbootable.
