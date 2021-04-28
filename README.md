@@ -561,7 +561,7 @@ There are three ways to generate the `initramfs`.
 
 2. Execute the command `mkinitramfs` manually:
 ```bash
-(chroot) $ mkinitramfs -o "/boot/initrd.img" 5.10.17+
+(chroot) $ mkinitramfs -o "/boot/initramfs.cpio.gz" 5.10.17+
 ```
 
 3. Or execute `update-initramfs` and rename the file `initrd.img-5.10.17+` manually:
@@ -571,28 +571,28 @@ update-initramfs: Generating /boot/initrd.img-5.10.17+
 Copying module directory kernel/drivers/usb/dwc2
 Adding module /lib/modules/5.10.17+/kernel/drivers/usb/roles/roles.ko
 [...]
-(chroot) $ mv /boot/initrd.img{-5.10.17+,}
+(chroot) $ mv "/boot/initrd.img-5.10.17+" "/boot/initramfs.cpio.gz"
 ```
 
 For this setup, the first method is preferred in order to test the `postinst.d` and `postrm.d` scripts.
 
-After the reinstallation has been completed, there should be the entry `initramfs initrd.img followkernel` in the configuration file `/boot/config.txt`:
+After the reinstallation has been completed, there should be the entry `initramfs initramfs.cpio.gz followkernel` in the configuration file `/boot/config.txt`:
 ```bash
 $ (chroot) tail --lines="3" "/boot/config.txt"
 [all]
 #dtoverlay=vc4-fkms-v3d
-initramfs initrd.img followkernel
+initramfs initramfs.cpio.gz followkernel
 ```
 
-Also, the file `/boot/initrd.img` should be updated:
+Also, the file `/boot/initramfs.cpio.gz` should be updated:
 ```bash
-$ stat "/boot/initrd.img" | grep "Modify"
+$ stat "/boot/initramfs.cpio.gz" | grep "Modify"
 Modify: 2021-04-10 22:59:16.000000000 +0100
 ```
 
-Make sure, that the following important files are present in the file `initrd.img`:
+Make sure, that the following important files are present in the file `initramfs.cpio.gz`:
 ```bash
-(chroot) $ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "adiantum.ko|crypttab|sbin/cryptsetup"
+(chroot) $ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "adiantum.ko|crypttab|sbin/cryptsetup"
 cryptroot/crypttab
 usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
 usr/sbin/cryptsetup
@@ -731,12 +731,12 @@ Make sure, that the `Raspberry Pi` and the `host` from which the partition shoul
 ### Rebuilding the initramfs
 `Rebuild` the `initramfs` to adapt all changes:
 ```bash
-$ mkinitramfs -o "/boot/initrd.img"
+$ mkinitramfs -o "/boot/initramfs.cpio.gz"
 ```
 
-Make sure, that the binary `dropbear` and its `configuration files` are present in the file `initrd.img`:
+Make sure, that the binary `dropbear` and its `configuration files` are present in the file `initramfs.cpio.gz`:
 ```bash
-$ lsinitramfs "/boot/initrd.img" | grep --extended-regexp "dropbear|authorized_keys"
+$ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "dropbear|authorized_keys"
 etc/dropbear
 etc/dropbear/config
 etc/dropbear/dropbear_dss_host_key
@@ -806,7 +806,7 @@ $ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-
 #### Rebuilding the initramfs
 Finally, rebuild the `initramfs`:
 ```bash
-$ mkinitramfs -o "/boot/initrd.img"
+$ mkinitramfs -o "/boot/initramfs.cpio.gz"
 ```
 
 #### Rebooting
@@ -827,7 +827,7 @@ Please unlock disk cryptroot:
 ## Examining the initramfs
 There is a tool, called `lsinitramfs`, which can output the content of an compressed `initramfs` to `stdout`:
 ```bash
-$ lsinitramfs "/boot/initrd.img" | less
+$ lsinitramfs "/boot/initramfs.cpio.gz" | less
 ```
 
 This is useful, when one wants to check a recent-built `initramfs` in a quick way.
@@ -838,7 +838,7 @@ The `initramfs` can be unarchived on the system in order to analyse its content.
 ### Easy method
 The following command `unarchives` the `initramfs` directly to the current working directory:
 ```bash
-$ unmkinitramfs -v "/boot/initrd.img" .
+$ unmkinitramfs -v "/boot/initramfs.cpio.gz" .
 .
 bin
 conf
@@ -854,7 +854,7 @@ etc/console-setup
 
 It is also possible to directly unarchive it to a custom directory:
 ```bash
-$ unmkinitramfs -v "/boot/initrd.img" "initramfs/"
+$ unmkinitramfs -v "/boot/initramfs.cpio.gz" "initramfs/"
 .
 bin
 conf
@@ -874,31 +874,30 @@ unmkinitramfs cannot deal with multiple-segmented initramfs images, except where
 ```
 
 ### Elaborated method
-Copy the initramfs `initrd.img` to the current working directory:
+Copy the initramfs `initramfs.cpio.gz` to the current working directory:
 ```bash
-$ cp --archive "/boot/initrd.img" .
+$ cp --archive "/boot/initramfs.cpio.gz" .
 ```
 
 Then, analyse which type of compression was used:
 ```bash
-$ file "initrd.img"
-/boot/initrd.img: gzip compressed data, last modified: Tue Mar 23 00:35:15 2021, from Unix, original size 24183808
+$ file "initramfs.cpio.gz"
+/boot/initramfs.cpio.gz: gzip compressed data, last modified: Tue Mar 23 00:35:15 2021, from Unix, original size 24183808
 ```
 
-To unarchive it, `gzip` is required and the suffix `.gz` needs to be appended as well:
+To unarchive it, `gzip` and the suffix `.gz` is required:
 ```bash
 $ apt update
 $ apt install gzip
-$ mv initrd.img{,.gz}
-$ gzip --decompress "initrd.img.gz"
+$ gzip --decompress "initramfs.cpio.gz"
 ```
 
 Once this is done, the file is still compressed as `ASCII cpio archive`, which can be unarchived like so:
 ```bash
-$ file "initrd.img"
-initrd.img: ASCII cpio archive (SVR4 with no CRC)
+$ file "initramfs.cpio"
+initramfs.cpio: ASCII cpio archive (SVR4 with no CRC)
 $ apt install cpio
-$ cpio --extract --make-directories --preserve-modification-time --verbose < "initrd.img"
+$ cpio --extract --make-directories --preserve-modification-time --verbose < "initramfs.cpio"
 .
 bin
 conf

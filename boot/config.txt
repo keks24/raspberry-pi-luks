@@ -79,4 +79,4 @@ max_framebuffers=2
 
 [all]
 #dtoverlay=vc4-fkms-v3d
-initramfs initrd.img followkernel
+initramfs initramfs.cpio.gz followkernel
