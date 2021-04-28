@@ -584,7 +584,7 @@ $ (chroot) tail --lines="3" "/boot/config.txt"
 initramfs initramfs.cpio.gz followkernel
 ```
 
-Also, the file `/boot/initramfs.cpio.gz` should be updated:
+Also, the file `/boot/initramfs.cpio.gz` should be created/updated:
 ```bash
 $ stat "/boot/initramfs.cpio.gz" | grep "Modify"
 Modify: 2021-04-10 22:59:16.000000000 +0100
@@ -772,7 +772,7 @@ Shared connection to 192.168.1.80 closed.
 ```
 
 ### Optional fancy SSH ASCII banner
-`dropbear-initramfs` allows to set a custom `ASCII banner`, which is shown, when logging into the `initramfs`.
+`dropbear-initramfs` allows to set a custom `ASCII banner`, which is shown, when connecting to the `initramfs`.
 
 #### Configuring dropbear-initramfs
 To do this, the parameter `-b` has to be appended to the configuration file `/etc/dropbear-initramfs/config`:
