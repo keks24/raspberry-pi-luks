@@ -31,7 +31,7 @@ if [ "$RPI_INITRD" = 'No' ]; then
     # comment initramfs entries in /boot/config.txt
     if [ -f "/boot/config.txt" ]
     then
-        if [ /bin/grep --quiet "^initramfs " "/boot/config.txt" ]
+        if /bin/grep --quiet "^initramfs " "/boot/config.txt"
         then
             /bin/sed --in-place "s/^initramfs /#initramfs /" "/boot/config.txt"
         else
