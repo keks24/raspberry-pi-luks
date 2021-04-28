@@ -79,7 +79,7 @@ linux-image-5.0 or higher
 parted
 util-linux
 ```
-* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES`.
+* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * The capacity of the `SD card` must be greater than `8 GiB`.
 
 ## Downloading the image
@@ -366,7 +366,7 @@ Enter passphrase for /dev/loop2: raspberry
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES`.
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 
 The `LUKS header information` looks like so:
 ```bash
