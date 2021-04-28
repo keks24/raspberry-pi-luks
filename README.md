@@ -942,8 +942,8 @@ Retype new password: <some_strong_personal_password>
 passwd: password updated successfully
 ```
 
-## Decrypting the root partition from the image
-The encrypted `root partition` can be opened via `cryptsetup` as follows:
+### Changing the LUKS password
+The password of the `root partition` of the image can be changed like so:
 ```bash
 $ parted "raspberrypi_sd_card_backup.img" "unit s print"
 Model:  (file)
@@ -1006,10 +1006,10 @@ Before doing any changes, create a `backup` of the SD card, since the following 
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512b" conv="fdatasync" status="progress"
 ```
 
-If one does not use a `Raspberry Pi 4` with `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please skip to [Re-encrypting the partition](#re-encrypting-the-partition).
+If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please skip to [Re-encrypting the partition](#re-encrypting-the-partition).
 
-### Configuring the Bootloader
-Boot into `Raspbian` of the Raspberry Pi, where the `root partition` should be re-encrypted and change its `boot order`:
+### Configuring the bootloader
+Boot into `Raspbian` of the Raspberry Pi, where the `root partition` should be re-encrypted and change the `boot order` of the `bootloader`:
 ```bash
 $ rpi-eeprom-config --edit
 #BOOT_ORDER=0xf41
