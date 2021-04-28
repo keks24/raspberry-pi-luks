@@ -675,7 +675,7 @@ $ touch "/etc/dropbear-initramfs/authorized_keys"
 $ chmod 600 "/etc/dropbear-initramfs/authorized_keys"
 ```
 
-`dropbear` does not seem to support `ed25519` keys, yet; so a strong `RSA 8192` key should be generated on the `host` from which the partition should be decrypted:
+`dropbear` does not seem to support `ed25519` keys, yet; so a strong `RSA 8192` key should be generated on the `host`, from which the partition should be decrypted:
 ```bash
 $ ssh-keygen -t rsa -b 8192 -f "/home/<some_username>/.ssh/dropbear_root_rsa8192"
 Generating public/private rsa key pair.
