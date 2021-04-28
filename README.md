@@ -1037,7 +1037,9 @@ Enter passphrase for key slot 0: raspberry
 Progress:   5.0%, ETA 19:38,  744 MiB written, speed  12.0 MiB/s
 ```
 
-This may take up to `30 minutes`.
+Note, newer versions of `cryptsetup` use `cryptsetup reencrypt`.
+
+This process may take up to `30 minutes`.
 
 After that, `revert the boot order` of the bootloader and `reboot` to apply all changes:
 ```bash
