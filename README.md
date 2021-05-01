@@ -1021,13 +1021,13 @@ There might be the case to apply a `new cipher method` to the `root partition`. 
 
 If the `LUKS` partition version is `1`, please refer to these instructions: [Upgrade LUKS](https://gist.github.com/kravietz/d7ea4d98c5ffb79fc7a1b3d98be4de94/revisions?short_path=b04fd3a#diff-b04fd3af6e99fb8beb441ef7cc96d1b29994a2ccc70d7519259537f1fca890dc).
 
+If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please proceed with [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1) and then skip to [Re-encrypting the partition](#re-encrypting-the-partition).
+
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512b" conv="fdatasync" status="progress"
 ```
-
-If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please skip to [Re-encrypting the partition](#re-encrypting-the-partition).
 
 ### Configuring the bootloader
 Boot into `Raspbian` of the Raspberry Pi, where the `root partition` should be re-encrypted and change the `boot order` of the `bootloader`:
