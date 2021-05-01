@@ -79,7 +79,7 @@ linux-image-5.0 or higher
 parted
 util-linux
 ```
-* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
+* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * The capacity of the `SD card` must be greater than `8 GiB`.
 
 ## Downloading the image
@@ -234,6 +234,7 @@ The result differs slightly from the output of `parted`, since the unit is in `G
 
 # Encrypting the root partition manually
 ## Prerequisites
+### Separate system
 * The following packages are installed:
 ```no-highlight
 aria2c
@@ -242,12 +243,19 @@ cryptsetup-2.0.6 or higher
 e2fsprogs
 parted
 qemu-user-static
-raspberrypi-kernel-1.20200527-1 or higher
 unzip
 util-linux
 ```
+
+### Raspberry Pi
+* The following packages are installed:
+```no-highlight
+cryptsetup-2.0.6 or higher
+raspberrypi-kernel-1.20200527-1 or higher
+```
+
 * `qemu-user-static` is needed, if one is working on a `non-ARM operating system`.
-* `raspberrypi-kernel-1.20200527-1 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast encryption method `aes-adiantum-plain64`
+* `raspberrypi-kernel-1.20200527-1 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
 ## Downloading the stock image
@@ -297,6 +305,13 @@ $ uname --kernel-release
 5.10.17+
 $ grep "Model" "/proc/cpuinfo"
 Model           : Raspberry Pi Model B Rev 2
+```
+
+Make sure, that the `Kernel version` is `1.20200527-1` or higher and `shut down` the system:
+```bash
+$ dpkg --list | grep "raspberrypi-kernel"
+ii  raspberrypi-kernel                   1.20210303-1                        armhf        Raspberry Pi bootloader
+ii  raspberrypi-kernel-headers           1.20210303-1                        armhf        Header files for the Raspberry Pi Linux kernel
 $ sudo poweroff
 ```
 
