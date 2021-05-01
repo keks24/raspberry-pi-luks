@@ -58,6 +58,7 @@ Table of Contents
       * [Configuring the bootloader](#configuring-the-bootloader)
       * [Adapting the changes of the bootloader](#adapting-the-changes-of-the-bootloader)
       * [Re-encrypting the partition](#re-encrypting-the-partition)
+      * [Reverting the changes of the bootloader](#reverting-the-changes-of-the-bootloader)
       * [Verifying the new cipher method](#verifying-the-new-cipher-method)
 * [Known issues](#known-issues)
 
@@ -1060,6 +1061,7 @@ Note, newer versions of `cryptsetup` use `cryptsetup reencrypt`.
 
 This process may take up to `30 minutes`.
 
+### Reverting the changes of the bootloader
 After that, `revert the boot order` of the bootloader and `reboot` to apply all changes:
 ```bash
 $ rpi-eeprom-config --edit
