@@ -13,6 +13,8 @@ Table of Contents
       * [Rebooting and verifying](#rebooting-and-verifying)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
    * [Prerequisites](#prerequisites-1)
+      * [Separate system](#separate-system)
+      * [Raspberry Pi](#raspberry-pi)
    * [Downloading the stock image](#downloading-the-stock-image)
    * [Configuration](#configuration)
       * [Preparation](#preparation)
