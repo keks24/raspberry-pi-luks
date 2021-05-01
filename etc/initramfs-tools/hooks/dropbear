@@ -31,4 +31,4 @@ esac
 
 #. /usr/share/initramfs-tools/hook-functions
 
-/usr/bin/install -D --compare --mode="644" "/etc/dropbear-initramfs/ssh_banner.net" "${DESTDIR}/etc/dropbear/ssh_banner.net"
+/usr/bin/install -D --compare --mode="644" --verbose "/etc/dropbear-initramfs/ssh_banner.net" "${DESTDIR}/etc/dropbear/ssh_banner.net"
