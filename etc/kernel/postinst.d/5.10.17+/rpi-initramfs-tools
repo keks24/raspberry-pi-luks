@@ -38,7 +38,7 @@ if [ "$RPI_INITRD" = 'No' ]; then
             exit 0
         fi
     else
-        echo -e "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
+        echo "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
         exit 1
     fi
 
@@ -75,7 +75,7 @@ then
         echo "initramfs initramfs.cpio.gz followkernel" >> "/boot/config.txt"
     fi
 else
-    echo -e "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
+    echo "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
     exit 1
 fi
 
@@ -84,6 +84,6 @@ if [ -f "/boot/initrd.img-${version}" ]
 then
     /bin/mv --force --verbose "/boot/initrd.img-${version}" "/boot/initramfs.cpio.gz"
 else
-    echo -e "\e[01;31mCould not find file '/boot/initrd.img-${version}'.\e[0m" >&2
+    echo "\e[01;31mCould not find file '/boot/initrd.img-${version}'.\e[0m" >&2
     exit 1
 fi
