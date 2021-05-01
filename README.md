@@ -1042,7 +1042,7 @@ BOOT_ORDER=0xf14
 [Source](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711_bootloader_config.md)
 
 ### Adapting the changes of the bootloader
-Connect the `USB stick` to the Raspberry Pi and and `adapt all changes` of the bootloader by `rebooting` the system:
+Connect the `USB stick` to the Raspberry Pi and `adapt all changes` of the bootloader by `rebooting` the system:
 ```bash
 $ reboot
 ```
