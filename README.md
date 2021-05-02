@@ -530,21 +530,52 @@ Raspberry Pi 4      | `<kernel_version>-v7l+`            | `kernel7l.img`    | `
 
 [Source](https://www.raspberrypi.org/documentation/linux/kernel/building.md)
 
-Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot` environment!**:
+Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot environment`!**:
 ```bash
-$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools" "/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools"
-install: creating directory '/mnt/etc/kernel/postinst.d/5.10.17+'
-'raspberry-pi-luks/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools' -> '/mnt/etc/kernel/postinst.d/5.10.17+/rpi-initramfs-tools'
-$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools" "/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools"
-install: creating directory '/mnt/etc/kernel/postrm.d/5.10.17+'
-'raspberry-pi-luks/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools' -> '/mnt/etc/kernel/postrm.d/5.10.17+/rpi-initramfs-tools'
+$ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-luks/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools" "/mnt/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools"
+install: creating directory '/mnt/usr/local/share/kernel'
+install: creating directory '/mnt/usr/local/share/kernel/postinst.d'
+'raspberry-pi-luks/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools' -> '/mnt/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools'
+$ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-luks/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools" "/mnt/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools"
+install: creating directory '/mnt/usr/local/share/kernel/postrm.d'
+'raspberry-pi-luks/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools' -> '/mnt/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools'
+$ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-luks/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools" "/mnt/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools"
+install: creating directory '/mnt/usr/local/share/kernel/preinst.d'
+'raspberry-pi-luks/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools' -> '/mnt/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools'
 ```
 
-Be aware, that the directory `/etc/kernel/postinst.d/5.10.17+/` must always match the `kernel version`, which is currently in use. Otherwise, generating the `initramfs` will fail and renders the `Raspberry Pi` unbootable.
+The `custom hook skripts` are placed in the directory `/usr/local/share/kernel/` and have the following tasks:
+* `postinst.d/01-rpi-initramfs-tools`
+    * `Appends` the entry `initramfs initramfs.cpio.gz followkernel` to the configuration file `/boot/config.txt`.
+        * `Uncomments` the entry `#initramfs [...]` to `initramfs [...]`, if it was commented before, but does not verify the subsequent entries. **Make absolutely sure, that these are correct!**
+    * `Renames` the newly generated `initramfs` file `/boot/initrd-5.10.17+` to `/boot/initramfs.cpio.gz`.
+* `postrm.d/01-rpi-initramfs-tools`
+    * `Comments` the entry `initramfs [...]` to `#initramfs [...]`.
+    * `Removes` the files `/boot/initrd-5.10.17+` and `/boot/initramfs.cpio.gz`.
+* `preinst.d/01-rpi-initramfs-tools`
+    * `Installs` the `post-install` hook script `/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools` to `/etc/kernel/postinst.d/5.10.17+/01-rpi-initramfs-tools` by creating a `symbolic link`.
+    * `Installs` the `post-remove` hook script `/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools` to `/etc/kernel/postrm.d/5.10.17+/01-rpi-initramfs-tools` by creating a `symbolic link`.
+    * `Renames` the hook script directory names of `/etc/kernel/postinst.d/5.10.17+` and `/etc/kernel/postrm.d/5.10.17+` after each update of the package `raspberrypi-kernel`.
+        * `Skips renaming`, if the `current kernel version` and the `package kernel version` are identical
+
+Back to the `chroot environment`. Install the `hook scripts` via `symbolic links`:
+```bash
+(chroot) $ mkdir /etc/kernel/{postinst.d,postrm.d}/5.10.17+/
+(chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools" "/etc/kernel/postinst.d/5.10.17+/"
+'/etc/kernel/postinst.d/01-rpi-initramfs-tools' -> '/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools'
+(chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools" "/etc/kernel/postrm.d/5.10.17+/"
+'/etc/kernel/postrm.d/01-rpi-initramfs-tools' -> '/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools'
+(chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools" "/etc/kernel/preinst.d/"
+'/etc/kernel/preinst.d/01-rpi-initramfs-tools' -> '/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools'
+```
+
+Be aware, that the hook script directories `/etc/kernel/postinst.d/5.10.17+/` and `/etc/kernel/postrm.d/5.10.17+` must always match the `current` or `newer` kernel version of the `Raspberry Pi`. **Otherwise, generating the `initramfs` will fail; rendering the `Raspberry Pi` unbootable**.
+
+Note, that the custom hook script `/etc/kernel/preinst.d/01-rpi-initramfs-tools` silently fails, if working on a different system in a `chroot environment`, since it uses `uname` to determine the `current kernel version` and compares its `suffix` with the `suffix` of the `package kernel version` in order to copy the `post-install` and `post-remove` hook scripts into their respective directories. If one is using a `Raspberry Pi` for this setup, make sure, that the `kernel version` of the `Raspberry Pi` and within the `chroot environment` are identical.
 
 Next, get the `UUID` of `/dev/loop2`, which will be used later on:
 ```bash
-$ blkid "/dev/loop2"
+(chroot) $ blkid "/dev/loop2"
 /dev/loop2: UUID="1fd31646-340c-47ed-8c66-8efb2e730d0f" TYPE="crypto_LUKS"
 ```
 
@@ -572,7 +603,7 @@ Adapt the file `/etc/fstab`, so the `decrypted root partition` will be mounted a
 #### Generating the initramfs
 There are three ways to generate the `initramfs`.
 
-1. Either reinstall the package `raspberrypi-kernel`, which will install all `Raspberry Pi kernels` and then executes the `hook scripts` in `/etc/kernel/postrm.d/` and `/etc/kernel/postinst.d/`:
+1. Either reinstall the package `raspberrypi-kernel`, which will install all `Raspberry Pi kernels` and then executes the `hook scripts` in `/etc/kernel/preinst.d/`, `/etc/kernel/postrm.d/` and `/etc/kernel/postinst.d/`:
 ```bash
 (chroot) $ apt install raspberrypi-kernel --reinstall
 ```
@@ -592,7 +623,7 @@ Adding module /lib/modules/5.10.17+/kernel/drivers/usb/roles/roles.ko
 (chroot) $ mv "/boot/initrd.img-5.10.17+" "/boot/initramfs.cpio.gz"
 ```
 
-For this setup, the first method is preferred in order to test the `postinst.d` and `postrm.d` scripts.
+For this setup, the `first method is preferred` in order to test the hook scripts in `preinst.d`, `postrm.d` and `postinst.d`.
 
 After the reinstallation has been completed, there should be the entry `initramfs initramfs.cpio.gz followkernel` in the configuration file `/boot/config.txt`:
 ```bash
