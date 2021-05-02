@@ -18,15 +18,15 @@
 version="$1"
 bootopt=""
 
-[ -x /usr/sbin/update-initramfs ] || exit 0
+command -v update-initramfs >/dev/null 2>&1 || exit 0
 
 # passing the kernel version is required
 if [ -z "${version}" ]; then
     echo >&2 "W: initramfs-tools: ${DPKG_MAINTSCRIPT_PACKAGE:-kernel package} did not pass a version number"
-    exit 0
+    exit 2
 fi
 
-# exit if custom kernel does not need an initramfs
+# exit if kernel does not need an initramfs
 if [ "$RPI_INITRD" = 'No' ]; then
     # comment initramfs entries in /boot/config.txt
     if [ -f "/boot/config.txt" ]
@@ -38,7 +38,7 @@ if [ "$RPI_INITRD" = 'No' ]; then
             exit 0
         fi
     else
-        echo "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
+        echo -e "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
         exit 1
     fi
 
@@ -55,30 +55,35 @@ fi
 # avoid running multiple times
 if [ -n "$DEB_MAINT_PARAMS" ]; then
     eval set -- "$DEB_MAINT_PARAMS"
-    if [ -z "$1" ] || [ "$1" != "remove" ]; then
+    if [ -z "$1" ] || [ "$1" != "configure" ]; then
         exit 0
     fi
 fi
 
-# delete initramfs
+# we're good - create initramfs.  update runs do_bootloader
 # shellcheck disable=SC2086
-INITRAMFS_TOOLS_KERNEL_HOOK=1 update-initramfs -d -k "${version}" ${bootopt} >&2
+INITRAMFS_TOOLS_KERNEL_HOOK=1 update-initramfs -c -k "${version}" ${bootopt} >&2
 
-# comment the entry "initramfs" in "/boot/config.txt"
+# add "initramfs" entry in "/boot/config.txt"
 if [ -f "/boot/config.txt" ]
 then
-    if /bin/grep --quiet "^initramfs " "/boot/config.txt"
+    if /bin/grep --quiet "^#initramfs " "/boot/config.txt"
     then
-        /bin/sed --in-place "s/^initramfs /#initramfs /" "/boot/config.txt"
+        /bin/sed --in-place "s/^#initramfs /initramfs /" "/boot/config.txt"
+    elif ! /bin/grep --quiet "^initramfs " "/boot/config.txt"
+    then
+        echo "initramfs initramfs.cpio.gz followkernel" >> "/boot/config.txt"
     fi
 else
-    echo "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
+    echo -e "\e[01;31mCould not find file '/boot/config.txt'.\e[0m" >&2
     exit 1
 fi
 
-# remove the initramfs file
-if [ -f "/boot/initramfs.cpio.gz" ]
+# be conform with the entry in "/boot/config.txt"
+if [ -f "/boot/initrd.img-${version}" ]
 then
-    # remove initramfs files
-    /bin/rm --force --verbose "/boot/initramfs.cpio.gz"
+    /bin/mv --force --verbose "/boot/initrd.img-${version}" "/boot/initramfs.cpio.gz"
+else
+    echo -e "\e[01;31mCould not find file '/boot/initrd.img-${version}'.\e[0m" >&2
+    exit 1
 fi
