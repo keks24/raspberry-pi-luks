@@ -551,7 +551,7 @@ The `custom hook skripts` are placed in the directory `/usr/local/share/kernel/`
     * `Renames` the newly generated `initramfs` file `/boot/initrd-5.10.17+` to `/boot/initramfs.cpio.gz`.
 * `postrm.d/01-rpi-initramfs-tools`
     * `Comments` the entry `initramfs [...]` to `#initramfs [...]`.
-    * `Removes` the files `/boot/initrd-5.10.17+` and `/boot/initramfs.cpio.gz`.
+    * `Removes` the `initramfs` files `/boot/initrd-5.10.17+` and `/boot/initramfs.cpio.gz`.
 * `preinst.d/01-rpi-initramfs-tools`
     * `Installs` the `post-install` hook script `/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools` to `/etc/kernel/postinst.d/5.10.17+/01-rpi-initramfs-tools` by creating a `symbolic link`.
     * `Installs` the `post-remove` hook script `/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools` to `/etc/kernel/postrm.d/5.10.17+/01-rpi-initramfs-tools` by creating a `symbolic link`.
@@ -633,13 +633,13 @@ $ (chroot) tail --lines="3" "/boot/config.txt"
 initramfs initramfs.cpio.gz followkernel
 ```
 
-Also, the file `/boot/initramfs.cpio.gz` should be `created/updated`:
+Also, the `initramfs` file `/boot/initramfs.cpio.gz` should be `created/updated`:
 ```bash
 $ stat "/boot/initramfs.cpio.gz" | grep "Modify"
 Modify: 2021-04-10 22:59:16.000000000 +0100
 ```
 
-Make sure, that the following important files are present in the file `initramfs.cpio.gz`:
+Make sure, that the following important files are present in the `initramfs` file `initramfs.cpio.gz`:
 ```bash
 (chroot) $ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "adiantum.ko|crypttab|sbin/cryptsetup"
 cryptroot/crypttab
