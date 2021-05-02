@@ -3,4 +3,5 @@
 # group: root
 # file access: 600
 
-no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-rsa [...]
+# example entry
+#no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-rsa [...]
