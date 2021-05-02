@@ -473,7 +473,7 @@ Before doing so, mount the `boot partition` to `/mnt/boot/`:
 $ mount "/dev/loop1" "/mnt/boot/"
 ```
 
-Then, prepare the `chroot` environment:
+Then, prepare the `chroot environment`:
 ```bash
 $ mount --types proc "/proc/" "/mnt/proc/"
 $ mount --rbind "/sys" "/mnt/sys/"
@@ -556,7 +556,7 @@ root=/dev/mapper/cryptroot cryptdevice=UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f
 cryptroot UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f none luks,initramfs
 ```
 
-Note, that adding the option `initramfs` is very important here. Otherwise, the following error might occur and the file `cryptroot/crypttab` within the `initramfs` might be empty; rendering the system unbootable:
+Note, that adding the option `initramfs` is very important here. Otherwise, the following error might occur and the file `cryptroot/crypttab` within the `initramfs` might be empty; **rendering the system unbootable**:
 ```no-highlight
 cryptsetup: WARNING: target '<some_target>' not found in /etc/crypttab
 cryptsetup: ERROR: cryptroot: Source mismatch
@@ -602,7 +602,7 @@ $ (chroot) tail --lines="3" "/boot/config.txt"
 initramfs initramfs.cpio.gz followkernel
 ```
 
-Also, the file `/boot/initramfs.cpio.gz` should be created/updated:
+Also, the file `/boot/initramfs.cpio.gz` should be `created/updated`:
 ```bash
 $ stat "/boot/initramfs.cpio.gz" | grep "Modify"
 Modify: 2021-04-10 22:59:16.000000000 +0100
