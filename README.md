@@ -515,7 +515,7 @@ RPI_INITRD=Yes
 
 As of writing, the package `rpi-initramfs-tools` is not available, yet. So `custom hook scripts` have to be created for this.
 
-The next commands contain the kernel version `5.10.17+`. Replace the version according to the `Raspberry Pi revision` (`grep "Model" "/proc/cpuinfo"`) and the current kernel version (`uname --kernel-release`):
+The next commands and explanations contain the kernel version `5.10.17+`. Replace the version according to the `Raspberry Pi revision` (`grep "Model" "/proc/cpuinfo"`) and the current kernel version (`uname --kernel-release`):
 
 Type                | Kernel version naming convention   | Kernel filename   | Initramfs filename
 ------------------- | ---------------------------------- | ----------------- |  -----------------
