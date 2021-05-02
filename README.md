@@ -817,7 +817,7 @@ There are also websites to generate some fancy ASCII art:
 After that, implement the `ASCII banner` by using a `custom hook script` for `initramfs-tools`. One is already prepared in the repository:
 ```bash
 $ git clone "https://codeberg.org/keks24/raspberry-pi-luks.git"
-$ install -D --verbose --owner="root" --group="root" --mode="755" "raspberry-pi-luks/etc/initramfs-tools/hooks/dropbear" "/etc/initramfs-tools/hooks/dropbear"
+$ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-luks/etc/initramfs-tools/hooks/dropbear" "/etc/initramfs-tools/hooks/dropbear"
 'raspberry-pi-luks/etc/initramfs-tools/hooks/dropbear' -> '/etc/initramfs-tools/hooks/dropbear'
 ```
 
