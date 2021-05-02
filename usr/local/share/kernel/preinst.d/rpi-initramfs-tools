@@ -1,0 +1,41 @@
+#!/bin/sh -e
+package_kernel_version="${1}"
+package_kernel_version_suffix=$(echo "${package_kernel_version}" | /usr/bin/sed --regexp-extended "s/[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}-?//")
+current_kernel_version=$(/usr/bin/uname --kernel-release)
+current_kernel_version_suffix=$(echo "${current_kernel_version}" | /usr/bin/sed --regexp-extended "s/[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}-?//")
+current_postinst_directory="/etc/kernel/postinst.d/${current_kernel_version}"
+current_postrm_directory="/etc/kernel/postrm.d/${current_kernel_version}"
+new_postinst_directory="/etc/kernel/postinst.d/${package_kernel_version}"
+new_postrm_directory="/etc/kernel/postrm.d/${package_kernel_version}"
+postinst_script_directory="/usr/local/share/kernel/postinst.d"
+postrm_script_directory="/usr/local/share/kernel/postrm.d"
+
+# identify which kernel variant is currently being used: "+", "v7+", "v7l+" or "v8+"
+if [ "${current_kernel_version_suffix}" = "${package_kernel_version_suffix}" ]
+then
+    if [ -d "${current_postinst_directory}" ]
+    then
+        if [ "${current_kernel_version}" = "${package_kernel_version}" ]
+        then
+            exit 0
+        else
+            /usr/bin/mv --force --verbose "${current_postinst_directory}" "${new_postinst_directory}"
+        fi
+    else
+        /usr/bin/mkdir --parents --verbose "${new_postinst_directory}"
+        /usr/bin/ln --force --symbolic --no-dereference --verbose "${postinst_script_directory}"/* "${new_postinst_directory}"
+    fi
+
+    if [ -d "${current_postrm_directory}" ]
+    then
+        if [ "${current_kernel_version}" = "${package_kernel_version}" ]
+        then
+            exit 0
+        else
+            /usr/bin/mv --force --verbose "${current_postrm_directory}" "${new_postrm_directory}"
+        fi
+    else
+        /usr/bin/mkdir --parents --verbose "${new_postrm_directory}"
+        /usr/bin/ln --force --symbolic --no-dereference --verbose "${postrm_script_directory}"/* "${new_postrm_directory}"
+    fi
+fi
