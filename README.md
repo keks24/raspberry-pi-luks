@@ -635,7 +635,7 @@ initramfs initramfs.cpio.gz followkernel
 
 Also, the `initramfs` file `/boot/initramfs.cpio.gz` should be `created/updated`:
 ```bash
-$ stat "/boot/initramfs.cpio.gz" | grep "Modify"
+$ (chroot) stat "/boot/initramfs.cpio.gz" | grep "Modify"
 Modify: 2021-04-10 22:59:16.000000000 +0100
 ```
 
