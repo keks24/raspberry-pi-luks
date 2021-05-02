@@ -19,11 +19,11 @@ Table of Contents
    * [Configuration](#configuration)
       * [Preparation](#preparation)
       * [Encrypting the root partition](#encrypting-the-root-partition)
-      * [Entering the chroot](#entering-the-chroot)
+      * [Entering the chroot environment](#entering-the-chroot-environment)
          * [Installing necessary tools](#installing-necessary-tools)
          * [Configuration](#configuration-1)
          * [Generating the initramfs](#generating-the-initramfs)
-         * [Exiting the chroot](#exiting-the-chroot)
+         * [Exiting the chroot environment](#exiting-the-chroot-environment)
 * [Installing the modified image](#installing-the-modified-image)
 * [Further steps](#further-steps)
    * [Updating all installed packages](#updating-all-installed-packages)
@@ -465,8 +465,8 @@ Finally, restore the backup:
 $ rsync --archive --hard-links --acls --xattrs --one-file-system --numeric-ids --info="progress2" "root_backup/" "/mnt/"
 ```
 
-### Entering the chroot
-Once this is done, it is time to go into a `chroot` environment.
+### Entering the chroot environment
+Once this is done, it is time to go into a `chroot environment`.
 
 Before doing so, mount the `boot partition` to `/mnt/boot/`:
 ```bash
@@ -620,7 +620,7 @@ Also make sure, that the content of `cryptroot/crypttab` is correct.
 
 Detailed debugging is explained [below](#debugging).
 
-#### Exiting the chroot
+#### Exiting the chroot environment
 Exit the `chroot`, unmount the `boot partition` and all `pseudo filesystems`:
 ```bash
 (chroot) $ exit
