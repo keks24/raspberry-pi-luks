@@ -104,7 +104,7 @@ $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --fo
     "https://srv-store1.gofile.io/download/48Rnkz/fa7c7877a25f02d9071eb712971917ad/LICENSE"
 ```
 
-If the links are dead, due to infrequent downloads, please `skip to` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
+If the links are dead, due to infrequent downloads, please `proceed with` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
 
 Check the `data integrity` and `verify` the signature:
 ```bash
@@ -1146,7 +1146,7 @@ There might be the case to apply a `new cipher method` to the `root partition`. 
 
 If the `LUKS` partition version is `1`, please refer to these instructions: [Upgrade LUKS](https://gist.github.com/kravietz/d7ea4d98c5ffb79fc7a1b3d98be4de94/revisions?short_path=b04fd3a#diff-b04fd3af6e99fb8beb441ef7cc96d1b29994a2ccc70d7519259537f1fca890dc).
 
-If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please proceed with [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1) and then skip to [Re-encrypting the partition](#re-encrypting-the-partition).
+If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please `proceed with` [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1) and then `skip to` [Re-encrypting the partition](#re-encrypting-the-partition).
 
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
