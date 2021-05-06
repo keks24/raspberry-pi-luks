@@ -11,6 +11,7 @@ Table of Contents
       * [Extending the root partition](#extending-the-root-partition)
       * [Calculating new LUKS partition size](#calculating-new-luks-partition-size)
       * [Rebooting and verifying](#rebooting-and-verifying)
+      * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
    * [Prerequisites](#prerequisites-1)
       * [Separate system](#separate-system)
@@ -51,6 +52,13 @@ Table of Contents
       * [User credentials](#user-credentials)
       * [Changing the user password](#changing-the-user-password)
       * [Changing the LUKS password](#changing-the-luks-password)
+   * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
+      * [Installing necessary tools](#installing-necessary-tools-1)
+      * [Changing the UUID](#changing-the-uuid)
+      * [Verifying the modification](#verifying-the-modification)
+      * [Adapting configuration files](#adapting-configuration-files)
+      * [Rebuilding the initramfs](#rebuilding-the-initramfs-2)
+      * [Rebooting](#rebooting-2)
    * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
    * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
       * [Prerequisites](#prerequisites-2)
@@ -234,6 +242,9 @@ That is:
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
+
+### Changing the UUID of the root partition
+Please refer to [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
 
 # Encrypting the root partition manually
 ## Prerequisites
@@ -1017,6 +1028,88 @@ $ cryptsetup luksChangeKey "/dev/mmcblk0p2"
 Enter passphrase to be changed: raspberry
 Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
+```
+
+## Changing the UUID of the root partition
+When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `UUIDs` are identical. There might be the case to change these.
+
+Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
+```bash
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="512b" conv="fdatasync" status="progress"
+```
+
+### Installing necessary tools
+Once this is done, boot into `Raspbian`, install the package `uuid-runtime` in order to install the tool `uuidgen`
+```bash
+$ apt update
+$ apt install uuid-runtime
+```
+
+After that, disable its `systemd service` and `socket unit`, since `time-based UUIDs` are not required:
+```bash
+$ systemctl disable uuidd.service uuidd.socket --now
+Synchronizing state of uuidd.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install disable uuidd
+Removed /etc/systemd/system/sockets.target.wants/uuidd.socket.
+$ systemctl is-active uuidd.service uuidd.socket
+inactive
+inactive
+```
+
+Further details about the `systemd service unit` can be found [here](https://packages.debian.org/buster/uuid-runtime).
+
+### Changing the UUID
+Next, generate a `new random UUID` via `uuidgen` and `modify` the `root partition` via `cryptsetup`:
+```bash
+$ uuidgen --random
+a00be720-f82f-452c-96cf-669601d1d57e
+$ cryptsetup --uuid="a00be720-f82f-452c-96cf-669601d1d57e" luksUUID "/dev/mmcblk0p2"
+
+WARNING!
+========
+Do you really want to change UUID of device?
+
+Are you sure? (Type 'yes' in capital letters): YES
+```
+
+### Verifying the modification
+Verify, if the `new UUID` has been applied successfully:
+```bash
+$ blkid "/dev/mmcblk0p2"
+/dev/mmcblk0p2: UUID="a00be720-f82f-452c-96cf-669601d1d57e" TYPE="crypto_LUKS" PARTUUID="b7w29109-12"
+```
+
+### Adapting configuration files
+After that, adapt the entries in `/boot/cmdline` and `/etc/crypttab`
+```bash
+$ vi "/boot/cmdline.txt"
+root=/dev/mapper/cryptroot cryptdevice=UUID=a00be720-f82f-452c-96cf-669601d1d57e:cryptroot
+$ vi "/etc/crypttab"
+cryptroot UUID=a00be720-f82f-452c-96cf-669601d1d57e none luks,initramfs
+```
+
+### Rebuilding the initramfs
+Rebuild the `initramfs`:
+```bash
+$ mkinitramfs -o "/boot/initramfs.cpio.gz"
+```
+
+Make sure, that the following important files are present in the `initramfs` file `initramfs.cpio.gz`:
+```bash
+$ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "adiantum.ko|crypttab|sbin/cryptsetup"
+cryptroot/crypttab
+usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
+usr/sbin/cryptsetup
+```
+
+Also make sure, that the content of `cryptroot/crypttab` is correct.
+
+Detailed debugging is explained [here](#debugging).
+
+### Rebooting
+Finally, `reboot` the `Raspberry Pi`:
+```bash
+$ reboot
 ```
 
 ## Decrypting the root partition from the image
