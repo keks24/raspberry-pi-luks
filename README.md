@@ -1072,7 +1072,7 @@ BOOT_ORDER=0xf14
 
 [Source](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711_bootloader_config.md)
 
-### Adapting the changes of the bootloader
+### Adapting the modifications of the bootloader
 Connect the `USB stick` to the Raspberry Pi and `adapt all changes` of the bootloader by `rebooting` the system:
 ```bash
 $ reboot
@@ -1092,7 +1092,7 @@ Note, newer versions of `cryptsetup` use `cryptsetup reencrypt`.
 
 This process may take up to `30 minutes`.
 
-### Reverting the changes of the bootloader
+### Reverting the modifications of the bootloader
 After that, `revert the boot order` of the bootloader and `reboot` to apply all changes:
 ```bash
 $ rpi-eeprom-config --edit
