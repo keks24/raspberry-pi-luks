@@ -11,7 +11,7 @@ Table of Contents
       * [Extending the root partition](#extending-the-root-partition)
       * [Calculating new LUKS partition size](#calculating-new-luks-partition-size)
       * [Rebooting and verifying](#rebooting-and-verifying)
-      * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
+   * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
    * [Prerequisites](#prerequisites-1)
       * [Separate system](#separate-system)
@@ -243,8 +243,8 @@ That is:
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
 
-### Changing the UUID of the root partition
-Please refer to [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
+## Changing the UUID of the root partition
+Please proceed with [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
 
 # Encrypting the root partition manually
 ## Prerequisites
