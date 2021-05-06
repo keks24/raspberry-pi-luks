@@ -56,9 +56,9 @@ Table of Contents
       * [Prerequisites](#prerequisites-2)
       * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1)
       * [Configuring the bootloader](#configuring-the-bootloader)
-      * [Adapting the changes of the bootloader](#adapting-the-changes-of-the-bootloader)
+      * [Adapting the modifications of the bootloader](#adapting-the-modifications-of-the-bootloader)
       * [Re-encrypting the partition](#re-encrypting-the-partition)
-      * [Reverting the changes of the bootloader](#reverting-the-changes-of-the-bootloader)
+      * [Reverting the modifications of the bootloader](#reverting-the-modifications-of-the-bootloader)
       * [Verifying the new cipher method](#verifying-the-new-cipher-method)
 * [Known issues](#known-issues)
 
