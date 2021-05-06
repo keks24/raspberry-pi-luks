@@ -96,7 +96,7 @@ $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --fo
     "https://srv-store1.gofile.io/download/48Rnkz/fa7c7877a25f02d9071eb712971917ad/LICENSE"
 ```
 
-If the links are dead, due to infrequent downloads, please `go to` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
+If the links are dead, due to infrequent downloads, please `skip to` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
 
 Check the `data integrity` and `verify` the signature:
 ```bash
