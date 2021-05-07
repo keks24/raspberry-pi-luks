@@ -1043,6 +1043,8 @@ Once this is done, boot into `Raspbian`, install the package `uuid-runtime` in o
 ```bash
 $ apt update
 $ apt install uuid-runtime
+[...]
+Created symlink /etc/systemd/system/sockets.target.wants/uuidd.socket → /lib/systemd/system/uuidd.socket.
 ```
 
 After that, disable its `systemd service` and `socket unit`, since `time-based UUIDs` are not required:
@@ -1054,6 +1056,9 @@ Removed /etc/systemd/system/sockets.target.wants/uuidd.socket.
 $ systemctl is-active uuidd.service uuidd.socket
 inactive
 inactive
+$ systemctl is-enabled uuidd.service uuidd.socket
+indirect
+disabled
 ```
 
 Further details about the `systemd service unit` can be found [here](https://packages.debian.org/buster/uuid-runtime).
