@@ -492,9 +492,12 @@ $ mount --make-rslave "/mnt/sys/"
 $ mount --rbind "/dev/" "/mnt/dev/"
 $ mount --make-rslave "/dev/"
 $ cp "/usr/bin/qemu-arm-static" "/mnt/usr/bin/"
+$ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 ```
 
 **`qemu-arm-static` is mandatory, if one is working on a `Non-ARM operating system`!**
+
+`/etc/resolv.conf` contains entries of `DNS name server`, which are required within the `chroot environment` in order to make `reverse DNS lookups` possible.
 
 Enter the new environment:
 ```bash
