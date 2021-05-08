@@ -574,7 +574,7 @@ The `custom hook scripts` are placed in the directory `/usr/local/share/kernel/`
 
 Back to the `chroot environment`. Install the `hook scripts` via `symbolic links`:
 ```bash
-(chroot) $ mkdir /etc/kernel/{postinst.d,postrm.d}/5.10.17+/ "/etc/kernel/preinst.d/"
+(chroot) $ mkdir --parents /etc/kernel/{postinst.d,postrm.d}/5.10.17+/ "/etc/kernel/preinst.d/"
 (chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools" "/etc/kernel/postinst.d/5.10.17+/"
 '/etc/kernel/postinst.d/01-rpi-initramfs-tools' -> '/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools'
 (chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools" "/etc/kernel/postrm.d/5.10.17+/"
