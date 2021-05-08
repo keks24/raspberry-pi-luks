@@ -558,7 +558,7 @@ install: creating directory '/mnt/usr/local/share/kernel/preinst.d'
 'raspberry-pi-luks/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools' -> '/mnt/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools'
 ```
 
-The `custom hook skripts` are placed in the directory `/usr/local/share/kernel/` and have the following tasks:
+The `custom hook scripts` are placed in the directory `/usr/local/share/kernel/` and have the following tasks:
 * `postinst.d/01-rpi-initramfs-tools`
     * `Appends` the entry `initramfs initramfs.cpio.gz followkernel` to the configuration file `/boot/config.txt`.
         * `Uncomments` the entry `#initramfs [...]` to `initramfs [...]`, if it was commented before, but does not verify the subsequent entries. **Make absolutely sure, that these are correct!**
