@@ -1084,7 +1084,7 @@ Are you sure? (Type 'yes' in capital letters): YES
 Verify, if the `new UUID` has been applied successfully:
 ```bash
 $ blkid "/dev/mmcblk0p2"
-/dev/mmcblk0p2: UUID="a00be720-f82f-452c-96cf-669601d1d57e" TYPE="crypto_LUKS" PARTUUID="b7w29109-12"
+/dev/mmcblk0p2: UUID="a00be720-f82f-452c-96cf-669601d1d57e" TYPE="crypto_LUKS" PARTUUID="e8af6eb2-02"
 ```
 
 ### Adapting configuration files
