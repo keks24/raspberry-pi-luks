@@ -1019,7 +1019,7 @@ Disk Flags:
 Number  Start    End        Size       Type     File system  Flags
  1      8192s    532479s    524288s    primary  fat32        lba
  2      532480s  15523839s  14991360s  primary
-$ losetup --offset="$(( 512 * 532480 ))" /dev/loop2 raspberrypi_sd_card_backup.img
+$ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ cryptsetup luksChangeKey "/dev/loop2"
 Enter passphrase to be changed: raspberry
 Enter new passphrase: <some_strong_personal_password>
