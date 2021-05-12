@@ -685,6 +685,7 @@ $ umount "/mnt/"
 $ cryptsetup close cryptroot
 $ losetup --detach "/dev/loop1"
 $ losetup --detach "/dev/loop2"
+$ losetup
 ```
 
 # Installing the modified image
