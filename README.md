@@ -233,7 +233,7 @@ $ cryptsetup status cryptroot
 
 To check, if the values are correct, the following formula can be used:
 ```no-highlight
-(<sector_size> * <sector_size>) / 1024^3 = <size_in_gib>
+(<sector_size> * <size>) / 1024^3 = <size_in_gib>
 ```
 
 That is:
