@@ -490,7 +490,7 @@ $ mount --types proc "/proc/" "/mnt/proc/"
 $ mount --rbind "/sys" "/mnt/sys/"
 $ mount --make-rslave "/mnt/sys/"
 $ mount --rbind "/dev/" "/mnt/dev/"
-$ mount --make-rslave "/dev/"
+$ mount --make-rslave "/mnt/dev/"
 $ cp "/usr/bin/qemu-arm-static" "/mnt/usr/bin/"
 $ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 ```
