@@ -354,14 +354,14 @@ These values can be used to mount the partitions from the image.
 
 Before doing that, check, that there are free `loop devices` at `/dev/`:
 ```bash
-$ losetup
+$ losetup --list
 ```
 
 Next, make the partitions available at `/dev/loop1` and `/dev/loop2`:
 ```bash
 $ losetup --offset="$(( 512 * 8192 ))" "/dev/loop1" "raspberrypi_sd_card_backup.img"
 $ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ losetup
+$ losetup --list
 NAME       SIZELIMIT    OFFSET AUTOCLEAR RO BACK-FILE                                DIO LOG-SEC
 /dev/loop1         0   4194304         0  0 /root/tmp/raspberrypi_sd_card_backup.img   0     512
 /dev/loop2         0 272629760         0  0 /root/tmp/raspberrypi_sd_card_backup.img   0     512
@@ -685,7 +685,7 @@ $ umount "/mnt/"
 $ cryptsetup close cryptroot
 $ losetup --detach "/dev/loop1"
 $ losetup --detach "/dev/loop2"
-$ losetup
+$ losetup --list
 ```
 
 # Installing the modified image
