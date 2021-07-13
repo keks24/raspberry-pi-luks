@@ -593,7 +593,7 @@ Next, get the `UUID` of `/dev/loop2`, which will be used later on:
 /dev/loop2: UUID="1fd31646-340c-47ed-8c66-8efb2e730d0f" TYPE="crypto_LUKS"
 ```
 
-Edit the kernel parameters in `/boot/cmdline.txt` and add an entry in `/etc/crypttab`, so the `root partition` can be decrypted:
+Edit the kernel parameters in `/boot/cmdline.txt` and add an entry in `/etc/crypttab`, so the `root partition` can be decrypted on boot:
 ```bash
 (chroot) $ vi "/boot/cmdline.txt"
 root=/dev/mapper/cryptroot cryptdevice=UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f:cryptroot
