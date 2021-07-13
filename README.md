@@ -878,7 +878,7 @@ $ mkinitramfs -o "/boot/initramfs.cpio.gz"
 #### Rebooting
 After rebooting the `Raspberry Pi`, `dropbear` will now display a `fancy ASCII banner`:
 ```bash
-$ ssh -i 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
+$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
        __                           __                           __                   __
   ____/ /__  ____________  ______  / /_   ____________  ______  / /__________  ____  / /_
  / __  / _ \/ ___/ ___/ / / / __ \/ __/  / ___/ ___/ / / / __ \/ __/ ___/ __ \/ __ \/ __/
