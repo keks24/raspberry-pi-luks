@@ -22,7 +22,7 @@ prereqs()
     echo "${PREREQ}"
 }
 
-case ${1} in
+case "${1}" in
     prereqs)
         prereqs
         exit 0
