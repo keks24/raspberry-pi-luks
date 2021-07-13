@@ -720,10 +720,10 @@ Log into the `Raspberry Pi` and install the package `dropbear-initramfs`:
 $ apt install dropbear-initramfs
 ```
 
-### Configure dropbear-initramfs
+### Configure dropbear
 All configuration files can be found at `/etc/dropbear-initramfs/` and are self-explained.
 
-Next, configure `dropbear-initramfs` by editing `/etc/dropbear-initramfs/config`:
+Next, configure `dropbear` by editing `/etc/dropbear-initramfs/config`:
 ```bash
 $ vi "/etc/dropbear-initramfs/config"
 DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk"
@@ -838,9 +838,9 @@ Shared connection to 192.168.1.80 closed.
 ```
 
 ### Optional fancy SSH ASCII banner
-`dropbear-initramfs` allows to set a custom `ASCII banner`, which is shown, when connecting to the `initramfs`.
+`dropbear` allows to set a custom `ASCII banner`, which is shown, when connecting to the `initramfs`.
 
-#### Configuring dropbear-initramfs
+#### Configuring dropbear
 To do this, the parameter `-b` has to be appended to the configuration file `/etc/dropbear-initramfs/config`:
 ```bash
 $ vi "/etc/dropbear-initramfs/config"
@@ -876,7 +876,7 @@ $ mkinitramfs -o "/boot/initramfs.cpio.gz"
 ```
 
 #### Rebooting
-After rebooting the `Raspberry Pi`, `dropbear-initramfs` will now display a `fancy ASCII banner`:
+After rebooting the `Raspberry Pi`, `dropbear` will now display a `fancy ASCII banner`:
 ```bash
 $ ssh -i 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
        __                           __                           __                   __
