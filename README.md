@@ -490,7 +490,7 @@ $ mount --types proc "/proc/" "/mnt/proc/"
 $ mount --rbind "/sys" "/mnt/sys/"
 $ mount --make-rslave "/mnt/sys/"
 $ mount --rbind "/dev/" "/mnt/dev/"
-$ mount --make-rslave "/dev/"
+$ mount --make-rslave "/mnt/dev/"
 $ cp "/usr/bin/qemu-arm-static" "/mnt/usr/bin/"
 $ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 ```
@@ -842,7 +842,7 @@ Shared connection to 192.168.1.80 closed.
 To do this, the parameter `-b` has to be appended to the configuration file `/etc/dropbear-initramfs/config`:
 ```bash
 $ vi "/etc/dropbear-initramfs/config"
-$ DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear-initramfs/ssh_banner.net"
+$ DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
 ```
 
 Leaving out the `leading slash` is important.
