@@ -140,7 +140,7 @@ After that, boot into `Raspbian` and check the partition structure via `parted`:
 $ parted --list
 Model: Linux device-mapper (crypt) (dm)
 Disk /dev/mapper/cryptroot: 7659MB
-Sector size (logical/physical): 512B/512B
+Sector size (logical/physical): 4096B/4096B
 Partition Table: loop
 Disk Flags:
 
@@ -227,9 +227,9 @@ $ cryptsetup status cryptroot
   keysize: 256 bits
   key location: keyring
   device:  /dev/mmcblk0p2
-  sector size:  512
+  sector size:  4096
   offset:  32768 sectors
-  size:    61766752 sectors
+  size:    7720844 sectors
   mode:    read/write
 ```
 
@@ -240,7 +240,7 @@ To check, if the values are correct, the following formula can be used:
 
 That is:
 ```no-highlight
-(512 Bytes * 61766752) / 1024^3 = 29.45 GiB
+(4096 Bytes * 7720844) / 1024^3 = 29.45 GiB
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
@@ -385,7 +385,7 @@ $ umount "/mnt/"
 ### Encrypting the root partition
 Since the preparation is done, the `root partition` can now be `formatted and encrypted` via `cryptsetup`:
 ```bash
-$ cryptsetup --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" luksFormat "/dev/loop2"
+$ cryptsetup --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" --sector-size="4096" luksFormat "/dev/loop2"
 WARNING: Device /dev/loop2 already contains a 'ext4' superblock signature.
 
 WARNING!
@@ -417,7 +417,7 @@ Data segments:
 	offset: 16777216 [bytes]
 	length: (whole device)
 	cipher: xchacha20,aes-adiantum-plain64
-	sector: 512 [bytes]
+	sector: 4096 [bytes]
 
 Keyslots:
   0: luks2
@@ -1216,9 +1216,9 @@ $ cryptsetup status cryptroot
   keysize: 256 bits
   key location: keyring
   device:  /dev/mmcblk0p2
-  sector size:  512
+  sector size:  4096
   offset:  32768 sectors
-  size:    61766752 sectors
+  size:    7720844 sectors
   mode:    read/write
 ```
 
