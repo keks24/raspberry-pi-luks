@@ -741,7 +741,7 @@ $ touch "/etc/dropbear-initramfs/authorized_keys"
 $ chmod 600 "/etc/dropbear-initramfs/authorized_keys"
 ```
 
-As of writing, `Raspbian` (`Debian 10 (Buster)`) uses `dropbear` version ([`2018.76-5`](https://packages.debian.org/buster/dropbear), which does not support `ed25519 keys`. The next stable release of `Debian 11 (Bullseye)` will have version [`2020.81-3`](https://packages.debian.org/bullseye/dropbear) available, which supports [`ed25519 keys`](https://github.com/mkj/dropbear/releases/tag/DROPBEAR_2020.79).
+As of writing, `Raspbian` (`Debian 10 (Buster)`) uses `dropbear` version [`2018.76-5`](https://packages.debian.org/buster/dropbear), which does not support `ed25519 keys`. The next stable release of `Debian 11 (Bullseye)` will have version [`2020.81-3`](https://packages.debian.org/bullseye/dropbear) available, which supports [`ed25519 keys`](https://github.com/mkj/dropbear/releases/tag/DROPBEAR_2020.79).
 
 This means, that a strong `RSA 8192` key should be generated on the `host`, from which the partition should be decrypted:
 ```bash
