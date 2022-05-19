@@ -249,7 +249,7 @@ The result differs slightly from the output of `parted`, since the unit is in `G
 
 ## Further steps
 ### Re-encrypting the root partition
-**It is mandatory to proceed with** [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below.
+**It is mandatory to proceed with [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below!**
 
 ### Changing the UUID of the root partition
 After that, proceed with [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
