@@ -11,7 +11,9 @@ Table of Contents
       * [Extending the root partition](#extending-the-root-partition)
       * [Calculating new LUKS partition size](#calculating-new-luks-partition-size)
       * [Rebooting and verifying](#rebooting-and-verifying)
-   * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
+   * [Further steps](#further-steps)
+      * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
+      * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
    * [Prerequisites](#prerequisites-1)
       * [Separate system](#separate-system)
@@ -26,7 +28,7 @@ Table of Contents
          * [Generating the initramfs](#generating-the-initramfs)
          * [Exiting the chroot environment](#exiting-the-chroot-environment)
 * [Installing the modified image](#installing-the-modified-image)
-* [Further steps](#further-steps)
+* [Further steps](#further-steps-1)
    * [Updating all installed packages](#updating-all-installed-packages)
 * [Optional steps](#optional-steps)
    * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
@@ -60,7 +62,7 @@ Table of Contents
       * [Rebuilding the initramfs](#rebuilding-the-initramfs-2)
       * [Rebooting](#rebooting-2)
    * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
-   * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
+   * [Re-encrypting the root partition](#re-encrypting-the-root-partition-1)
       * [Prerequisites](#prerequisites-2)
       * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1)
       * [Configuring the bootloader](#configuring-the-bootloader)
@@ -245,8 +247,12 @@ That is:
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
 
-## Changing the UUID of the root partition
-Please proceed with [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
+## Further steps
+### Re-encrypting the root partition
+**It is mandatory to proceed with** [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below.
+
+### Changing the UUID of the root partition
+After that, proceed with [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
 
 # Encrypting the root partition manually
 ## Prerequisites
@@ -1151,7 +1157,9 @@ $ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ```
 
 ## Re-encrypting the root partition
-There might be the case to apply a `new cipher method` to the `root partition`. This can only be done `offline` and **not** `on-the-fly`. Further configuration is needed for this.
+When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `key slot hashes and salts` are identical. **It is mandatory to change these.**
+
+This method can also be used to apply a `new cipher method` to the `root partition`. This can only be done `offline` and **not** `on-the-fly`. Further configuration is needed for this.
 
 ### Prerequisites
 * `LUKS` partition `version 2` (`cryptsetup luksDump "/dev/mmcblk0p2" | grep "Version"`)
