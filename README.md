@@ -1028,6 +1028,8 @@ $ cryptsetup luksChangeKey "/dev/loop2"
 Enter passphrase to be changed: raspberry
 Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
+$ losetup --detach "/dev/loop2"
+$ losetup --list
 ```
 
 This is also possible on the `Raspberry Pi` itself:
