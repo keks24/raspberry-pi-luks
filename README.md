@@ -899,12 +899,12 @@ Please unlock disk cryptroot: raspberry
 
 # Debugging
 ## Examining the initramfs
-There is a tool, called `lsinitramfs`, which can output the content of an compressed `initramfs` to `stdout`:
+There is a tool, called `lsinitramfs`, which can output the content of a compressed `initramfs` to `stdout`:
 ```bash
 $ lsinitramfs "/boot/initramfs.cpio.gz" | less
 ```
 
-This is useful, when one wants to check a recent-built `initramfs` in a quick way.
+This is useful, if one wants to check a recent-built `initramfs` in a quick way.
 
 ## Unarchiving the initramfs
 The `initramfs` can be unarchived on the system in order to analyse its content.
