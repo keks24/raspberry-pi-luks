@@ -550,7 +550,7 @@ Raspberry Pi 3+     | `<kernel_version>-v7`              | `kernel7.img`     | `
 Raspberry Pi 4      | `<kernel_version>-v7l`             | `kernel7l.img`    | `initrd.img-<kernel_version>-v7l`
 Raspberry Pi 4      | `<kernel_version>-v7l+`            | `kernel7l.img`    | `initrd.img-<kernel_version>-v7l+`
 
-[Source](https://www.raspberrypi.org/documentation/linux/kernel/building.md)
+[Source](https://www.raspberrypi.com/documentation/computers/linux_kernel.html#default_configuration)
 
 Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot environment`!**:
 ```bash
@@ -1186,7 +1186,7 @@ $ rpi-eeprom-config --edit
 BOOT_ORDER=0xf14
 ```
 
-[Source](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711_bootloader_config.md)
+[Source](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#BOOT_ORDER)
 
 ### Adapting the modifications of the bootloader
 Connect the `USB stick` to the Raspberry Pi and `adapt all changes` of the bootloader by `rebooting` the system:
