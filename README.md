@@ -73,7 +73,7 @@ Table of Contents
 * [Known issues](#known-issues)
 
 # Introduction
-This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite`; currently `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`.
+This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`.
 
 The instructions are adaptable for `other Raspberry Pi revisions` as well. They should also work on `image files with partition information` in general.
 
