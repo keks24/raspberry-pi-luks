@@ -1,7 +1,6 @@
 Table of Contents
 =================
 * [Introduction](#introduction)
-* [Known issues](#known-issues)
 
 # Introduction
 This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite`.
