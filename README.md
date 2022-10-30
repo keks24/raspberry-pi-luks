@@ -1,8 +1,8 @@
 Table of Contents
 =================
-* [Introduction](#introduction)
+* [Selecting the target distribution](#selecting-the-target-distribution)
 
-# Introduction
+# Selecting the target distribution
 This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite`.
 
 Please refer to the different branches for your `target distribution`:
