@@ -1159,7 +1159,9 @@ $ mount "/dev/mapper/cryptsdcard" "/mnt/"
 ## Re-encrypting the root partition
 When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `key slot hashes and salts` are identical. **It is mandatory to change these.**
 
-This method can also be used to apply a `new cipher method` to the `root partition`. This can only be done `offline` and **not** `on-the-fly`. Further configuration is needed for this.
+This method can also be used to apply a `new cipher method` to the `root partition`. This can only be done, if the `partition is unmounted`. It is not possbile to do this `on-the-fly`.
+
+Further configuration is needed for this.
 
 ### Prerequisites
 * `LUKS` partition `version 2` (`cryptsetup luksDump "/dev/mmcblk0p2" | grep "Version"`)
