@@ -331,9 +331,14 @@ Model           : Raspberry Pi Model B Rev 2
 
 Make sure, that the `Kernel version` is `1.20200527-1` or higher and `shut down` the system:
 ```bash
-$ dpkg --list | grep "raspberrypi-kernel"
-ii  raspberrypi-kernel                   1.20210303-1                        armhf        Raspberry Pi bootloader
-ii  raspberrypi-kernel-headers           1.20210303-1                        armhf        Header files for the Raspberry Pi Linux kernel
+$ dpkg --list "raspberrypi-kernel*"
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
+||/ Name                       Version      Architecture Description
++++-==========================-============-============-==============================================
+ii  raspberrypi-kernel         1.20210303-1 armhf        Raspberry Pi bootloader
+ii  raspberrypi-kernel-headers 1.20210303-1 armhf        Header files for the Raspberry Pi Linux kernel
 $ sudo poweroff
 ```
 
