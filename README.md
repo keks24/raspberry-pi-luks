@@ -318,7 +318,7 @@ Boot into `Raspbian`, so the `root partition` is extended to its full capacity. 
 ```bash
 $ sudo apt update
 $ sudo apt install raspberrypi-kernel --only-upgrade
-$ reboot
+$ sudo reboot
 ```
 
 After logging in again, take notes of the following output. These information are important for later:
