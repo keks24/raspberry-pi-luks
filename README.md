@@ -460,7 +460,7 @@ Digests:
 
 Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#Cipher%20and%20Hash%20specification%20registry).
 
-If the encryption method `aes-xts-plain64` is preferred, make absolutely sure, that the `key size` is `at least 512 Bytes`, [since `XTS` splits the key size in half](https://wiki.archlinux.org/index.php/dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode).
+If the encryption method `aes-xts-plain64` is preferred, make absolutely sure, that the `key size` is `at least 512 bits`, [since `XTS` splits the key size in half](https://wiki.archlinux.org/index.php/dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode).
 
 Now, open/decrypt the encrypted `root partition` and format it via `mkfs.ext4`:
 ```bash
@@ -508,7 +508,7 @@ $ cp "/usr/bin/qemu-arm-static" "/mnt/usr/bin/"
 $ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 ```
 
-**`qemu-arm-static` is mandatory, if one is working on a `Non-ARM operating system`!**
+**`qemu-arm-static` is mandatory, if one is working on a `non-ARM operating system`!**
 
 `/etc/resolv.conf` contains entries of `DNS name servers`, which are required within the `chroot environment` in order to make `reverse DNS lookups` possible.
 
