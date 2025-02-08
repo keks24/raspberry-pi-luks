@@ -717,7 +717,7 @@ $ umount --lazy --recursive /mnt/{proc/,sys/,dev/} "/mnt/"
 
 Remove `qemu-aarch64-static` from `/mnt/usr/bin/`:
 ```bash
-$ rm "/mnt/usr/bin/qemu-arm-static"
+$ rm "/mnt/usr/bin/qemu-aarch64-static"
 ```
 
 Unmount the encrypted `root partition` and detach all `loop devices`:
