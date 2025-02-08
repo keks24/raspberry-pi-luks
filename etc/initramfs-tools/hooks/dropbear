@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #############################################################################
-# Copyright 2021 Ramon Fischer                                              #
+# Copyright 2021-2025 Ramon Fischer                                         #
 #                                                                           #
 # Licensed under the Apache License, Version 2.0 (the "License");           #
 # you may not use this file except in compliance with the License.          #
@@ -32,4 +32,4 @@ esac
 
 . "/usr/share/initramfs-tools/hook-functions"
 
-copy_file "file" "/etc/dropbear-initramfs/ssh_banner.net" "/etc/dropbear/ssh_banner.net"
+copy_file "file" "/etc/dropbear/initramfs/ssh_banner.net" "/etc/dropbear/ssh_banner.net"

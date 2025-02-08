@@ -1,0 +1,2 @@
+# custom - 20250208T095222+0100 - fischer: add ed25519 ssh key for initramfs
+no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGOVnCMzzi5u9qsCzr5DlGqqtcCenMaT8NTOv1ZviSVz <some_username>@<some_hostname>

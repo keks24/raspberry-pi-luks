@@ -71,13 +71,14 @@ Table of Contents
       * [Reverting the modifications of the bootloader](#reverting-the-modifications-of-the-bootloader)
       * [Verifying the new cipher method](#verifying-the-new-cipher-method)
 * [Known issues](#known-issues)
+   * [Compatibility](#compatibility)
 
 # Introduction
-This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`.
+This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 12 (Bookworm)` on a `Raspberry Pi 4 Model B Rev 1.4`.
 
 The instructions are adaptable for `other Raspberry Pi revisions` as well. They should also work on `image files with partition information` in general.
 
-The entire setup was done on a `Banana Pi Pro` with [`Armbian Buster (mainline based kernel 5.10.y)`](https://www.armbian.com/banana-pi-pro/).
+The entire setup was done on a `amd64-based computer` with [`Gentoo Linux (Kernel 6.6.67)`](https://www.gentoo.org/downloads/).
 
 **Please read [Known issues](#known-issues) first before following any of the instructions!**
 
@@ -90,22 +91,23 @@ coreutils
 cryptsetup-2.0.6 or higher
 e2fsprogs
 gnupg
-linux-image-5.0 or higher
+linux-image-6.6.51+rpt-rpi-v8 or higher
+linux-image-rpi-v8
 parted
 util-linux
 ```
-* `linux-image-5.0 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
-* The capacity of the `SD card` must be greater than `8 GiB`.
+* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). `aes-xts-plain64` with a `key size` of `512 bits` may be preferred, if one is using a `Raspberry Pi 5`.
+* The capacity of the `SD card` must be greater than `64 GiB`.
 
 ## Downloading the image
-Either download the files manually from the [release page](https://codeberg.org/keks24/raspberry-pi-luks/releases) or download them via `direct links`:
+Download the files from [gofile.io](https://gofile.io/home):
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential="true" \
-    "https://srv-store4.gofile.io/download/48Rnkz/ee3a464731dc8453f7d9b214cdc445dc/raspberrypi_sd_card_backup.img" \
-    "https://srv-store4.gofile.io/download/48Rnkz/c57f476a29378ae9ce21dff9e3c8120c/raspberrypi_sd_card_backup.img.asc" \
-    "https://srv-store4.gofile.io/download/48Rnkz/2e907656ce9f9c30c31058a1d0e06091/raspberrypi_sd_card_backup.img.b2" \
-    "https://srv-store4.gofile.io/download/48Rnkz/26dccd90de56da6cfdf4d00df63291e6/raspberrypi_sd_card_backup.img.sha256" \
-    "https://srv-store1.gofile.io/download/48Rnkz/fa7c7877a25f02d9071eb712971917ad/LICENSE"
+    "<link_will_be_added_soon!>" \
+    "https://store-na-phx-1.gofile.io/download/web/72091c84-66c1-48d6-bfc1-3a7c858e20e2/raspberrypi_sd_card_backup.img.b2.asc" \
+    "https://store3.gofile.io/download/web/1414db62-3204-4a5e-b922-7a8d42f4110f/raspberrypi_sd_card_backup.img.b2" \
+    "https://store3.gofile.io/download/web/08e7b6e4-9f6f-4632-adfe-c2b38cc806b3/raspberrypi_sd_card_backup.img.sha256" \
+    "https://store3.gofile.io/download/web/2768d79b-bfdd-4ac6-aadb-12f41c8f875a/LICENSE"
 ```
 
 If the links are dead, due to infrequent downloads, please `proceed with` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
@@ -115,7 +117,7 @@ Check the `data integrity` and `verify` the signature:
 $ b2sum --check "raspberrypi_sd_card_backup.img.b2"
 raspberrypi_sd_card_backup.img: OK
 $ gpg --verify "raspberrypi_sd_card_backup.img.asc" "raspberrypi_sd_card_backup.img"
-gpg: Signature made Mon Mar 22 06:16:43 2021 CET
+gpg: Signature made Sat Feb  8 15:37:15 2025 CET
 gpg:                using RSA key 598398DA5F4DA46438FDCF87155BE26413E699BF
 gpg: Good signature from "Ramon Fischer (ramon@sharkoon) <RamonFischer24@googlemail.com>" [ultimate]
 gpg:                 aka "Ramon Fischer (ramon@sharkoon) <Ramon_Fischer@hotmail.de>" [ultimate]
@@ -128,7 +130,7 @@ $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" st
 ```
 
 ## Resizing the root partition
-When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~8 GiB`. Therefore, it needs to be `extended` in order to use the `unused free space`.
+When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~64 GiB`. Therefore, it needs to be `extended` in order to use the `unused free space`.
 
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
@@ -137,31 +139,31 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512b" c
 ```
 
 ### Analysing the root partition
-After that, boot into `Raspbian` and check the partition structure via `parted`:
+After that, boot into `Debian` and check the partition structure via `parted`:
 ```bash
 $ parted --list
 Model: Linux device-mapper (crypt) (dm)
-Disk /dev/mapper/cryptroot: 7659MB
+Disk /dev/mapper/cryptroot: 61.0GB
 Sector size (logical/physical): 4096B/4096B
 Partition Table: loop
 Disk Flags:
 
 Number  Start  End     Size    File system  Flags
- 1      0.00B  7659MB  7659MB  ext4
+ 1      0.00B  61.0GB  61.0GB  ext4
 
 
-Model: SD SC32G (sd/mmc)
-Disk /dev/mmcblk0: 31.9GB
+Model: SD SC64G (sd/mmc)
+Disk /dev/mmcblk0: 127.9GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start   End     Size    Type     File system  Flags
- 1      4194kB  273MB   268MB   primary  fat32        lba
- 2      273MB   7948MB  7676MB  primary
+ 1      4194kB  541MB   537MB   primary  fat32        lba
+ 2      541MB   61.5GB  61.0GB  primary
 ```
 
-This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `7676 MB`, but the SD card's total capacity is `31.9 GB`.
+This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `61.0 GB`, but the SD card's total capacity is `127.9`.
 
 ### Extending the root partition
 In order to `extend` the `second partition`, execute the following commands:
@@ -171,30 +173,29 @@ GNU Parted 3.2
 Using /dev/mmcblk0
 Welcome to GNU Parted! Type 'help' to view a list of commands.
 (parted) print
-Model: SD SC32G (sd/mmc)
-Disk /dev/mmcblk0: 31.9GB
+Model: SD SC64G (sd/mmc)
+Disk /dev/mmcblk0: 127.9GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start   End     Size    Type     File system  Flags
- 1      4194kB  273MB   268MB   primary  fat32        lba
- 2      273MB   7948MB  7676MB  primary
+ 1      4194kB  541MB   537MB   primary  fat32        lba
+ 2      541MB   61.5GB  61.0GB  primary
 
 (parted) resizepart
 Partition number? 2
-End?  [7948MB]? -1
+End?  [61.5GB]? -1
 (parted) print
-Model: SD SC32G (sd/mmc)
-Disk /dev/mmcblk0: 31.9GB
+Model: SD SC64G (sd/mmc)
+Disk /dev/mmcblk0: 127.9GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start   End     Size    Type     File system  Flags
- 1      4194kB  273MB   268MB   primary  fat32        lba
- 2      273MB   31.9GB  31.6GB  primary
-
+ 1      4194kB  541MB   537MB   primary  fat32        lba
+ 2      541MB   127.9GB 127.4GB primary
 (parted) quit
 ```
 
@@ -210,13 +211,13 @@ Enter passphrase for /dev/mmcblk0p2: raspberry
 Once this is done, use `resize2fs` to `resize` the partition:
 ```bash
 $ resize2fs /dev/mapper/cryptroot
-resize2fs 1.44.5 (15-Dec-2018)
+resize2fs 1.47.0 (5-Feb-2023)
 Filesystem at /dev/mapper/cryptroot is mounted on /; on-line resizing required
 old_desc_blocks = 1, new_desc_blocks = 4
-The filesystem on /dev/mapper/cryptroot is now 7720844 (4k) blocks long.
+The filesystem on /dev/mapper/cryptroot is now 65498251264 (4k) blocks long.
 ```
 
-Note, that the partition size of `7720844 Bytes (~8 GB)` is still indicated.
+Note, that the partition size of `65498251264 Bytes (~61 GB)` is still indicated.
 
 ### Rebooting and verifying
 After rebooting, all changes are applied properly:
@@ -231,7 +232,7 @@ $ cryptsetup status cryptroot
   device:  /dev/mmcblk0p2
   sector size:  4096
   offset:  32768 sectors
-  size:    7720844 sectors
+  size:    33397145 sectors
   mode:    read/write
 ```
 
@@ -242,7 +243,7 @@ To check, if the values are correct, the following formula can be used:
 
 That is:
 ```no-highlight
-(4096 Bytes * 7720844) / 1024^3 = 29.45 GiB
+(4096 Bytes * 33397145) / 1024^3 = 127.39 GiB
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
@@ -263,21 +264,25 @@ aria2c
 coreutils
 cryptsetup-2.0.6 or higher
 e2fsprogs
+fping
+netcat
+openssl
 parted
 qemu-user-static
-unzip
 util-linux
+xz-utils
 ```
 
 ### Raspberry Pi
 * The following packages are installed:
 ```no-highlight
 cryptsetup-2.0.6 or higher
-raspberrypi-kernel-1.20200527-1 or higher
+linux-image-6.6.51+rpt-rpi-v8 or higher
+linux-image-rpi-v8
 ```
 
 * `qemu-user-static` is needed, if one is working on a `non-ARM operating system`.
-* `raspberrypi-kernel-1.20200527-1 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
+* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi 4's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). `aes-xts-plain64` with a `key size` of `512 bits` may be preferred, if one is using a `Raspberry Pi 5`.
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
 ## Downloading the stock image
@@ -285,14 +290,14 @@ Download the image `Raspberry Pi OS Lite` from the [official page](https://www.r
 
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential="true" \
-    "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-01-12/2021-01-11-raspios-buster-armhf-lite.zip" \
-    "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-01-12/2021-01-11-raspios-buster-armhf-lite.zip.sha256"
+    "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-11-19/2024-11-19-raspios-bookworm-arm64-lite.img.xz" \
+    "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-11-19/2024-11-19-raspios-bookworm-arm64-lite.img.xz.sha256"
 ```
 
 Verify the checksum of the archive:
 ```bash
-$ sha256sum --check "2021-01-11-raspios-buster-armhf-lite.zip.sha256"
-2021-01-11-raspios-buster-armhf-lite.zip: OK
+$ sha256sum --check "2024-11-19-raspios-bookworm-arm64-lite.img.xz.sha256"
+2024-11-19-raspios-bookworm-arm64-lite.img.xz: OK
 ```
 
 ## Configuration
@@ -302,47 +307,91 @@ Clone the repository to the `current working directory`:
 $ git clone "https://codeberg.org/keks24/raspberry-pi-luks.git"
 ```
 
-Unarchive `2021-01-11-raspios-buster-armhf-lite.zip`:
+Unarchive `2024-11-19-raspios-bookworm-arm64-lite.img.xz`:
 ```bash
-$ unzip "2021-01-11-raspios-buster-armhf-lite.zip"
-Archive:  2021-01-11-raspios-buster-armhf-lite.zip
-  inflating: 2021-01-11-raspios-buster-armhf-lite.img
+$ xz --decompress --verbose "2024-11-19-raspios-bookworm-arm64-lite.img.xz"
+2024-11-19-raspios-bookworm-arm64-lite.img.xz (1/1)
+  100 %     437.7 MiB / 2,628.0 MiB = 0.167   427 MiB/s       0:06
 ```
 
-Copy the image `2021-01-11-raspios-buster-armhf-lite.img` to the `SD card`:
+Copy the image `2024-11-19-raspios-bookworm-arm64-lite.img` to the `SD card`:
 ```bash
-$ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
+$ dd if="2024-11-19-raspios-bookworm-arm64-lite.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
 ```
 
-Boot into `Raspbian`, so the `root partition` is extended to its full capacity. Then, log in with the [predefined user credentials](#user-credentials) and update the kernel:
+Since `Debian Bullseye` a user needs to be added [manually](https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/), in order to be able to log in. Therefore the `boot partition` needs to be mounted:
 ```bash
+$ mount "/dev/sdx1" "/mnt/"
+```
+
+Next, create the file [`userconf`](https://www.raspberrypi.com/documentation/computers/configuration.html#configuring-a-user) in the directory `/mnt/`:
+```bash
+$ echo "pi:$(openssl passwd -6)" > "/mnt/userconf"
+Password: raspberry
+Verifying - Password: raspberry
+```
+
+This file will be read `on boot` and the user `pi` will be created with [default credentials](#user-credentials). This user is preferred, since there are `predefined sudo rules` at `/etc/sudoers.d/010_pi-nopasswd` on the `root partition`, which allow to `escalate privileges without password`.
+
+In order to be able to `establish an SSH connection` to the Raspberry Pi, the `empty` file `ssh` needs to be added:
+```bash
+$ touch "/mnt/ssh"
+```
+
+Unmount the `boot partition`:
+```bash
+$ umount "/mnt/"
+```
+
+Insert the `SD card` into the Raspberry Pi and boot into `Debian`. This will create the user `pi`, the daemon `sshd` will be started and the `root partition` will be extended to its full capacity.
+
+It may be necessary to `scan the network` for `active devices` and `probe the port 22 (SSH)`, in order to find the Raspberry Pi:
+```bash
+$ fping --alive --generate 192.168.1.0/24 2>/dev/null
+192.168.1.1
+192.168.1.2
+192.168.1.3
+192.168.1.80
+[...]
+$ nc -zvn 192.168.1.80 22
+(UNKNOWN) [192.168.1.80] 22 (ssh) open
+```
+
+In this case, it is `192.168.1.80`.
+
+After that, `establish an SSH connection` to the Raspberry Pi, `log in` with the [predefined user credentials](#user-credentials) and `update the kernel`:
+```bash
+$ ssh pi@192.168.1.80
+pi@192.168.0.30's password: raspberry
+[...]
 $ sudo apt update
-$ sudo apt install raspberrypi-kernel --only-upgrade
-$ reboot
-```
-
-After logging in again, take notes of the following output. These information are important for later:
-```bash
 $ uname --kernel-release
-5.10.17+
-$ grep "Model" "/proc/cpuinfo"
-Model           : Raspberry Pi Model B Rev 2
-```
-
-Make sure, that the `Kernel version` is `1.20200527-1` or higher and `shut down` the system:
-```bash
-$ dpkg --list "raspberrypi-kernel*"
-Desired=Unknown/Install/Remove/Purge/Hold
-| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
-|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
-||/ Name                       Version      Architecture Description
-+++-==========================-============-============-==============================================
-ii  raspberrypi-kernel         1.20210303-1 armhf        Raspberry Pi bootloader
-ii  raspberrypi-kernel-headers 1.20210303-1 armhf        Header files for the Raspberry Pi Linux kernel
+6.6.51+rpt-rpi-v8
+$ sudo apt install linux-image-rpi-v8 --only-upgrade
 $ sudo poweroff
 ```
 
-After that, create a `backup` of the `SD card`:
+All `installed kernel packages` can be looked up with the following command:
+```bash
+$ dpkg --list "linux-image*"
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
+||/ Name                                     Version         Architecture Description
++++-========================================-===============-============-=============================================
+ii  linux-image-6.6.51+rpt-rpi-2712          1:6.6.51-1+rpt3 arm64        Linux 6.6 for Raspberry Pi 2712, Raspberry Pi
+un  linux-image-6.6.51+rpt-rpi-2712-unsigned <none>          <none>       (no description available)
+ii  linux-image-6.6.51+rpt-rpi-v8            1:6.6.51-1+rpt3 arm64        Linux 6.6 for Raspberry Pi v8, Raspberry Pi
+un  linux-image-6.6.51+rpt-rpi-v8-unsigned   <none>          <none>       (no description available)
+ii  linux-image-6.6.74+rpt-rpi-2712          1:6.6.74-1+rpt1 arm64        Linux 6.6 for Raspberry Pi 2712, Raspberry Pi
+un  linux-image-6.6.74+rpt-rpi-2712-unsigned <none>          <none>       (no description available)
+ii  linux-image-6.6.74+rpt-rpi-v8            1:6.6.74-1+rpt1 arm64        Linux 6.6 for Raspberry Pi v8, Raspberry Pi
+un  linux-image-6.6.74+rpt-rpi-v8-unsigned   <none>          <none>       (no description available)
+ii  linux-image-rpi-2712                     1:6.6.74-1+rpt1 arm64        Linux for Raspberry Pi 2712 (meta-package)
+ii  linux-image-rpi-v8                       1:6.6.74-1+rpt1 arm64        Linux for Raspberry Pi v8 (meta-package)
+```
+
+Next, create a `backup` of the `SD card`:
 ```bash
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" conv="fsync" status="progress"
 ```
@@ -351,17 +400,17 @@ Analyse the image for its partition `start sectors` and the `logical sector size
 ```bash
 $ parted "raspberrypi_sd_card_backup.img" "unit s print"
 Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 120176640s
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
-Number  Start    End        Size       Type     File system  Flags
- 1      8192s    532479s    524288s    primary  fat32        lba
- 2      532480s  15523839s  14991360s  primary  ext4
+Number  Start     End         Size        Type     File system  Flags
+ 1      8192s     1056767s    1048576s    primary  fat32        lba
+ 2      1056768s  120176639s  119119872s  primary  ext4
 ```
 
-In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 532480`. The `logical sector size` is `512 bytes`.
+In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 1056768`. The `logical sector size` is `512 bytes`.
 
 These values can be used to mount the partitions from the image.
 
@@ -375,9 +424,9 @@ Next, make the partitions available at `/dev/loop1` and `/dev/loop2`:
 $ losetup --offset="$(( 512 * 8192 ))" "/dev/loop1" "raspberrypi_sd_card_backup.img"
 $ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ losetup --list
-NAME       SIZELIMIT    OFFSET AUTOCLEAR RO BACK-FILE                                DIO LOG-SEC
+NAME       SIZELIMIT    OFFSET AUTOCLEAR RO BACK-FILE                                                                                 DIO LOG-SEC
 /dev/loop1         0   4194304         0  0 /root/tmp/raspberrypi_sd_card_backup.img   0     512
-/dev/loop2         0 272629760         0  0 /root/tmp/raspberrypi_sd_card_backup.img   0     512
+/dev/loop2         0 541065216         0  0 /root/tmp/raspberrypi_sd_card_backup.img   0     512
 ```
 
 Using `losetup` here is important, since it is necessary for the `chroot` later on. Using `mount --options="offset"` might return the error `overlapping loop device exists`.
@@ -403,59 +452,59 @@ WARNING!
 ========
 This will overwrite data on /dev/loop2 irrevocably.
 
-Are you sure? (Type uppercase yes): YES
-Enter passphrase for /dev/loop2: raspberry
+Are you sure? (Type 'yes' in capital letters): YES
+Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img:
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). `aes-xts-plain64` with a `key size` of `512 bits` may be preferred, if one is using a `Raspberry Pi 5`.
 
 The `LUKS header information` looks like so:
 ```bash
 $ cryptsetup luksDump "/dev/loop2"
 LUKS header information
-Version:       	2
-Epoch:         	3
-Metadata area: 	16384 [bytes]
-Keyslots area: 	16744448 [bytes]
-UUID:          	4b1b525d-da43-4316-83a3-39a67b8403db
-Label:         	(no label)
-Subsystem:     	(no subsystem)
-Flags:       	(no flags)
+Version:        2
+Epoch:          3
+Metadata area:  16384 [bytes]
+Keyslots area:  16744448 [bytes]
+UUID:           1eee5e92-e843-4dd8-b663-5a3cf7b32361
+Label:          (no label)
+Subsystem:      (no subsystem)
+Flags:          (no flags)
 
 Data segments:
   0: crypt
-	offset: 16777216 [bytes]
-	length: (whole device)
-	cipher: xchacha20,aes-adiantum-plain64
-	sector: 4096 [bytes]
+        offset: 16777216 [bytes]
+        length: (whole device)
+        cipher: xchacha20,aes-adiantum-plain64
+        sector: 4096 [bytes]
 
 Keyslots:
   0: luks2
-	Key:        256 bits
-	Priority:   normal
-	Cipher:     xchacha20,aes-adiantum-plain64
-	Cipher key: 256 bits
-	PBKDF:      argon2i
-	Time cost:  4
-	Memory:     190840
-	Threads:    4
-	Salt:       f4 e7 c8 63 26 ee 0d ae 2b dc 8a 25 bc cd 62 a5
-	            6f d4 ea 91 da c0 a9 b4 1a 4b 6a 04 ee b8 d5 92
-	AF stripes: 4000
-	AF hash:    sha256
-	Area offset:32768 [bytes]
-	Area length:131072 [bytes]
-	Digest ID:  0
+        Key:        256 bits
+        Priority:   normal
+        Cipher:     xchacha20,aes-adiantum-plain64
+        Cipher key: 256 bits
+        PBKDF:      argon2id
+        Time cost:  4
+        Memory:     1048576
+        Threads:    4
+        Salt:       fa 2b 44 06 38 59 32 32 ea 62 6a 56 ce 05 44 64
+                    c1 89 05 94 3e 0f 7b be 1a 24 6a 7b d1 df ba 6d
+        AF stripes: 4000
+        AF hash:    sha256
+        Area offset:32768 [bytes]
+        Area length:131072 [bytes]
+        Digest ID:  0
 Tokens:
 Digests:
   0: pbkdf2
-	Hash:       sha256
-	Iterations: 68124
-	Salt:       11 23 2d 69 d3 3a e6 b3 1b b0 78 1a 78 b5 4c 3e
-	            68 6d ec cc 65 69 4b 61 fd ee 51 eb a1 01 58 f4
-	Digest:     d7 bd 62 df ba 94 d2 b6 ec 10 6a 7d 93 9b d1 5d
-	            08 56 1c 92 fb e7 6a 48 37 64 73 7d 61 e9 8c 0f
+        Hash:       sha256
+        Iterations: 173375
+        Salt:       2f 3b 74 c8 e0 c9 1c d1 52 dc 69 d5 72 2b 3b 74
+                    15 42 0a 17 e0 b1 3d e2 46 9f 18 54 c1 d4 78 6a
+        Digest:     06 bf 10 72 07 c7 5e 01 ba cf ec 40 79 1a 08 e7
+                    eb 44 63 b7 91 c1 7e 77 c4 e3 d6 b0 ca 6b 64 39
 ```
 
 Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#Cipher%20and%20Hash%20specification%20registry).
@@ -465,17 +514,18 @@ If the encryption method `aes-xts-plain64` is preferred, make absolutely sure, t
 Now, open/decrypt the encrypted `root partition` and format it via `mkfs.ext4`:
 ```bash
 $ cryptsetup open "/dev/loop2" cryptroot
-Enter passphrase for /dev/loop2: raspberry
+Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img: raspberry
 $ mkfs.ext4 "/dev/mapper/cryptroot"
-mke2fs 1.44.5 (15-Dec-2018)
-Creating filesystem with 384000 4k blocks and 96000 inodes
-Filesystem UUID: 1fd31646-340c-47ed-8c66-8efb2e730d0f
+mke2fs 1.47.1 (20-May-2024)
+Creating filesystem with 14885888 4k blocks and 3727360 inodes
+Filesystem UUID: 9f98f16c-9779-49b5-89d6-4be7be1937a5
 Superblock backups stored on blocks:
-        32768, 98304, 163840, 229376, 294912
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000, 7962624, 11239424
 
 Allocating group tables: done
 Writing inode tables: done
-Creating journal (8192 blocks): done
+Creating journal (65536 blocks): done
 Writing superblocks and filesystem accounting information: done
 ```
 
@@ -492,9 +542,9 @@ $ rsync --archive --hard-links --acls --xattrs --one-file-system --numeric-ids -
 ### Entering the chroot environment
 Once this is done, it is time to go into a `chroot environment`.
 
-Before doing so, mount the `boot partition` to `/mnt/boot/`:
+Before doing so, mount the `boot partition` to `/mnt/boot/firmware/`:
 ```bash
-$ mount "/dev/loop1" "/mnt/boot/"
+$ mount "/dev/loop1" "/mnt/boot/firmware/"
 ```
 
 Then, prepare the `chroot environment`:
@@ -504,17 +554,17 @@ $ mount --rbind "/sys" "/mnt/sys/"
 $ mount --make-rslave "/mnt/sys/"
 $ mount --rbind "/dev/" "/mnt/dev/"
 $ mount --make-rslave "/mnt/dev/"
-$ cp "/usr/bin/qemu-arm-static" "/mnt/usr/bin/"
+$ cp "/usr/bin/qemu-aarch64-static" "/mnt/usr/bin/"
 $ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 ```
 
-**`qemu-arm-static` is mandatory, if one is working on a `non-ARM operating system`!**
+**`qemu-aarch64-static` is mandatory, if one is working on a `non-ARM operating system`!**
 
 `/etc/resolv.conf` contains entries of `DNS name servers`, which are required within the `chroot environment` in order to make `reverse DNS lookups` possible.
 
 Enter the new environment:
 ```bash
-$ chroot "/mnt/" qemu-arm-static "/bin/bash"
+$ chroot "/mnt/" qemu-aarch64-static "/bin/bash"
 $ source "/etc/profile"
 $ export PS1="(chroot) ${PS1}"
 (chroot) $ cd
@@ -524,97 +574,27 @@ $ export PS1="(chroot) ${PS1}"
 An `initramfs` is needed in order to decrypt the `root partition` on boot. The following packages will provide all tools to build it:
 ```bash
 (chroot) $ apt update
-(chroot) $ apt install busybox cryptsetup initramfs-tools
+(chroot) $ apt install busybox cryptsetup cryptsetup-initramfs initramfs-tools
 ```
+
+This will automatically trigger `update-initramfs`, which will install the `zstd-compressed` file `initramfs8` to `/boot/firmware/initramfs8`.
 
 #### Configuration
-The binary `cryptsetup` must be included in the `initramfs`. This can be configured in `/etc/cryptsetup-initramfs/conf-hook`:
-```bash
-(chroot) $ vi "/etc/cryptsetup-initramfs/conf-hook"
-CRYPTSETUP="y"
-```
-
-The `initramfs` should always be generated, when a new kernel was installed. Enable this by setting `RPI_INITRD=Yes` in `/etc/default/raspberrypi-kernel`:
-```bash
-(chroot) $ vi "/etc/default/raspberrypi-kernel"
-RPI_INITRD=Yes
-```
-
-As of writing, the package `rpi-initramfs-tools` is not available, yet. So `custom hook scripts` have to be created for this.
-
-The next commands and explanations contain the kernel version `5.10.17+`. Replace the version according to the `Raspberry Pi revision` (`grep "Model" "/proc/cpuinfo"`) and the current kernel version (`uname --kernel-release`):
-
-Type                | Kernel version naming convention   | Kernel filename   | Initramfs filename
-------------------- | ---------------------------------- | ----------------- |  -----------------
-Raspberry Pi 1      | `<kernel_version>+`                | `kernel.img`      | `initrd.img-<kernel_version>+`
-Raspberry Pi Zero   | `<kernel_version>+`                | `kernel.img`      | `initrd.img-<kernel_version>+`
-Raspberry Pi Zero W | `<kernel_version>+`                | `kernel.img`      | `initrd.img-<kernel_version>+`
-Raspberry Pi 2      | `<kernel_version>-v7`              | `kernel7.img`     | `initrd.img-<kernel_version>-v7`
-Raspberry Pi 3      | `<kernel_version>-v7`              | `kernel7.img`     | `initrd.img-<kernel_version>-v7`
-Raspberry Pi 3+     | `<kernel_version>-v7`              | `kernel7.img`     | `initrd.img-<kernel_version>-v7`
-Raspberry Pi 4      | `<kernel_version>-v7l`             | `kernel7l.img`    | `initrd.img-<kernel_version>-v7l`
-Raspberry Pi 4      | `<kernel_version>-v7l+`            | `kernel7l.img`    | `initrd.img-<kernel_version>-v7l+`
-
-[Source](https://www.raspberrypi.com/documentation/computers/linux_kernel.html#default_configuration)
-
-Copy the `custom hook scripts`. **This step must be done in a `separate shell` outside of the `chroot environment`!**:
-```bash
-$ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-luks/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools" "/mnt/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools"
-install: creating directory '/mnt/usr/local/share/kernel'
-install: creating directory '/mnt/usr/local/share/kernel/postinst.d'
-'raspberry-pi-luks/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools' -> '/mnt/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools'
-$ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-luks/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools" "/mnt/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools"
-install: creating directory '/mnt/usr/local/share/kernel/postrm.d'
-'raspberry-pi-luks/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools' -> '/mnt/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools'
-$ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-luks/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools" "/mnt/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools"
-install: creating directory '/mnt/usr/local/share/kernel/preinst.d'
-'raspberry-pi-luks/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools' -> '/mnt/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools'
-```
-
-The `custom hook scripts` are placed in the directory `/usr/local/share/kernel/` and have the following tasks:
-* `postinst.d/01-rpi-initramfs-tools`
-    * `Appends` the entry `initramfs initramfs.cpio.gz followkernel` to the configuration file `/boot/config.txt`.
-        * `Uncomments` the entry `#initramfs [...]` to `initramfs [...]`, if it was commented before, but does not verify the subsequent entries. **Make absolutely sure, that these are correct!**
-    * `Renames` the newly generated `initramfs` file `/boot/initrd-5.10.17+` to `/boot/initramfs.cpio.gz`.
-* `postrm.d/01-rpi-initramfs-tools`
-    * `Comments` the entry `initramfs [...]` to `#initramfs [...]`.
-    * `Removes` the `initramfs` files `/boot/initrd-5.10.17+` and `/boot/initramfs.cpio.gz`.
-* `preinst.d/01-rpi-initramfs-tools`
-    * `Installs` the `post-install` hook script `/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools` to `/etc/kernel/postinst.d/5.10.17+/01-rpi-initramfs-tools` by creating a `symbolic link`.
-    * `Installs` the `post-remove` hook script `/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools` to `/etc/kernel/postrm.d/5.10.17+/01-rpi-initramfs-tools` by creating a `symbolic link`.
-    * `Renames` the hook script directory names of `/etc/kernel/postinst.d/5.10.17+` and `/etc/kernel/postrm.d/5.10.17+` after each update of the package `raspberrypi-kernel`.
-        * `Skips renaming`, if the `current kernel version` and the `package kernel version` are identical
-
-Back to the `chroot environment`. Install the `hook scripts` via `symbolic links`:
-```bash
-(chroot) $ mkdir --parents /etc/kernel/{postinst.d,postrm.d}/5.10.17+/ "/etc/kernel/preinst.d/"
-(chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools" "/etc/kernel/postinst.d/5.10.17+/"
-'/etc/kernel/postinst.d/01-rpi-initramfs-tools' -> '/usr/local/share/kernel/postinst.d/01-rpi-initramfs-tools'
-(chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools" "/etc/kernel/postrm.d/5.10.17+/"
-'/etc/kernel/postrm.d/01-rpi-initramfs-tools' -> '/usr/local/share/kernel/postrm.d/01-rpi-initramfs-tools'
-(chroot) $ ln --symbolic --verbose "/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools" "/etc/kernel/preinst.d/"
-'/etc/kernel/preinst.d/01-rpi-initramfs-tools' -> '/usr/local/share/kernel/preinst.d/01-rpi-initramfs-tools'
-```
-
-Be aware, that the hook script directories `/etc/kernel/postinst.d/5.10.17+/` and `/etc/kernel/postrm.d/5.10.17+` must always match the `current` or `newer` kernel version of the `Raspberry Pi`. **Otherwise, generating the `initramfs` will fail; rendering the `Raspberry Pi` unbootable**.
-
-Note, that the custom hook script `/etc/kernel/preinst.d/01-rpi-initramfs-tools` silently fails, if working on a different system in a `chroot environment`, since it uses `uname` to determine the `current kernel version` and compares its `suffix` with the `suffix` of the `package kernel version` in order to copy the `post-install` and `post-remove` hook scripts into their respective directories. If one is using a `Raspberry Pi` for this setup, make sure, that the `kernel version` of the `Raspberry Pi` and within the `chroot environment` are identical.
-
 Next, get the `UUID` of `/dev/loop2`, which will be used later on:
 ```bash
 (chroot) $ blkid "/dev/loop2"
-/dev/loop2: UUID="1fd31646-340c-47ed-8c66-8efb2e730d0f" TYPE="crypto_LUKS"
+/dev/loop2: UUID="1eee5e92-e843-4dd8-b663-5a3cf7b32361" TYPE="crypto_LUKS"
 ```
 
-Edit the kernel parameters in `/boot/cmdline.txt` and add an entry in `/etc/crypttab`, so the `root partition` can be decrypted on boot:
+Edit the kernel parameters in `/boot/firmware/cmdline.txt` and add an entry in `/etc/crypttab`, so the `root partition` can be decrypted on boot:
 ```bash
-(chroot) $ vi "/boot/cmdline.txt"
-root=/dev/mapper/cryptroot cryptdevice=UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f:cryptroot
+(chroot) $ vi "/boot/firmware/cmdline.txt"
+root=/dev/mapper/cryptroot cryptdevice=UUID=1eee5e92-e843-4dd8-b663-5a3cf7b32361:cryptroot
 (chroot) $ vi "/etc/crypttab"
-cryptroot UUID=1fd31646-340c-47ed-8c66-8efb2e730d0f none luks,initramfs
+cryptroot UUID=1eee5e92-e843-4dd8-b663-5a3cf7b32361 none luks,initramfs
 ```
 
-Note, that adding the option `initramfs` is very important here. Otherwise, the following error might occur and the file `cryptroot/crypttab` within the `initramfs` might be empty; **rendering the system unbootable**:
+Note, that adding the option `initramfs` is very important here. Otherwise, the following error might occur and the file `/cryptroot/crypttab` within the `initramfs` might be empty; **rendering the system unbootable**:
 ```no-highlight
 cryptsetup: WARNING: target '<some_target>' not found in /etc/crypttab
 cryptsetup: ERROR: cryptroot: Source mismatch
@@ -627,51 +607,99 @@ Adapt the file `/etc/fstab`, so the `decrypted root partition` will be mounted a
 /dev/mapper/cryptroot  /               ext4    defaults,noatime  0       1
 ```
 
+Edit the configuration file `/etc/initramfs-tools/modules`, in order to make `cryptsetup` work in the `initramfs`:
+```bash
+$ vi "/etc/initramfs-tools/modules"
+# see in the following directories for available modules:
+## "/lib/modules/<some_kernel_version>/kernel/crypto/"
+## "/lib/modules/<some_kernel_version>/kernel/arch/arm64/crypto/"
+## "/lib/modules/<some_kernel_version>/kernel/lib/crypto/"
+adiantum
+aes_arm64
+algif_skcipher
+dm-crypt
+nhpoly1305
+sha256
+xchacha20
+```
+
+Once this is done, the `initramfs` can now be built.
+
 #### Generating the initramfs
 There are three ways to generate the `initramfs`.
 
-1. Either reinstall the package `raspberrypi-kernel`, which will install all `Raspberry Pi kernels` and then executes the `hook scripts` in `/etc/kernel/preinst.d/`, `/etc/kernel/postrm.d/` and `/etc/kernel/postinst.d/`:
+1. Either reinstall the package `linux-image-6.6.74+rpt-rpi-v8`, which will only install that specific kernel and then executes the `hook scripts` in `/etc/kernel/postrm.d/` and `/etc/kernel/postinst.d/`:
 ```bash
-(chroot) $ apt install raspberrypi-kernel --reinstall
+(chroot) $ apt install linux-image-6.6.74+rpt-rpi-v8 --reinstall
 ```
 
 2. Execute the command `mkinitramfs` manually:
 ```bash
-(chroot) $ mkinitramfs -o "/boot/initramfs.cpio.gz" 5.10.17+
+(chroot) $ mkinitramfs -o "/boot/firmware/initramfs8" 6.6.74+rpt-rpi-v8
 ```
 
-3. Or execute `update-initramfs` and rename the file `initrd.img-5.10.17+` manually:
+3. Or execute `update-initramfs` manually:
 ```bash
-(chroot) $ update-initramfs -vuk 5.10.17+
-update-initramfs: Generating /boot/initrd.img-5.10.17+
-Copying module directory kernel/drivers/usb/dwc2
-Adding module /lib/modules/5.10.17+/kernel/drivers/usb/roles/roles.ko
+(chroot) $ update-initramfs -vuk 6.6.74+rpt-rpi-v8
 [...]
-(chroot) $ mv "/boot/initrd.img-5.10.17+" "/boot/initramfs.cpio.gz"
+Keeping /boot/initrd.img-6.6.74+rpt-rpi-v8.dpkg-bak
+update-initramfs: Generating /boot/initrd.img-6.6.74+rpt-rpi-v8
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/lib/crypto/libpoly1305.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/adiantum.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/lib/crypto/libaes.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/aes_generic.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/aes-arm64.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/af_alg.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/algif_skcipher.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/md/dm-mod.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/md/dm-crypt.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/nhpoly1305.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/sha256-arm64.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/sha2-ce.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/lib/crypto/libchacha.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/chacha-neon.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/chacha_generic.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/uio/uio.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/uio/uio_pdrv_genirq.ko.xz
+[...]
+Building cpio /boot/initrd.img-6.6.74+rpt-rpi-v8.new initramfs
+'/boot/initrd.img-6.6.74+rpt-rpi-v8' -> '/boot/firmware/initramfs8'
 ```
 
-For this setup, the `first method is preferred` in order to test the hook scripts in `preinst.d`, `postrm.d` and `postinst.d`.
-
-After the reinstallation has been completed, there should be the entry `initramfs initramfs.cpio.gz followkernel` in the configuration file `/boot/config.txt`:
+For this setup, the `third method is preferred`, which can be executed now.
 ```bash
-$ (chroot) tail --lines="3" "/boot/config.txt"
+(chroot) $ update-initramfs -vuk 6.6.74+rpt-rpi-v8
+```
+
+The file `modification date and time` of the `initramfs` can be checked with the command `stat`:
+```bash
+$ (chroot) stat "/boot/firmware/initramfs8" | grep "Modify"
+Modify: 2025-02-07 21:37:16.000000000 +0000
+```
+
+After the reinstallation has been completed, add the entry `initramfs initramfs8 followkernel` at the end of the configuration file `/boot/firmware/config.txt`:
+```bash
+$ (chroot) vi "/boot/firmware/config.txt"
 [all]
-#dtoverlay=vc4-fkms-v3d
-initramfs initramfs.cpio.gz followkernel
+initramfs initramfs8 followkernel
 ```
 
-Also, the `initramfs` file `/boot/initramfs.cpio.gz` should be `created/updated`:
+Make sure, that the following important files are present in the initramfs file `/boot/firmware/initramfs8`:
 ```bash
-$ (chroot) stat "/boot/initramfs.cpio.gz" | grep "Modify"
-Modify: 2021-04-10 22:59:16.000000000 +0100
-```
-
-Make sure, that the following important files are present in the `initramfs` file `initramfs.cpio.gz`:
-```bash
-(chroot) $ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "adiantum.ko|crypttab|sbin/cryptsetup"
+(chroot) $ lsinitramfs "/boot/firmware/initramfs8" | grep --extended-regexp "adiantum|aes-arm|algif_skcipher|dm-crypt|nhpoly|sha256|chacha|crypttab|sbin/cryptsetup|usr/bin/cryptroot-unlock"
 cryptroot/crypttab
-usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
+usr/bin/cryptroot-unlock
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/aes-arm64.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/chacha-neon.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/sha256-arm64.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/adiantum.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/algif_skcipher.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/chacha_generic.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/nhpoly1305.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/md/dm-crypt.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/lib/crypto/libchacha.ko
 usr/sbin/cryptsetup
+usr/bin/sha256sum
 ```
 
 Also make sure, that the content of `cryptroot/crypttab` is correct.
@@ -683,11 +711,11 @@ Exit the `chroot`, unmount the `boot partition` and all `pseudo filesystems`:
 ```bash
 (chroot) $ exit
 $ cd
-$ umount "/mnt/boot/"
-$ umount --lazy --recursive /mnt/{proc/,sys/,dev/}
+$ umount "/mnt/boot/firmware/"
+$ umount --lazy --recursive /mnt/{proc/,sys/,dev/} "/mnt/"
 ```
 
-Remove `qemu-arm-static` from `/mnt/usr/bin/`:
+Remove `qemu-aarch64-static` from `/mnt/usr/bin/`:
 ```bash
 $ rm "/mnt/usr/bin/qemu-arm-static"
 ```
@@ -716,7 +744,7 @@ After entering the password, the `Raspberry Pi` should boot.
 
 # Further steps
 ## Updating all installed packages
-As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:
+Since only the kernel package `linux-image-rpi-v8` has been upgraded earlier, the probability is very high, that `new packages` are available. Update them using the following commands:
 ```bash
 $ apt update
 $ apt list --upgradable
@@ -734,11 +762,11 @@ $ apt install dropbear-initramfs
 ```
 
 ### Configure dropbear
-All configuration files can be found at `/etc/dropbear-initramfs/` and are self-explained.
+All configuration files can be found at `/etc/dropbear/initramfs/` and are self-explained.
 
-Next, configure `dropbear` by editing `/etc/dropbear-initramfs/config`:
+Next, configure `dropbear` by editing `/etc/dropbear/initramfs/dropbear.conf`:
 ```bash
-$ vi "/etc/dropbear-initramfs/config"
+$ vi "/etc/dropbear/initramfs/dropbear.conf"
 DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk"
 ```
 
@@ -748,40 +776,37 @@ Further information can be looked up at `man 8 dropbear`.
 
 Before adding the public key, the file `authorized_keys` should be created like so:
 ```bash
-$ touch "/etc/dropbear-initramfs/authorized_keys"
-$ chmod 600 "/etc/dropbear-initramfs/authorized_keys"
+$ touch "/etc/dropbear/initramfs/authorized_keys"
+$ chmod 600 "/etc/dropbear/initramfs/authorized_keys"
 ```
 
-As of writing, `Raspbian` (`Debian 10 (Buster)`) uses `dropbear` version [`2018.76-5`](https://packages.debian.org/buster/dropbear), which does not support `ed25519 keys`. The next stable release of `Debian 11 (Bullseye)` will have version [`2020.81-3`](https://packages.debian.org/bullseye/dropbear) available, which supports [`ed25519 keys`](https://github.com/mkj/dropbear/releases/tag/DROPBEAR_2020.79).
-
-This means, that a strong `RSA 8192` key should be generated on the `host`, from which the partition should be decrypted:
+Since [`Debian 11 (Bullseye)`](https://packages.debian.org/bullseye/dropbear) dropbear supports [`ed25519 keys`](https://github.com/mkj/dropbear/releases/tag/DROPBEAR_2020.79), which will be created on the `host` like this:
 ```bash
-$ ssh-keygen -t rsa -b 8192 -f "/home/<some_username>/.ssh/dropbear_root_rsa8192"
-Generating public/private rsa key pair.
-Enter file in which to save the key (/home/<some_username>/.ssh/dropbear_root_rsa8192):
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192
-Your public key has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192.pub
+$ ssh-keygen -t ed25519 -f "/home/<some_username>/.ssh/dropbear_root_ed25519"
+Generating public/private ed25519 key pair.
+Enter passphrase (empty for no passphrase): <some_password>
+Enter same passphrase again: <some_password>
+Your identification has been saved in /home/<some_username>/.ssh/dropbear_root_ed25519
+Your public key has been saved in /home/<some_username>/.ssh/dropbear_root_ed25519.pub
 The key fingerprint is:
-SHA256:XaASDCS2YOFPyNQzO7IalEvMC8EE7ZZhrpzPFRymwjI <some_username>@<some_hostname>
+SHA256:ZJmQeVDrJpSM+URlKV16DIxM+dhDkjrMXn33Al/FRvs <some_username>@<some_hostname>
 The key's randomart image is:
-+---[RSA 8192]----+
-|           o++.  |
-|          o.. . .|
-|         o+= o o |
-|         o=+O o +|
-|        S.oO o o+|
-|          =o+. ..|
-|         .+.+Boo |
-|        .o =.o@  |
-|        .. .=E.. |
++--[ED25519 256]--+
+|     o=%=o.    o.|
+|     =X+*B      =|
+|   oo.=XB o    + |
+|    =+o+=.o . . .|
+|   . oo So + o  E|
+|    .  o    o .  |
+|             .   |
+|                 |
+|                 |
 +----[SHA256]-----+
 ```
 
-Copy the contents of the `SSH public key` `/home/<some_username>/.ssh/dropbear_root_rsa8192.pub` to the `Raspberry Pi` to `/etc/dropbear-initramfs/authorized_keys` with the following `SSHD options`:
+Copy the contents of the `SSH public key` `/home/<some_username>/.ssh/dropbear_root_ed25519.pub` to the `Raspberry Pi` to `/etc/dropbear/initramfs/authorized_keys` with the following `SSHD options`:
 ```bash
-no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-rsa [...]
+no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-ed25519 [...]
 ```
 
 The option `command` restricts the logged in user `root` to only execute the command `/usr/bin/cryptroot-unlock` within the `initramfs`. All other options should be self-explained, but can be looked up at `man 8 sshd`. The path to the binary can be determined by [examining](#examining-the-initramfs) or [unarchiving the content of the `initramfs`](#unarchiving-the-initramfs).
@@ -791,8 +816,9 @@ Removing all options will grant access to the `busybox` as user `root`.
 Make sure, that the `SSH public key` is copied correctly, since `logins via password` are disabled.
 
 ### Configuring kernel parameters
-In order to make the `initramfs` available in the network on boot, set a `static IP address` via kernel parameters. Append the following line in `/boot/cmdline.txt`:
+In order to make the `initramfs` available in the network on boot, set a `static IP address` via kernel parameters. Append the following line in `/boot/firmware/cmdline.txt`:
 ```bash
+$ vi "/boot/firmware/cmdline.txt"
 ip=192.168.1.80:::255.255.255.0
 ```
 
@@ -805,27 +831,53 @@ ip=<client_ip>:<server_ip>:<gateway_ip>:<netmask>:<hostname>:<network_interface>
 
 This will set the `private Class C IP address` to `192.168.1.80` and the `subnet mask` to `255.255.255.0`; these values may differ depending on the network infrastructure. The `initramfs` does not have any connection to the `internet`, since no `gateway IP address` is set.
 
-Make sure, that the `Raspberry Pi` and the `host` from which the partition should be decrypted, are in the same network.
+Make sure, that the `Raspberry Pi` and the `host`, from which the partition should be decrypted, are in the same network.
 
 ### Rebuilding the initramfs
 `Rebuild` the `initramfs` to adapt all changes:
 ```bash
-$ mkinitramfs -o "/boot/initramfs.cpio.gz"
+$ update-initramfs -vuk 6.6.74+rpt-rpi-v8
+[...]
+Keeping /boot/initrd.img-6.6.74+rpt-rpi-v8.dpkg-bak
+update-initramfs: Generating /boot/initrd.img-6.6.74+rpt-rpi-v8
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/lib/crypto/libpoly1305.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/adiantum.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/af_alg.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/algif_skcipher.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/cryptd.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/md/dm-mod.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/md/dm-crypt.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/nhpoly1305.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/sha256-arm64.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/sha2-ce.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/lib/crypto/libchacha.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/chacha-neon.ko.xz
+Adding module /usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/chacha_generic.ko.xz
+[...]
+Calling hook dropbear
+Adding binary /usr/sbin/dropbear
+[...]
+Building cpio /boot/initrd.img-6.6.74+rpt-rpi-v8.new initramfs
+'/boot/initrd.img-6.6.74+rpt-rpi-v8' -> '/boot/firmware/initramfs8'
 ```
 
-Make sure, that the binary `dropbear` and its `configuration files` are present in the file `initramfs.cpio.gz`:
+Make sure, that the binary `dropbear` and its `configuration files` are present in the initramfs file `/boot/firmware/initramfs8`:
 ```bash
-$ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "dropbear|authorized_keys"
+$ lsinitramfs "/boot/firmware/initramfs8" | grep --extended-regexp "dropbear|authorized_keys"
 etc/dropbear
-etc/dropbear/config
-etc/dropbear/dropbear_dss_host_key
+etc/dropbear/dropbear.conf
 etc/dropbear/dropbear_ecdsa_host_key
+etc/dropbear/dropbear_ed25519_host_key
 etc/dropbear/dropbear_rsa_host_key
-root-0sldnV/.ssh/authorized_keys
+root-6a1XMV4VQT/.ssh/authorized_keys
 scripts/init-bottom/dropbear
 scripts/init-premount/dropbear
 usr/sbin/dropbear
 ```
+
+Also make sure, that the content of `/root-<some_random_alphanumeric_characters>/.ssh/authorized_keys` and `/etc/dropbear/dropbear.conf` are correct.
+
+Detailed debugging is explained [here](#debugging).
 
 ### Rebooting
 After that, `reboot` the `Raspberry Pi`:
@@ -836,7 +888,13 @@ $ reboot
 ### Testing remote decryption
 The `initramfs` should be now accessable via `SSH` on `port 22222`, which can be accessed like so:
 ```bash
-$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
+$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_ed25519"
+The authenticity of host '[192.168.1.80]:22222 ([192.168.1.80]:22222)' can't be established.
+ED25519 key fingerprint is SHA256:<some_random_alphanumeric_characters>.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[192.168.1.80]:22222' (ED25519) to the list of known hosts.
+Enter passphrase for key '/home/<some_username>/.ssh/dropbear_root_ed25519': <some_password>
 ```
 
 The following message should appear:
@@ -850,25 +908,31 @@ cryptsetup: cryptroot set up successfully
 Shared connection to 192.168.1.80 closed.
 ```
 
+Logging in via `SSH (port 22)` should now be possible:
+```bash
+$ ssh pi@192.168.0.30
+pi@192.168.0.30's password: raspberry
+```
+
 ### Optional fancy SSH ASCII banner
 `dropbear` allows to set a custom `ASCII banner`, which is shown, when connecting to the `initramfs`.
 
 #### Configuring dropbear
-To do this, the parameter `-b` has to be appended to the configuration file `/etc/dropbear-initramfs/config`:
+To do this, the parameter `-b` has to be appended to the configuration file `/etc/dropbear/initramfs/dropbear.conf`:
 ```bash
-$ vi "/etc/dropbear-initramfs/config"
+$ vi "/etc/dropbear/initramfs/dropbear.conf"
 DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
 ```
 
-Leaving out the `leading slash` is important.
+**Leaving out the `leading slash` is important!**
 
 #### Generating a fancy ASCII banner
-Then, generate a `fancy ASCII banner` via `figlet` and save it to `/etc/dropbear-initramfs/ssh_banner.net`:
+Then, generate a `fancy ASCII banner` via `figlet` and save it to `/etc/dropbear/initramfs/ssh_banner.net`:
 ```bash
 $ apt update
 $ apt install figlet
-$ figlet -w 100 -f slant "decrypt cryptroot" > "/etc/dropbear-initramfs/ssh_banner.net"
-$ echo "" >> "/etc/dropbear-initramfs/ssh_banner.net"
+$ figlet -w 100 -f slant "decrypt cryptroot" > "/etc/dropbear/initramfs/ssh_banner.net"
+$ echo "" >> "/etc/dropbear/initramfs/ssh_banner.net"
 ```
 
 There are also websites to generate some fancy ASCII art:
@@ -883,15 +947,22 @@ $ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-
 ```
 
 #### Rebuilding the initramfs
-Finally, rebuild the `initramfs`:
+Finally, rebuild the `initramfs` and reboot:
 ```bash
-$ mkinitramfs -o "/boot/initramfs.cpio.gz"
+$ update-initramfs -vuk 6.6.74+rpt-rpi-v8
+[...]
+Calling hook dropbear
+Adding file /etc/dropbear/initramfs/ssh_banner.net
+[...]
+Building cpio /boot/initrd.img-6.6.74+rpt-rpi-v8.new initramfs
+'/boot/initrd.img-6.6.74+rpt-rpi-v8' -> '/boot/firmware/initramfs8'
+$ reboot
 ```
 
 #### Rebooting
 After rebooting the `Raspberry Pi`, `dropbear` will now display a `fancy ASCII banner`:
 ```bash
-$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
+$ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_ed25519"
        __                           __                           __                   __
   ____/ /__  ____________  ______  / /_   ____________  ______  / /__________  ____  / /_
  / __  / _ \/ ___/ ___/ / / / __ \/ __/  / ___/ ___/ / / / __ \/ __/ ___/ __ \/ __ \/ __/
@@ -906,10 +977,10 @@ Please unlock disk cryptroot: raspberry
 ## Examining the initramfs
 There is a tool, called `lsinitramfs`, which can output the content of a compressed `initramfs` to `stdout`:
 ```bash
-$ lsinitramfs "/boot/initramfs.cpio.gz" | less
+$ lsinitramfs "/boot/firmware/initramfs8" | less
 ```
 
-This is useful, if one wants to check a recent-built `initramfs` in a quick way.
+This is useful, if one wants to check a `recent-built initramfs` in a quick way.
 
 ## Unarchiving the initramfs
 The `initramfs` can be unarchived on the system in order to analyse its content.
@@ -917,13 +988,14 @@ The `initramfs` can be unarchived on the system in order to analyse its content.
 ### Easy method
 The following command `unarchives` the `initramfs` directly to the `current working directory`:
 ```bash
-$ unmkinitramfs -v "/boot/initramfs.cpio.gz" .
+$ unmkinitramfs -v "/boot/firmware/initramfs8" "."
 .
 bin
 conf
 conf/arch.conf
 conf/conf.d
 conf/initramfs.conf
+conf/modules
 cryptroot
 cryptroot/crypttab
 etc
@@ -933,13 +1005,14 @@ etc/console-setup
 
 It is also possible to directly unarchive it to a custom directory:
 ```bash
-$ unmkinitramfs -v "/boot/initramfs.cpio.gz" "initramfs/"
+$ unmkinitramfs -v "/boot/initramfs8" "initramfs/"
 .
 bin
 conf
 conf/arch.conf
 conf/conf.d
 conf/initramfs.conf
+conf/modules
 cryptroot
 cryptroot/crypttab
 etc
@@ -953,36 +1026,38 @@ unmkinitramfs cannot deal with multiple-segmented initramfs images, except where
 ```
 
 ### Elaborated method
-Copy the initramfs `initramfs.cpio.gz` to the `current working directory`:
+Copy the initramfs `/boot/firmware/initramfs8` to the `current working directory`:
 ```bash
-$ cp --archive "/boot/initramfs.cpio.gz" .
+$ cp --archive "/boot/firmware/initramfs8" "."
 ```
 
 Then, analyse which type of compression was used:
 ```bash
-$ file "initramfs.cpio.gz"
-/boot/initramfs.cpio.gz: gzip compressed data, last modified: Tue Mar 23 00:35:15 2021, from Unix, original size 24183808
+$ file i"nitramfs8"
+initramfs8: Zstandard compressed data (v0.8+), Dictionary ID: None
 ```
 
-To unarchive it, `gzip` is required and the file must have the suffix `.gz`:
+To unarchive it, `zstd` is required and the file must have the suffix `.zst`:
 ```bash
 $ apt update
-$ apt install gzip
-$ gzip --decompress "initramfs.cpio.gz"
+$ apt install zstd
+$ mv initramfs8{,.cpio.zst}
+$ zstd --decompress "initramfs8"
 ```
 
 Once this is done, the file is still compressed as `ASCII cpio archive`, which can be unarchived to the `current working directory` like so:
 ```bash
-$ file "initramfs.cpio"
+$ file "initramfs8.cpio"
 initramfs.cpio: ASCII cpio archive (SVR4 with no CRC)
 $ apt install cpio
-$ cpio --extract --make-directories --preserve-modification-time --verbose < "initramfs.cpio"
+$ cpio --extract --make-directories --preserve-modification-time --verbose < "initramfs8.cpio"
 .
 bin
 conf
 conf/arch.conf
 conf/conf.d
 conf/initramfs.conf
+conf/modules
 cryptroot
 cryptroot/crypttab
 etc
@@ -1026,15 +1101,15 @@ The password of the `root partition` of the image can be changed like so:
 ```bash
 $ parted "raspberrypi_sd_card_backup.img" "unit s print"
 Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 120176640s
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
-Number  Start    End        Size       Type     File system  Flags
- 1      8192s    532479s    524288s    primary  fat32        lba
- 2      532480s  15523839s  14991360s  primary
-$ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
+Number  Start     End         Size        Type     File system  Flags
+ 1      8192s     1056767s    1048576s    primary  fat32        lba
+ 2      1056768s  120176639s  119119872s  primary  ext4
+$ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ cryptsetup luksChangeKey "/dev/loop2"
 Enter passphrase to be changed: raspberry
 Enter new passphrase: <some_strong_personal_password>
@@ -1052,7 +1127,7 @@ Verify passphrase: <some_strong_personal_password>
 ```
 
 ## Changing the UUID of the root partition
-When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `UUIDs` are identical. There might be the case to change these.
+When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `UUIDs` are identical. There might be the need to change these.
 
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
@@ -1060,36 +1135,18 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="
 ```
 
 ### Installing necessary tools
-Once this is done, boot into `Raspbian`, install the package `uuid-runtime` in order to install the tool `uuidgen`
+Once this is done, boot into `Debian` and install the package `uuid`:
 ```bash
 $ apt update
-$ apt install uuid-runtime
-[...]
-Created symlink /etc/systemd/system/sockets.target.wants/uuidd.socket → /lib/systemd/system/uuidd.socket.
+$ apt install uuid
 ```
-
-After that, disable its `systemd service` and `socket unit`, since `time-based UUIDs` are not required:
-```bash
-$ systemctl disable uuidd.service uuidd.socket --now
-Synchronizing state of uuidd.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install disable uuidd
-Removed /etc/systemd/system/sockets.target.wants/uuidd.socket.
-$ systemctl is-active uuidd.service uuidd.socket
-inactive
-inactive
-$ systemctl is-enabled uuidd.service uuidd.socket
-indirect
-disabled
-```
-
-Further details about the `systemd service unit` can be found [here](https://packages.debian.org/buster/uuid-runtime).
 
 ### Changing the UUID
 Next, generate a `new random UUID` via `uuidgen` and `modify` the `root partition` via `cryptsetup`:
 ```bash
-$ uuidgen --random
-a00be720-f82f-452c-96cf-669601d1d57e
-$ cryptsetup --uuid="a00be720-f82f-452c-96cf-669601d1d57e" luksUUID "/dev/mmcblk0p2"
+$ uuid -v 4
+8be664e3-e89d-4c23-adda-657eb936b1e5
+$ cryptsetup --uuid="8be664e3-e89d-4c23-adda-657eb936b1e5" luksUUID "/dev/mmcblk0p2"
 
 WARNING!
 ========
@@ -1102,33 +1159,44 @@ Are you sure? (Type 'yes' in capital letters): YES
 Verify, if the `new UUID` has been applied successfully:
 ```bash
 $ blkid "/dev/mmcblk0p2"
-/dev/mmcblk0p2: UUID="a00be720-f82f-452c-96cf-669601d1d57e" TYPE="crypto_LUKS" PARTUUID="e8af6eb2-02"
+/dev/mmcblk0p2: UUID="8be664e3-e89d-4c23-adda-657eb936b1e5" TYPE="crypto_LUKS" PARTUUID="e8af6eb2-02"
 ```
 
 ### Adapting configuration files
-After that, adapt the entries in `/boot/cmdline` and `/etc/crypttab`
+After that, adapt the entries in `/boot/firmware/cmdline.txt` and `/etc/crypttab`
 ```bash
-$ vi "/boot/cmdline.txt"
-root=/dev/mapper/cryptroot cryptdevice=UUID=a00be720-f82f-452c-96cf-669601d1d57e:cryptroot
+$ vi "/boot/firmware/cmdline.txt"
+root=/dev/mapper/cryptroot cryptdevice=UUID=c8be664e3-e89d-4c23-adda-657eb936b1e5:cryptroot
 $ vi "/etc/crypttab"
-cryptroot UUID=a00be720-f82f-452c-96cf-669601d1d57e none luks,initramfs
+cryptroot UUID=8be664e3-e89d-4c23-adda-657eb936b1e5 none luks,initramfs
 ```
 
 ### Rebuilding the initramfs
 Rebuild the `initramfs`:
 ```bash
-$ mkinitramfs -o "/boot/initramfs.cpio.gz"
+$ update-initramfs -vuk 6.6.74+rpt-rpi-v8
 ```
 
-Make sure, that the following important files are present in the `initramfs` file `initramfs.cpio.gz`:
+Make sure, that the following important files are present in the `initramfs` file `/boo/firmware/initramfs8`:
 ```bash
-$ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "adiantum.ko|crypttab|sbin/cryptsetup"
+$ lsinitramfs "/boot/firmware/initramfs8" | grep --extended-regexp "adiantum|aes-arm|algif_skcipher|dm-crypt|nhpoly|sha2|chacha|crypttab|sbin/cryptsetup|usr/bin/cryptroot-unlock"
 cryptroot/crypttab
-usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
+usr/bin/cryptroot-unlock
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/aes-arm64.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/chacha-neon.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/sha2-ce.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/arch/arm64/crypto/sha256-arm64.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/adiantum.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/algif_skcipher.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/chacha_generic.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/crypto/nhpoly1305.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/drivers/md/dm-crypt.ko
+usr/lib/modules/6.6.74+rpt-rpi-v8/kernel/lib/crypto/libchacha.ko
 usr/sbin/cryptsetup
+usr/bin/sha256sum
 ```
 
-Also make sure, that the content of `cryptroot/crypttab` is correct.
+Also make sure, that the content of `/cryptroot/crypttab` is correct.
 
 Detailed debugging is explained [here](#debugging).
 
@@ -1143,22 +1211,22 @@ The encrypted `root partition` can be opened via `cryptsetup` as follows:
 ```bash
 $ parted "raspberrypi_sd_card_backup.img" "unit s print"
 Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 31116288s
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 120176640s
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
-Number  Start    End        Size       Type     File system  Flags
- 1      8192s    532479s    524288s    primary  fat32        lba
- 2      532480s  15523839s  14991360s  primary
-$ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/dev/loop2" cryptsdcard
+Number  Start     End         Size        Type     File system  Flags
+ 1      8192s     1056767s    1048576s    primary  fat32        lba
+ 2      1056768s  120176639s  119119872s  primary  ext4
+$ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
+$ cryptsetup open "/dev/loop2" cryptsdcardbackup
 Enter passphrase for /dev/loop2: raspberry
 ```
 
 After that, mount it like so:
 ```bash
-$ mount "/dev/mapper/cryptsdcard" "/mnt/"
+$ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
 ```
 
 ## Re-encrypting the root partition
@@ -1173,7 +1241,7 @@ Further configuration is needed for this.
 ### Prerequisites
 * `LUKS` partition `version 2` (`cryptsetup luksDump "/dev/mmcblk0p2" | grep "Version"`)
 * Raspberry Pi 4
-* Bootable `USB stick` with `Raspbian`, which is accessable via `SSH`
+* Bootable `USB stick` with `Debian`, which is accessable via `SSH`
     * `cryptsetup-2.0.6` or higher
 
 If the `LUKS` partition version is `1`, please upgrade it to version `2` first, using [these instructions](https://gist.github.com/kravietz/d7ea4d98c5ffb79fc7a1b3d98be4de94/a306dba941cd6a6c56c65a08df879fa3033608ba#upgrade-luks).
@@ -1187,7 +1255,7 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512b
 ```
 
 ### Configuring the bootloader
-Boot into `Raspbian` of the Raspberry Pi, where the `root partition` should be re-encrypted and change the `boot order` of the `bootloader`:
+Boot into `Debian` of the Raspberry Pi, where the `root partition` should be re-encrypted and change the `boot order` of the `bootloader`:
 ```bash
 $ rpi-eeprom-config --edit
 #BOOT_ORDER=0xf41
@@ -1208,12 +1276,12 @@ The Raspberry Pi should now boot from the `USB stick`. Connect to it via `SSH` a
 ### Re-encrypting the partition
 `Re-encrypt` the `root-partition` via `cryptsetup-reencrypt`:
 ```bash
-$ cryptsetup-reencrypt --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" "/dev/mmcblk0p2"
+$ cryptsetup reencrypt --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" "/dev/mmcblk0p2"
 Enter passphrase for key slot 0: raspberry
 Progress:   5.0%, ETA 19:38,  744 MiB written, speed  12.0 MiB/s
 ```
 
-Note, newer versions of `cryptsetup` use `cryptsetup reencrypt`.
+Note, older versions of `cryptsetup` use `cryptsetup-reencrypt`.
 
 This process may take up to `30 minutes`.
 
@@ -1226,25 +1294,26 @@ $ reboot
 ```
 
 ### Verifying the new cipher method
-Finally, verify, if the re-encryption was successful:
+Finally, `verify`, if the re-encryption was successful:
 ```bash
 $ cryptsetup status cryptroot
 /dev/mapper/cryptroot is active and is in use.
-  type:    LUKS2
+type:    LUKS2
   cipher:  xchacha20,aes-adiantum-plain64
   keysize: 256 bits
   key location: keyring
   device:  /dev/mmcblk0p2
   sector size:  4096
   offset:  32768 sectors
-  size:    7720844 sectors
+  size:    119087104 sectors
   mode:    read/write
 ```
 
 The `USB stick` can now be disconnected.
 
 # Known issues
-**Note: For some reason, following the instructions [Encrypting the root partition manually](#encrypting-the-root-partition-manually) will provide an image file, which is **only compatible** with the Raspberry Pi revision, on which the `root partition` was resized.**
+## Compatibility
+**For some reason, following the instructions [Encrypting the root partition manually](#encrypting-the-root-partition-manually) will provide an image file, which is **only compatible** with the Raspberry Pi revision, on which the `root partition` was resized.**
 
 So, using an image, where the `root partition` was previously resized on a `Raspberry Pi Model B Rev 2` is **incompatible** with a `Raspberry Pi 4 Model B Rev 1.4`.
 
