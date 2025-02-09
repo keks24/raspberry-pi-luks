@@ -883,9 +883,10 @@ $ install -D --owner="root" --group="root" --mode="755" --verbose "raspberry-pi-
 ```
 
 #### Rebuilding the initramfs
-Finally, rebuild the `initramfs`:
+Finally, rebuild the `initramfs` and reboot:
 ```bash
 $ mkinitramfs -o "/boot/initramfs.cpio.gz"
+$ reboot
 ```
 
 #### Rebooting
