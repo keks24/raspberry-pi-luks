@@ -918,7 +918,7 @@ The `initramfs` can be unarchived on the system in order to analyse its content.
 ### Easy method
 The following command `unarchives` the `initramfs` directly to the `current working directory`:
 ```bash
-$ unmkinitramfs -v "/boot/initramfs.cpio.gz" .
+$ unmkinitramfs -v "/boot/initramfs.cpio.gz" "."
 .
 bin
 conf
@@ -956,7 +956,7 @@ unmkinitramfs cannot deal with multiple-segmented initramfs images, except where
 ### Elaborated method
 Copy the initramfs `initramfs.cpio.gz` to the `current working directory`:
 ```bash
-$ cp --archive "/boot/initramfs.cpio.gz" .
+$ cp --archive "/boot/initramfs.cpio.gz" "."
 ```
 
 Then, analyse which type of compression was used:
