@@ -86,7 +86,6 @@ The entire setup was done on a `amd64-based computer` with [`Gentoo Linux (Kerne
 ## Prerequisites
 * The following packages are installed:
 ```no-highlight
-aria2c
 coreutils
 cryptsetup-2.0.6 or higher
 e2fsprogs
@@ -100,15 +99,7 @@ util-linux
 * The capacity of the `SD card` must be greater than `64 GiB`.
 
 ## Downloading the image
-Download the files from [gofile.io](https://gofile.io/home):
-```bash
-$ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential="true" \
-    "<link_will_be_added_soon!>" \
-    "https://store-na-phx-1.gofile.io/download/web/72091c84-66c1-48d6-bfc1-3a7c858e20e2/raspberrypi_sd_card_backup.img.b2.asc" \
-    "https://store3.gofile.io/download/web/1414db62-3204-4a5e-b922-7a8d42f4110f/raspberrypi_sd_card_backup.img.b2" \
-    "https://store3.gofile.io/download/web/08e7b6e4-9f6f-4632-adfe-c2b38cc806b3/raspberrypi_sd_card_backup.img.sha256" \
-    "https://store3.gofile.io/download/web/2768d79b-bfdd-4ac6-aadb-12f41c8f875a/LICENSE"
-```
+Download the files from [gofile.io](https://gofile.io/d/1NMZEv).
 
 If the links are dead, due to infrequent downloads, please `proceed with` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
 
