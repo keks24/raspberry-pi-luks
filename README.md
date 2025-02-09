@@ -71,6 +71,7 @@ Table of Contents
       * [Reverting the modifications of the bootloader](#reverting-the-modifications-of-the-bootloader)
       * [Verifying the new cipher method](#verifying-the-new-cipher-method)
 * [Known issues](#known-issues)
+   * [Compatibility](#compatibility)
 
 # Introduction
 This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`.
@@ -1245,7 +1246,8 @@ $ cryptsetup status cryptroot
 The `USB stick` can now be disconnected.
 
 # Known issues
-**Note: For some reason, following the instructions [Encrypting the root partition manually](#encrypting-the-root-partition-manually) will provide an image file, which is **only compatible** with the Raspberry Pi revision, on which the `root partition` was resized.**
+## Compatibility
+**For some reason, following the instructions [Encrypting the root partition manually](#encrypting-the-root-partition-manually) will provide an image file, which is **only compatible** with the Raspberry Pi revision, on which the `root partition` was resized.**
 
 So, using an image, where the `root partition` was previously resized on a `Raspberry Pi Model B Rev 2` is **incompatible** with a `Raspberry Pi 4 Model B Rev 1.4`.
 
