@@ -95,7 +95,7 @@ linux-image-rpi-v8
 parted
 util-linux
 ```
-* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). `aes-xts-plain64` with a `key size` of `512 bits` may be preferred, if one is using a `Raspberry Pi 5`.
+* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 * The capacity of the `SD card` must be greater than `64 GiB`.
 
 ## Downloading the image
@@ -273,7 +273,7 @@ linux-image-rpi-v8
 ```
 
 * `qemu-user-static` is needed, if one is working on a `non-ARM operating system`.
-* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi 4's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). `aes-xts-plain64` with a `key size` of `512 bits` may be preferred, if one is using a `Raspberry Pi 5`.
+* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
 ## Downloading the stock image
@@ -448,7 +448,7 @@ Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img:
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). `aes-xts-plain64` with a `key size` of `512 bits` may be preferred, if one is using a `Raspberry Pi 5`.
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 
 The `LUKS header information` looks like so:
 ```bash
