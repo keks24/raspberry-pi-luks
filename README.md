@@ -1032,7 +1032,8 @@ To unarchive it, `zstd` is required and the file must have the suffix `.zst`:
 ```bash
 $ apt update
 $ apt install zstd
-$ mv initramfs8{,.cpio.zst}
+$ mv --verbose initramfs8{,.cpio.zst}
+renamed 'initramfs8' -> 'initramfs8.cpio.zst'
 $ zstd --decompress "initramfs8"
 ```
 
