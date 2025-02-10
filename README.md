@@ -787,7 +787,7 @@ no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/crypt
 
 The option `command` restricts the logged in user `root` to only execute the command `/usr/bin/cryptroot-unlock` within the `initramfs`. All other options should be self-explained, but can be looked up at `man 8 sshd`. The path to the binary can be determined by [examining](#examining-the-initramfs) or [unarchiving the content of the `initramfs`](#unarchiving-the-initramfs).
 
-Removing all options will grant access to the `busybox` as user `root`.
+Removing the option `command` will grant access to the `busybox` as user `root`.
 
 Make sure, that the `SSH public key` is copied correctly, since `logins via password` are disabled.
 
