@@ -130,7 +130,7 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512b" c
 ```
 
 ### Analysing the root partition
-After that, boot into `Debian` and check the partition structure via `parted`:
+After that, boot into `Raspberry Pi OS (Debian)` and check the partition structure via `parted`:
 ```bash
 $ parted --list
 Model: Linux device-mapper (crypt) (dm)
@@ -334,7 +334,7 @@ Unmount the `boot partition`:
 $ umount "/mnt/"
 ```
 
-Insert the `SD card` into the Raspberry Pi and boot into `Debian`. This will create the user `pi`, the daemon `sshd` will be started and the `root partition` will be extended to its full capacity.
+Insert the `SD card` into the Raspberry Pi and boot into `Raspberry Pi OS (Debian)`. This will create the user `pi`, the daemon `sshd` will be started and the `root partition` will be extended to its full capacity.
 
 It may be necessary to `scan the network` for `active devices` and `probe the port 22 (SSH)`, in order to find the Raspberry Pi:
 ```bash
@@ -1127,7 +1127,7 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="
 ```
 
 ### Installing necessary tools
-Once this is done, boot into `Debian` and install the package `uuid`:
+Once this is done, boot into `Raspberry Pi OS (Debian)` and install the package `uuid`:
 ```bash
 $ apt update
 $ apt install uuid
@@ -1233,7 +1233,7 @@ Further configuration is needed for this.
 ### Prerequisites
 * `LUKS` partition `version 2` (`cryptsetup luksDump "/dev/mmcblk0p2" | grep "Version"`)
 * Raspberry Pi 4
-* Bootable `USB stick` with `Debian`, which is accessable via `SSH`
+* Bootable `USB stick` with `Raspberry Pi OS (Debian)`, which is accessable via `SSH`
     * `cryptsetup-2.0.6` or higher
 
 If the `LUKS` partition version is `1`, please upgrade it to version `2` first, using [these instructions](https://gist.github.com/kravietz/d7ea4d98c5ffb79fc7a1b3d98be4de94/a306dba941cd6a6c56c65a08df879fa3033608ba#upgrade-luks).
@@ -1247,7 +1247,7 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512b
 ```
 
 ### Configuring the bootloader
-Boot into `Debian` of the Raspberry Pi, where the `root partition` should be re-encrypted and change the `boot order` of the `bootloader`:
+Boot into `Raspberry Pi OS (Debian)` of the Raspberry Pi, where the `root partition` should be re-encrypted and change the `boot order` of the `bootloader`:
 ```bash
 $ rpi-eeprom-config --edit
 #BOOT_ORDER=0xf41
