@@ -74,11 +74,11 @@ Table of Contents
    * [Compatibility](#compatibility)
 
 # Introduction
-This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 12 (Bookworm)` on a `Raspberry Pi 4 Model B Rev 1.4`.
+This repository shall describe all necessary steps, in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 12 (Bookworm)` on a `Raspberry Pi 4 Model B Rev 1.4`.
 
 The instructions are adaptable for `other Raspberry Pi revisions` as well. They should also work on `image files with partition information` in general.
 
-The entire setup was done on a `amd64-based computer` with [`Gentoo Linux (Kernel 6.6.67)`](https://www.gentoo.org/downloads/).
+The entire setup was done on an `amd64-based computer` with [`Gentoo Linux (Kernel 6.6.67)`](https://www.gentoo.org/downloads/).
 
 **Please read [Known issues](#known-issues) first before following any of the instructions!**
 
@@ -121,7 +121,7 @@ $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" st
 ```
 
 ## Resizing the root partition
-When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~64 GiB`. Therefore, it needs to be `extended` in order to use the `unused free space`.
+When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~64 GiB`. Therefore, it needs to be `extended`, in order to use the `unused free space`.
 
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
@@ -277,7 +277,7 @@ linux-image-rpi-v8
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
 ## Downloading the stock image
-Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum:
+Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum file:
 
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential="true" \
@@ -551,7 +551,7 @@ $ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 
 **`qemu-aarch64-static` is mandatory, if one is working on a `non-ARM operating system`!**
 
-`/etc/resolv.conf` contains entries of `DNS name servers`, which are required within the `chroot environment` in order to make `reverse DNS lookups` possible.
+`/etc/resolv.conf` contains entries of `DNS name servers`, which are required within the `chroot environment`, in order to make `reverse DNS lookups` possible.
 
 Enter the new environment:
 ```bash
@@ -562,7 +562,7 @@ $ export PS1="(chroot) ${PS1}"
 ```
 
 #### Installing necessary tools
-An `initramfs` is needed in order to decrypt the `root partition` on boot. The following packages will provide all tools to build it:
+An `initramfs` is needed, in order to decrypt the `root partition` on boot. The following packages will provide all tools to build it:
 ```bash
 (chroot) $ apt update
 (chroot) $ apt install busybox cryptsetup cryptsetup-initramfs initramfs-tools
@@ -693,7 +693,7 @@ usr/sbin/cryptsetup
 usr/bin/sha256sum
 ```
 
-Also make sure, that the content of `cryptroot/crypttab` is correct.
+Also make sure, that the content of `/cryptroot/crypttab` is correct.
 
 Detailed debugging is explained [below](#debugging).
 
@@ -974,7 +974,7 @@ $ lsinitramfs "/boot/firmware/initramfs8" | less
 This is useful, if one wants to check a `recent-built initramfs` in a quick way.
 
 ## Unarchiving the initramfs
-The `initramfs` can be unarchived on the system in order to analyse its content.
+The `initramfs` can be unarchived on the system, in order to analyse its content.
 
 ### Easy method
 The following command `unarchives` the `initramfs` directly to the `current working directory`:
@@ -1024,7 +1024,7 @@ $ cp --archive "/boot/firmware/initramfs8" "."
 
 Then, analyse which type of compression was used:
 ```bash
-$ file i"nitramfs8"
+$ file "initramfs8"
 initramfs8: Zstandard compressed data (v0.8+), Dictionary ID: None
 ```
 
@@ -1133,7 +1133,7 @@ $ apt install uuid
 ```
 
 ### Changing the UUID
-Next, generate a `new random UUID` via `uuidgen` and `modify` the `root partition` via `cryptsetup`:
+Next, generate a `new random UUID` via `uuid` and `modify` the `root partition` via `cryptsetup`:
 ```bash
 $ uuid -v 4
 8be664e3-e89d-4c23-adda-657eb936b1e5
@@ -1168,7 +1168,7 @@ Rebuild the `initramfs`:
 $ update-initramfs -vuk 6.6.74+rpt-rpi-v8
 ```
 
-Make sure, that the following important files are present in the `initramfs` file `/boo/firmware/initramfs8`:
+Make sure, that the following important files are present in the `initramfs` file `/boot/firmware/initramfs8`:
 ```bash
 $ lsinitramfs "/boot/firmware/initramfs8" | grep --extended-regexp "adiantum|aes-arm|algif_skcipher|dm-crypt|nhpoly|sha2|chacha|crypttab|sbin/cryptsetup|usr/bin/cryptroot-unlock"
 cryptroot/crypttab
@@ -1265,7 +1265,7 @@ $ reboot
 The Raspberry Pi should now boot from the `USB stick`. Connect to it via `SSH` and proceed with the next step.
 
 ### Re-encrypting the partition
-`Re-encrypt` the `root-partition` via `cryptsetup-reencrypt`:
+`Re-encrypt` the `root-partition` via `cryptsetup reencrypt`:
 ```bash
 $ cryptsetup reencrypt --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" "/dev/mmcblk0p2"
 Enter passphrase for key slot 0: raspberry
