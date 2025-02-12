@@ -95,8 +95,10 @@ linux-image-rpi-v8
 parted
 util-linux
 ```
-* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * The capacity of the `SD card` must be greater than `64 GiB`.
+
+If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 
 ## Downloading the image
 Download the files from [gofile.io](https://gofile.io/d/1NMZEv).
@@ -273,8 +275,10 @@ linux-image-rpi-v8
 ```
 
 * `qemu-user-static` is needed, if one is working on a `non-ARM operating system`.
-* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+* `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * Free space of at least `1.5 times` the capactiy of the `SD card`
+
+If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 
 ## Downloading the stock image
 Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum file:
