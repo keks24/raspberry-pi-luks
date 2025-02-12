@@ -735,7 +735,7 @@ After entering the password, the `Raspberry Pi` should boot.
 
 # Further steps
 ## Updating all installed packages
-Since only the kernel package `linux-image-rpi-v8` has been upgraded earlier, the probability is very high, that `new packages` are available. Update them using the following commands:
+Since only some of the above mentioned packages have been upgraded, the probability is very high, that `new packages` are available. Update them using the following commands:
 ```bash
 $ apt update
 $ apt list --upgradable
