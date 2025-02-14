@@ -9,7 +9,7 @@ Table of Contents
       * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card)
       * [Analysing the root partition](#analysing-the-root-partition)
       * [Extending the root partition](#extending-the-root-partition)
-      * [Calculating new LUKS partition size](#calculating-new-luks-partition-size)
+      * [Extending the filesystem](#extending-the-filesystem)
       * [Rebooting and verifying](#rebooting-and-verifying)
    * [Further steps](#further-steps)
       * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
@@ -194,23 +194,17 @@ Number  Start   End     Size    Type     File system  Flags
 
 The command `resizepart` will be used to `extend` the partition, where `-1` defines the last sector of the SD card.
 
-### Calculating new LUKS partition size
-After `extending` the partition via `parted`, the new `LUKS partition size` needs to be `calculated` via `cryptsetup` as well:
+### Extending the filesystem
+Once this is done, use `resize2fs` to `extend` the filesystem:
 ```bash
-$ cryptsetup resize cryptroot
-Enter passphrase for /dev/mmcblk0p2: raspberry
-```
-
-Once this is done, use `resize2fs` to `resize` the partition:
-```bash
-$ resize2fs /dev/mapper/cryptroot
+$ resize2fs "/dev/mapper/cryptroot"
 resize2fs 1.47.0 (5-Feb-2023)
 Filesystem at /dev/mapper/cryptroot is mounted on /; on-line resizing required
 old_desc_blocks = 1, new_desc_blocks = 4
 The filesystem on /dev/mapper/cryptroot is now 65498251264 (4k) blocks long.
 ```
 
-Note, that the partition size of `65498251264 Bytes (~61 GB)` is still indicated.
+Note, that the filesystem size of `65498251264 Bytes (~61 GB)` is still indicated.
 
 ### Rebooting and verifying
 After rebooting, all changes are applied properly:
