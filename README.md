@@ -701,7 +701,7 @@ Exit the `chroot`, unmount the `boot partition` and all `pseudo filesystems`:
 (chroot) $ exit
 $ cd
 $ umount "/mnt/boot/firmware/"
-$ umount --lazy --recursive /mnt/{proc/,sys/,dev/} "/mnt/"
+$ umount --lazy --recursive /mnt/{proc/,sys/,dev/}
 ```
 
 Remove `qemu-aarch64-static` from `/mnt/usr/bin/`:
