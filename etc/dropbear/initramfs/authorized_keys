@@ -1,1 +1,7 @@
-no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGOVnCMzzi5u9qsCzr5DlGqqtcCenMaT8NTOv1ZviSVz <some_username>@<some_hostname>
+# the following permissions for this file should be set to:
+# owner: root
+# group: root
+# file access: 600
+
+# example entry
+#no-port-forwarding,no-agent-forwarding,no-x11-forwarding,command="/usr/bin/cryptroot-unlock" ssh-ed25519 [...]
