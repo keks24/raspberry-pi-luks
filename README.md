@@ -464,10 +464,14 @@ $ umount "/mnt/"
 ```
 
 ### Encrypting the root partition
-Since the preparation is done, the `root partition` can now be `formatted and encrypted` via `cryptsetup`:
+Since the preparation is done, the `root partition` can now be `overwritten with random characters` before formatting, in order to `decrease the chance of external recovery` from `third parties`:
+```bash
+$ dd if="/dev/urandom" of="/dev/loop2" bs="512b" conv="fsync" status="progress"
+```
+
+Then `format` and `encrypt` the `root partition` via `cryptsetup`:
 ```bash
 $ cryptsetup --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" --sector-size="4096" luksFormat "/dev/loop2"
-WARNING: Device /dev/loop2 already contains a 'ext4' superblock signature.
 
 WARNING!
 ========
@@ -478,7 +482,7 @@ Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img:
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 Bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 
 The `LUKS header information` looks like so:
 ```bash
@@ -528,7 +532,7 @@ Digests:
                     eb 44 63 b7 91 c1 7e 77 c4 e3 d6 b0 ca 6b 64 39
 ```
 
-Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#Cipher%20and%20Hash%20specification%20registry).
+Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#cipher-and-hash-specification-registry).
 
 If the encryption method `aes-xts-plain64` is preferred, make absolutely sure, that the `key size` is `at least 512 bits`, [since `XTS` splits the key size in half](https://wiki.archlinux.org/index.php/dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode).
 
@@ -1122,7 +1126,7 @@ The following diagram shows the `partition structure` in `Kibibytes`, which will
 └─────────────────────┴─────────────────────────────────────────────┘
 ```
 
-[Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf)
+[Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf#luks2-on-disk-format)
 
 As side note, the [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/lib/luks2/luks2.h?ref_type=heads#L27) is `hardcoded` to `32`.
 
