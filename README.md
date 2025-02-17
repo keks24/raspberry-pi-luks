@@ -52,7 +52,7 @@ Table of Contents
         * [Shrinking the filesystem](#shrinking-the-filesystem)
         * [Shrinking the root partition](#shrinking-the-root-partition)
         * [Truncating the modified image](#truncating-the-modified-image)
-        * [Verifying the modification](#verifying-the-modification)
+        * [Verifying the data integrity](#verifying-the-data-integrity)
         * [Copying the modified image to the SD card](#copying-the-modified-image-to-the-sd-card)
 * [Debugging](#debugging)
     * [Examining the initramfs](#examining-the-initramfs)
@@ -68,7 +68,7 @@ Table of Contents
     * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
         * [Installing necessary tools](#installing-necessary-tools-1)
         * [Changing the UUID](#changing-the-uuid)
-        * [Verifying the modification](#verifying-the-modification-1)
+        * [Verifying the modification](#verifying-the-modification)
         * [Adapting configuration files](#adapting-configuration-files)
         * [Rebuilding the initramfs](#rebuilding-the-initramfs-2)
         * [Rebooting](#rebooting-2)
@@ -255,7 +255,7 @@ That is:
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
 
-For good measure, `dumpe2fs` can be used to see the `real sector size (block count)` and `real size (block size)` of the `decrypted root partition`:
+For good measure, the command `dumpe2fs` can be used to see the `real sector size (block size)` and `real size (block count)` of the `decrypted root partition`:
 ```bash
 $ dumpe2fs "/dev/mapper/cryptroot" | grep "Block "
 Block count:              14884108
@@ -1070,7 +1070,7 @@ Pass 5: Checking group summary information
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
 
 ### Shrinking the filesystem
-Next, `determine` the lowest filesystem size possible via `resize2fs`. This command can handle the `filesystem type` `ext4`. Moreover, it is capable of `moving data on-demand`, so defragmentation before this process via `e4defrag` is **not needed**:
+Next, `determine` the lowest filesystem size possible via `resize2fs`. This command can handle the `filesystem type ext4`. Moreover, it is capable of `moving data on-demand`, so defragmentation before this process via `e4defrag` is **not needed**:
 ```bash
 $ resize2fs "/dev/mapper/cryptsdcardbackup" "1"
 resize2fs 1.47.1 (20-May-2024)
@@ -1079,7 +1079,7 @@ resize2fs: New size smaller than minimum (889692)
 
 This will return the `lowest filesystem size (889692)` in `4 Kibibyte sectors`, which was automatically determined by the underlying `ext4 filesystem`. **This value should not be used as is, since it is not taking the `LUKS header size` into consideration!**
 
-Be aware, that the command was `intentionally` executed in a wrong way, since the parameter `-n` for a `dry run` is not available.
+Be aware, that the command was `intentionally` executed in a wrong way, since there is no available parameter for a `dry run`.
 
 Further information can be looked up at `man 8 resize2fs`.
 
@@ -1106,7 +1106,7 @@ The filesystem on /dev/mapper/cryptsdcardbackup is now 930652 (4k) blocks long.
 ### Shrinking the root partition
 Once this is done, the `partition information` need to be `adjusted` to the `new filesystem size`.
 
-Before doing so, `close` the `LUKS` and `detach` the `loop device`, in order to not have any other activity to the image:
+Before doing so, `close` the `LUKS device` and `detach` the `loop device`, in order to not have any other activity to the image:
 ```bash
 $ cryptsetup close cryptsdcardbackup
 $ losetup --detach "/dev/loop2"
@@ -1128,7 +1128,7 @@ The following diagram shows the `partition structure` in `Kibibytes`, which will
 
 [Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf#luks2-on-disk-format)
 
-As side note, the [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/lib/luks2/luks2.h?ref_type=heads#L27) is `hardcoded` to `32`.
+As a side note: The [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/lib/luks2/luks2.h?ref_type=heads#L27) is `hardcoded` to `32`.
 
 This above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`.
 
@@ -1196,7 +1196,7 @@ total 4943224K
 -rw-r--r-- 1 root root 4943216K Feb 16 22:08 raspberrypi_sd_card_backup.img
 ```
 
-### Verifying the modification
+### Verifying the data integrity
 **Before copying the modified image to the SD card, checking the `data integrity` is mandatory!**
 
 Therefore, the `root partition` needs to be `mounted again`:
@@ -1212,7 +1212,7 @@ Number  Start     End         Size        Type     File system  Flags
  1      8192s     1056767s    1048576s    primary  fat32        lba
  2      1056768s  120176639s  119119872s  primary
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/root/tmp/raspberrypi_sd_card_backup.img" cryptsdcardbackup
+$ cryptsetup open "/dev/loop2" cryptsdcardbackup
 Enter passphrase for /dev/loop2: raspberry
 ```
 
@@ -1283,9 +1283,9 @@ $ cryptsetup status "/dev/mapper/cryptsdcardbackup"
   mode:    read/write
 ```
 
-Be aware, that the `size` is in `512-Byte-sectors`, even, if `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
-After that, `close` the `LUKS` and `detach` the `loop device`:
+After that, `close` the `LUKS device` and `detach` the `loop device`:
 ```bash
 $ cryptsetup close cryptsdcardbackup
 $ losetup --detach "/dev/loop2"
@@ -1558,7 +1558,7 @@ $ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
 ```
 
 ## Re-encrypting the root partition
-When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `key slot hashes and salts` are identical. **It is mandatory to change these.**
+When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `key slot hashes and salts` are identical. **It is mandatory to change these!**
 
 This method can also be used to apply a `new cipher method` to the `root partition`.
 
