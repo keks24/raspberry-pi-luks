@@ -1,77 +1,88 @@
 Table of Contents
 =================
+* [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Using the modified image](#using-the-modified-image)
-   * [Prerequisites](#prerequisites)
-   * [Downloading the image](#downloading-the-image)
-   * [Copying the image to the SD card](#copying-the-image-to-the-sd-card)
-   * [Resizing the root partition](#resizing-the-root-partition)
-      * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card)
-      * [Analysing the root partition](#analysing-the-root-partition)
-      * [Extending the root partition](#extending-the-root-partition)
-      * [Extending the filesystem](#extending-the-filesystem)
-      * [Rebooting and verifying](#rebooting-and-verifying)
-   * [Further steps](#further-steps)
-      * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
-      * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
+    * [Prerequisites](#prerequisites)
+    * [Downloading the image](#downloading-the-image)
+    * [Copying the image to the SD card](#copying-the-image-to-the-sd-card)
+    * [Extending the root partition](#extending-the-root-partition)
+        * [Creating a backup of the image](#creating-a-backup-of-the-image)
+        * [Analysing the root partition](#analysing-the-root-partition)
+        * [Extending the root partition](#extending-the-root-partition-1)
+        * [Calculating new LUKS device size](#calculating-new-luks-device-size)
+        * [Extending the filesystem](#extending-the-filesystem)
+        * [Verifying the filesystem](#verifying-the-filesystem)
+    * [Further steps](#further-steps)
+        * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
+        * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
-   * [Prerequisites](#prerequisites-1)
-      * [Separate system](#separate-system)
-      * [Raspberry Pi](#raspberry-pi)
-   * [Downloading the stock image](#downloading-the-stock-image)
-   * [Configuration](#configuration)
-      * [Preparation](#preparation)
-      * [Encrypting the root partition](#encrypting-the-root-partition)
-      * [Entering the chroot environment](#entering-the-chroot-environment)
-         * [Installing necessary tools](#installing-necessary-tools)
-         * [Configuration](#configuration-1)
-         * [Generating the initramfs](#generating-the-initramfs)
-         * [Exiting the chroot environment](#exiting-the-chroot-environment)
+    * [Prerequisites](#prerequisites-1)
+        * [Separate system](#separate-system)
+        * [Raspberry Pi](#raspberry-pi)
+    * [Downloading the stock image](#downloading-the-stock-image)
+    * [Configuration](#configuration)
+        * [Preparation](#preparation)
+        * [Encrypting the root partition](#encrypting-the-root-partition)
+        * [Entering the chroot environment](#entering-the-chroot-environment)
+            * [Installing necessary tools](#installing-necessary-tools)
+            * [Configuration](#configuration-1)
+            * [Generating the initramfs](#generating-the-initramfs)
+            * [Exiting the chroot environment](#exiting-the-chroot-environment)
 * [Installing the modified image](#installing-the-modified-image)
 * [Further steps](#further-steps-1)
-   * [Updating all installed packages](#updating-all-installed-packages)
+    * [Copying the modified image to smaller data storage devices](#copying-the-modified-image-to-smaller-data-storage-devices)
+    * [Updating all installed packages](#updating-all-installed-packages)
 * [Optional steps](#optional-steps)
-   * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
-      * [Install dropbear-initramfs](#install-dropbear-initramfs)
-      * [Configure dropbear](#configure-dropbear)
-      * [Configuring kernel parameters](#configuring-kernel-parameters)
-      * [Rebuilding the initramfs](#rebuilding-the-initramfs)
-      * [Rebooting](#rebooting)
-      * [Testing remote decryption](#testing-remote-decryption)
-      * [Optional fancy SSH ASCII banner](#optional-fancy-ssh-ascii-banner)
-         * [Configuring dropbear](#configuring-dropbear)
-         * [Generating a fancy ASCII banner](#generating-a-fancy-ascii-banner)
-         * [Rebuilding the initramfs](#rebuilding-the-initramfs-1)
-         * [Rebooting](#rebooting-1)
+    * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
+        * [Install dropbear-initramfs](#install-dropbear-initramfs)
+        * [Configure dropbear](#configure-dropbear)
+        * [Configuring kernel parameters](#configuring-kernel-parameters)
+        * [Rebuilding the initramfs](#rebuilding-the-initramfs)
+        * [Rebooting](#rebooting)
+        * [Testing remote decryption](#testing-remote-decryption)
+        * [Optional fancy SSH ASCII banner](#optional-fancy-ssh-ascii-banner)
+            * [Configuring dropbear](#configuring-dropbear)
+            * [Generating a fancy ASCII banner](#generating-a-fancy-ascii-banner)
+            * [Rebuilding the initramfs](#rebuilding-the-initramfs-1)
+            * [Rebooting](#rebooting-1)
+    * [Shrinking the modified image](#shrinking-the-modified-image)
+        * [Creating a backup of the image](#creating-a-backup-of-the-image-1)
+        * [Analysing the filesystem](#analysing-the-filesystem)
+        * [Shrinking the filesystem](#shrinking-the-filesystem)
+        * [Shrinking the root partition](#shrinking-the-root-partition)
+        * [Truncating the modified image](#truncating-the-modified-image)
+        * [Verifying the modification](#verifying-the-modification)
+        * [Copying the modified image to the SD card](#copying-the-modified-image-to-the-sd-card)
 * [Debugging](#debugging)
-   * [Examining the initramfs](#examining-the-initramfs)
-   * [Unarchiving the initramfs](#unarchiving-the-initramfs)
-      * [Easy method](#easy-method)
-      * [Elaborated method](#elaborated-method)
+    * [Examining the initramfs](#examining-the-initramfs)
+    * [Unarchiving the initramfs](#unarchiving-the-initramfs)
+        * [Easy method](#easy-method)
+        * [Elaborated method](#elaborated-method)
 * [Additional information](#additional-information)
-   * [Credentials](#credentials)
-      * [LUKS password](#luks-password)
-      * [User credentials](#user-credentials)
-      * [Changing the user password](#changing-the-user-password)
-      * [Changing the LUKS password](#changing-the-luks-password)
-   * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
-      * [Installing necessary tools](#installing-necessary-tools-1)
-      * [Changing the UUID](#changing-the-uuid)
-      * [Verifying the modification](#verifying-the-modification)
-      * [Adapting configuration files](#adapting-configuration-files)
-      * [Rebuilding the initramfs](#rebuilding-the-initramfs-2)
-      * [Rebooting](#rebooting-2)
-   * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
-   * [Re-encrypting the root partition](#re-encrypting-the-root-partition-1)
-      * [Prerequisites](#prerequisites-2)
-      * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1)
-      * [Configuring the bootloader](#configuring-the-bootloader)
-      * [Adapting the modifications of the bootloader](#adapting-the-modifications-of-the-bootloader)
-      * [Re-encrypting the partition](#re-encrypting-the-partition)
-      * [Reverting the modifications of the bootloader](#reverting-the-modifications-of-the-bootloader)
-      * [Verifying the new cipher method](#verifying-the-new-cipher-method)
+    * [Credentials](#credentials)
+        * [LUKS password](#luks-password)
+        * [User credentials](#user-credentials)
+        * [Changing the user password](#changing-the-user-password)
+        * [Changing the LUKS password](#changing-the-luks-password)
+    * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
+        * [Installing necessary tools](#installing-necessary-tools-1)
+        * [Changing the UUID](#changing-the-uuid)
+        * [Verifying the modification](#verifying-the-modification-1)
+        * [Adapting configuration files](#adapting-configuration-files)
+        * [Rebuilding the initramfs](#rebuilding-the-initramfs-2)
+        * [Rebooting](#rebooting-2)
+    * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
+    * [Re-encrypting the root partition](#re-encrypting-the-root-partition-1)
+        * [Prerequisites](#prerequisites-2)
+        * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card)
+        * [Configuring the bootloader](#configuring-the-bootloader)
+        * [Adapting the modifications of the bootloader](#adapting-the-modifications-of-the-bootloader)
+        * [Re-encrypting the partition](#re-encrypting-the-partition)
+        * [Reverting the modifications of the bootloader](#reverting-the-modifications-of-the-bootloader)
+        * [Verifying the new cipher method](#verifying-the-new-cipher-method)
 * [Known issues](#known-issues)
-   * [Compatibility](#compatibility)
+    * [Compatibility](#compatibility)
 
 # Introduction
 This repository shall describe all necessary steps, in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 12 (Bookworm)` on a `Raspberry Pi 4 Model B Rev 1.4`.
@@ -96,12 +107,12 @@ parted
 util-linux
 ```
 * `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
-* The capacity of the `SD card` must be greater than `64 GiB`.
+* The capacity of the `SD card` must be greater than `3.3 GiB`.
 
-If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 
 ## Downloading the image
-Download the files from [gofile.io](https://gofile.io/d/1NMZEv).
+Download the files from [gofile.io](https://gofile.io/d/JA1Wzd).
 
 If the links are dead, due to infrequent downloads, please `proceed with` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
 
@@ -109,7 +120,7 @@ Check the `data integrity` and `verify` the signature:
 ```bash
 $ b2sum --check "raspberrypi_sd_card_backup.img.b2"
 raspberrypi_sd_card_backup.img: OK
-$ gpg --verify "raspberrypi_sd_card_backup.img.asc" "raspberrypi_sd_card_backup.img"
+$ gpg --verify "raspberrypi_sd_card_backup.img.b2.asc" "raspberrypi_sd_card_backup.img.b2"
 gpg: Signature made Sat Feb  8 15:37:15 2025 CET
 gpg:                using RSA key 598398DA5F4DA46438FDCF87155BE26413E699BF
 gpg: Good signature from "Ramon Fischer (ramon@sharkoon) <RamonFischer24@googlemail.com>" [ultimate]
@@ -122,13 +133,14 @@ Copy the image to the `SD card`:
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
 ```
 
-## Resizing the root partition
-When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~64 GiB`. Therefore, it needs to be `extended`, in order to use the `unused free space`.
+## Extending the root partition
+When copying the image to other data storage devices with `higher capacity`, the `encrypted root partition` will stay at `~3.3 GiB`. Therefore, it needs to be `extended`, in order to use the `unused free space`.
 
-### Creating a backup of the SD card
-Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
+### Creating a backup of the image
+Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512b" conv="fsync" status="progress"
+$ cp --archive --verbose raspberrypi_sd_card_backup{,_before_extending}.img
+'raspberrypi_sd_card_backup' -> 'raspberrypi_sd_card_backup_before_extending.img'
 ```
 
 ### Analysing the root partition
@@ -136,27 +148,27 @@ After that, boot into `Raspberry Pi OS (Debian)` and check the partition structu
 ```bash
 $ parted --list
 Model: Linux device-mapper (crypt) (dm)
-Disk /dev/mapper/cryptroot: 61.0GB
+Disk /dev/mapper/cryptroot: 3963MB
 Sector size (logical/physical): 4096B/4096B
 Partition Table: loop
 Disk Flags:
 
 Number  Start  End     Size    File system  Flags
- 1      0.00B  61.0GB  61.0GB  ext4
+ 1      0.00B  3963MB  3963MB  ext4
 
 
 Model: SD SC64G (sd/mmc)
-Disk /dev/mmcblk0: 127.9GB
+Disk /dev/mmcblk0: 61.5GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start   End     Size    Type     File system  Flags
  1      4194kB  541MB   537MB   primary  fat32        lba
- 2      541MB   61.5GB  61.0GB  primary
+ 2      541MB   4521MB  3980MB  primary
 ```
 
-This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `61.0 GB`, but the SD card's total capacity is `127.9`.
+This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `~4 GB`, but the SD card's total capacity is `61.5 GB`.
 
 ### Extending the root partition
 In order to `extend` the `second partition`, execute the following commands:
@@ -167,7 +179,21 @@ Using /dev/mmcblk0
 Welcome to GNU Parted! Type 'help' to view a list of commands.
 (parted) print
 Model: SD SC64G (sd/mmc)
-Disk /dev/mmcblk0: 127.9GB
+Disk /dev/mmcblk0: 61.5GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      4194kB  541MB   537MB   primary  fat32        lba
+ 2      541MB   4521MB  3980MB  primary
+
+(parted) resizepart
+Partition number? 2
+End?  [61.5GB]? -1
+(parted) print
+Model: SD SC64G (sd/mmc)
+Disk /dev/mmcblk0: 61.5GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
@@ -176,23 +202,17 @@ Number  Start   End     Size    Type     File system  Flags
  1      4194kB  541MB   537MB   primary  fat32        lba
  2      541MB   61.5GB  61.0GB  primary
 
-(parted) resizepart
-Partition number? 2
-End?  [61.5GB]? -1
-(parted) print
-Model: SD SC64G (sd/mmc)
-Disk /dev/mmcblk0: 127.9GB
-Sector size (logical/physical): 512B/512B
-Partition Table: msdos
-Disk Flags:
-
-Number  Start   End     Size    Type     File system  Flags
- 1      4194kB  541MB   537MB   primary  fat32        lba
- 2      541MB   127.9GB 127.4GB primary
 (parted) quit
 ```
 
-The command `resizepart` will be used to `extend` the partition, where `-1` defines the last sector of the SD card.
+The command `resizepart` is used to `extend` the partition, where `-1` defines the `last sector` of the SD card.
+
+### Calculating new LUKS device size
+After `extending` the partition via `parted`, the new `LUKS device size` needs to be `calculated` via `cryptsetup` as well:
+```bash
+$ cryptsetup resize cryptroot
+Enter passphrase for /dev/mmcblk0p2: raspberry
+```
 
 ### Extending the filesystem
 Once this is done, use `resize2fs` to `extend` the filesystem:
@@ -200,16 +220,15 @@ Once this is done, use `resize2fs` to `extend` the filesystem:
 $ resize2fs "/dev/mapper/cryptroot"
 resize2fs 1.47.0 (5-Feb-2023)
 Filesystem at /dev/mapper/cryptroot is mounted on /; on-line resizing required
-old_desc_blocks = 1, new_desc_blocks = 4
-The filesystem on /dev/mapper/cryptroot is now 65498251264 (4k) blocks long.
+old_desc_blocks = 1, new_desc_blocks = 1
+The filesystem on /dev/mapper/cryptroot is now 14884108 (4k) blocks long.
 ```
 
-Note, that the filesystem size of `65498251264 Bytes (~61 GB)` is still indicated.
+Note, that the filesystem size is now `~56.78 GiB`.
 
-### Rebooting and verifying
-After rebooting, all changes are applied properly:
+### Verifying the filesystem
+All changes are now applied properly:
 ```bash
-$ reboot
 $ cryptsetup status cryptroot
 /dev/mapper/cryptroot is active and is in use.
   type:    LUKS2
@@ -219,9 +238,11 @@ $ cryptsetup status cryptroot
   device:  /dev/mmcblk0p2
   sector size:  4096
   offset:  32768 sectors
-  size:    33397145 sectors
+  size:    119072864 sectors
   mode:    read/write
 ```
+
+Be aware, that the `size` is in `512-Byte-sectors`, even, if `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
 To check, if the values are correct, the following formula can be used:
 ```no-highlight
@@ -230,10 +251,22 @@ To check, if the values are correct, the following formula can be used:
 
 That is:
 ```no-highlight
-(4096 Bytes * 33397145) / 1024^3 = 127.39 GiB
+(512 Bytes * 119072864) / 1024^3 = ~56.78 GiB
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
+
+For good measure, `dumpe2fs` can be used to see the `real sector size (block count)` and `real size (block size)` of the `decrypted root partition`:
+```bash
+$ dumpe2fs "/dev/mapper/cryptroot" | grep "Block "
+Block count:              14884108
+Block size:               4096
+```
+
+Which leads to the `same result` as above:
+```no-highlight
+(4096 Bytes * 14884108) / 1024^3 = ~56.78 GiB
+```
 
 ## Further steps
 ### Re-encrypting the root partition
@@ -272,7 +305,7 @@ linux-image-rpi-v8
 * `Linux Kernel 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
-If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 
 ## Downloading the stock image
 Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum file:
@@ -399,7 +432,7 @@ Number  Start     End         Size        Type     File system  Flags
  2      1056768s  120176639s  119119872s  primary  ext4
 ```
 
-In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 1056768`. The `logical sector size` is `512 bytes`.
+In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 1056768`. The `logical sector size` is `512 Bytes`.
 
 These values can be used to mount the partitions from the image.
 
@@ -446,7 +479,7 @@ Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img:
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
 
 The `LUKS header information` looks like so:
 ```bash
@@ -732,6 +765,9 @@ Please unlock disk cryptroot: raspberry
 After entering the password, the `Raspberry Pi` should boot.
 
 # Further steps
+## Copying the modified image to smaller data storage devices
+In order to copy the modified image to `smaller` data storage devices, the `filesystem` and `partition information` and the `image size` need to be `adjusted` accordingly; see [Shrinking the modified image](#shrinking-the-modified-image) below.
+
 ## Updating all installed packages
 Since only some of the above mentioned packages have been upgraded, the probability is very high, that `new packages` are available. Update them using the following commands:
 ```bash
@@ -962,6 +998,305 @@ $ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_ed
 Please unlock disk cryptroot: raspberry
 ```
 
+## Shrinking the modified image
+When copying the image to other data storage devices with `lower capacity`, the `filesystem` and `partition information` and the `image size` need to be `shrunk`, in order to fit on the new device.
+
+**This can only be done, if the image is not in use; it is not possbile to do this `on-the-fly`!**
+
+### Creating a backup of the image
+Before making any changes, create a `backup` of the `modified image`, since the following commands `can corrupt data`:
+```bash
+$ cp --archive --verbose raspberrypi_sd_card_backup{,_before_shrinking}.img
+'raspberrypi_sd_card_backup' -> 'raspberrypi_sd_card_backup_before_shrinking.img'
+```
+
+### Analysing the filesystem
+After that, check, that there are free `loop devices` at `/dev/`:
+```bash
+$ losetup --list
+```
+
+Then, decrypt the `root partition`:
+```bash
+$ parted "raspberrypi_sd_card_backup.img" "unit s print"
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 120176640s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start     End         Size        Type     File system  Flags
+ 1      8192s     1056767s    1048576s    primary  fat32        lba
+ 2      1056768s  120176639s  119119872s  primary
+$ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
+$ cryptsetup open "/root/tmp/raspberrypi_sd_card_backup.img" cryptsdcardbackup
+Enter passphrase for /dev/loop2: raspberry
+```
+
+Once this is done, `verify the filesystem integrity` via `e2fsck`:
+```bash
+$ e2fsck -f "/dev/mapper/cryptsdcardbackup"
+e2fsck 1.47.1 (20-May-2024)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+
+       82247 inodes used (2.21%, out of 3727360)
+          22 non-contiguous files (0.0%)
+          68 non-contiguous directories (0.1%)
+             # of inodes with ind/dind/tind blocks: 0/0/0
+             Extent depth histogram: 76270/10
+      922976 blocks used (6.20%, out of 14885888)
+           0 bad blocks
+           1 large file
+
+       70052 regular files
+        6126 directories
+           8 character device files
+           0 block device files
+           0 fifos
+         366 links
+        6052 symbolic links (5951 fast symbolic links)
+           0 sockets
+------------
+       82604 files
+```
+
+The parameter `-f` `forces` the filesystem check, even, if it is clean.
+
+### Shrinking the filesystem
+Next, `determine` the lowest filesystem size possible via `resize2fs`. This command can handle the `filesystem type` `ext4`. Moreover, it is capable of `moving data on-demand`, so defragmentation before this process via `e4defrag` is **not needed**:
+```bash
+$ resize2fs "/dev/mapper/cryptsdcardbackup" "1"
+resize2fs 1.47.1 (20-May-2024)
+resize2fs: New size smaller than minimum (889692)
+```
+
+This will return the `lowest filesystem size (889692)` in `4 Kibibyte sectors`, which was automatically determined by the underlying `ext4 filesystem`. **This value should not be used as is, since it is not taking the `LUKS header size` into consideration!**
+
+Be aware, that the command was `intentionally` executed in a wrong way, since the parameter `-n` for a `dry run` is not available.
+
+Further information can be looked up at `man 8 resize2fs`.
+
+The following formula will be used to `determine` the `new filesystem size`:
+```no-highlight
+(<luks_header_binary_size> + <luks_header_json_size> + <luks_header_keyslots_size>) + (<encrypted_partition_size>) = <new_size_of_the_root_partition>
+```
+
+That is:
+```no-highlight
+(16,384 KiB + 16,384 KiB + 131,072 KiB) + (4 KiB * 889692) = 3,722,608 KiB
+```
+
+Using `Kibibytes` as unit is precise enough for the next steps. The values of the `LUKS header size` can be looked up in the diagram [below](#shrinking-the-root-partition).
+
+Now, `resize` the `filesystem`:
+```bash
+$ resize2fs "/dev/mapper/cryptsdcardbackup" "3722608K"
+resize2fs 1.47.1 (20-May-2024)
+Resizing the filesystem on /dev/mapper/cryptsdcardbackup to 930652 (4k) blocks.
+The filesystem on /dev/mapper/cryptsdcardbackup is now 930652 (4k) blocks long.
+```
+
+### Shrinking the root partition
+Once this is done, the `partition information` need to be `adjusted` to the `new filesystem size`.
+
+Before doing so, `close` the `LUKS` and `detach` the `loop device`, in order to not have any other activity to the image:
+```bash
+$ cryptsetup close cryptsdcardbackup
+$ losetup --detach "/dev/loop2"
+$ losetup --list
+```
+
+The following diagram shows the `partition structure` in `Kibibytes`, which will be used later on:
+```no-highlight
+                      ┌────────────────────────────┐
+                      │        LUKS 2 header       │
+┌─────────┬───────────┼────────┬────────┬──────────┼────────────────┐
+│ Offset  │ Boot data │ Binary │  JSON  │ Keyslots │ Encrypted data │
+├─────────┼───────────┼────────┼────────┼──────────┼────────────────┤
+│  4,096  │  524,288  │ 16,384 │ 16,384 │ 131,072  │    3,722,608   │
+├─────────┴───────────┼────────┴────────┴──────────┴────────────────┤
+│  Boot partiton (1)  │              Root partition (2)             │
+└─────────────────────┴─────────────────────────────────────────────┘
+```
+
+[Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf)
+
+As side note, the [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/lib/luks2/luks2.h?ref_type=heads#L27) is `hardcoded` to `32`.
+
+This above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`.
+
+The following formula will be used, in order to `determine` the `end sector` of the `root partition` in `Kibibytes`:
+```no-highlight
+(<boot_offset> + <boot_data_size>) + (<luks_header_binary_size> + <luks_header_json_size> + <luks_header_keyslots_size>) + <encrypted_data_size> = <new_size_of_the_root_partition>
+```
+
+That is:
+```no-highlight
+(4,096 + 524,288) + (16,384 KiB + 16,384 KiB + 131,072 KiB) + 3,722,608 KiB = 4,414,832 KiB
+```
+
+Next, `shrink` the `root partition` via `parted`:
+```bash
+$ parted "raspberrypi_sd_card_backup.img"
+GNU Parted 3.6
+Using /root/tmp/raspberrypi_sd_card_backup.img
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) unit kib
+(parted) print
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 60088320kiB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start      End          Size         Type     File system  Flags
+ 1      4096kiB    528384kiB    524288kiB    primary  fat32        lba
+ 2      528384kiB  60088320kiB  59559936kiB  primary
+
+(parted) resizepart
+Partition number? 2
+End?  [3886448kiB]? 4414832
+(parted) print
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 60088320kiB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start      End         Size        Type     File system  Flags
+ 1      4096kiB    528384kiB   524288kiB   primary  fat32        lba
+ 2      528384kiB  4414832kiB  3886448kiB  primary
+
+(parted) quit
+```
+
+### Truncating the modified image
+Once this is done, use the following formula, in order to `determine` the `total file size`:
+```no-highlight
+<boot_partition_end_sector> + <root_partition_end_sector> = <total_file_size>
+```
+
+That is:
+```no-highlight
+528,384 KiB + 4,414,832 KiB = 4,943,216 KiB
+```
+
+Finally, `truncate` the file to `its new total size`:
+```bash
+$ truncate --size="$(( 528384 + 4414832 ))K" "raspberrypi_sd_card_backup.img"
+$ ls -l --block-size="K"
+total 4943224K
+-rw-r--r-- 1 root root 4943216K Feb 16 22:08 raspberrypi_sd_card_backup.img
+```
+
+### Verifying the modification
+**Before copying the modified image to the SD card, checking the `data integrity` is mandatory!**
+
+Therefore, the `root partition` needs to be `mounted again`:
+```bash
+$ parted "raspberrypi_sd_card_backup.img" "unit s print"
+Model:  (file)
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 120176640s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start     End         Size        Type     File system  Flags
+ 1      8192s     1056767s    1048576s    primary  fat32        lba
+ 2      1056768s  120176639s  119119872s  primary
+$ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
+$ cryptsetup open "/root/tmp/raspberrypi_sd_card_backup.img" cryptsdcardbackup
+Enter passphrase for /dev/loop2: raspberry
+```
+
+After that, `verify the filesystem integrity` via `e2fsck`:
+```bash
+$ e2fsck -f "/dev/mapper/cryptsdcardbackup"
+e2fsck 1.47.1 (20-May-2024)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+
+       82247 inodes used (34.62%, out of 237568)
+         238 non-contiguous files (0.3%)
+          68 non-contiguous directories (0.1%)
+             # of inodes with ind/dind/tind blocks: 0/0/0
+             Extent depth histogram: 76229/51
+      698832 blocks used (75.09%, out of 930652)
+           0 bad blocks
+           1 large file
+
+       70052 regular files
+        6126 directories
+           8 character device files
+           0 block device files
+           0 fifos
+         366 links
+        6052 symbolic links (5951 fast symbolic links)
+           0 sockets
+------------
+       82604 files
+```
+
+The parameter `-f` `forces` the filesystem check, even, if it is clean.
+
+**If this check `fails`, `one or more` of the above steps may have caused a `misalignment`; rendering the `root partition` unusable! Try to comprehend the above steps from the beginning once again.**
+
+If the check was `successful`, the `root partition` should be `mountable`:
+```bash
+$ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
+$ df --block-size="K" "/mnt/"
+Filesystem                    1K-blocks     Used Available Use% Mounted on
+/dev/mapper/cryptsdcardbackup  3368008K 2440728K   724776K  78% /mnt
+$ ls -l "/mnt/"
+total 76
+lrwxrwxrwx  1 root root     7 Nov 19 14:30 bin -> usr/bin
+drwxr-xr-x  3 root root  4096 Feb 16 18:55 boot
+drwxr-xr-x  4 root root  4096 Feb 16 18:55 dev
+drwxr-xr-x 93 root root  4096 Feb 16 18:55 etc
+drwxr-xr-x  3 root root  4096 Feb 16 18:55 home
+[...]
+```
+
+For good measure, check the status of the `root partition` via `cryptsetup`:
+```bash
+$ cryptsetup status "/dev/mapper/cryptsdcardbackup"
+/dev/mapper/cryptsdcardbackup is active and is in use.
+  type:    LUKS2
+  cipher:  xchacha20,aes-adiantum-plain64
+  keysize: 256 bits
+  key location: keyring
+  device:  /dev/loop2
+  loop:    /root/tmp/raspberrypi_sd_card_backup.img
+  sector size:  4096
+  offset:  32768 sectors
+  size:    8796896 sectors
+  mode:    read/write
+```
+
+Be aware, that the `size` is in `512-Byte-sectors`, even, if `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+
+After that, `close` the `LUKS` and `detach` the `loop device`:
+```bash
+$ cryptsetup close cryptsdcardbackup
+$ losetup --detach "/dev/loop2"
+$ losetup --list
+```
+
+### Copying the modified image to the SD card
+Finally, copy the image to the `SD card`:
+```bash
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
+```
+
+When booting into `Raspberry Pi OS (Debian)`, the `root partition` can be [`extended on-the-fly`](#extending-the-root-partition).
+
 # Debugging
 ## Examining the initramfs
 There is a tool, called `lsinitramfs`, which can output the content of a compressed `initramfs` to `stdout`:
@@ -1119,7 +1454,7 @@ Verify passphrase: <some_strong_personal_password>
 ## Changing the UUID of the root partition
 When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `UUIDs` are identical. There might be the need to change these.
 
-Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
+Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="512b" conv="fsync" status="progress"
 ```
@@ -1132,7 +1467,7 @@ $ apt install uuid
 ```
 
 ### Changing the UUID
-Next, generate a `new random UUID` via `uuid` and `modify` the `root partition` via `cryptsetup`:
+Next, generate a `new random UUID` via the command `uuid` and `modify` the `root partition` via `cryptsetup`:
 ```bash
 $ uuid -v 4
 8be664e3-e89d-4c23-adda-657eb936b1e5
@@ -1210,7 +1545,7 @@ Number  Start     End         Size        Type     File system  Flags
  1      8192s     1056767s    1048576s    primary  fat32        lba
  2      1056768s  120176639s  119119872s  primary  ext4
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/dev/loop2" cryptsdcardbackup
+$ cryptsetup open "/root/tmp/raspberrypi_sd_card_backup.img" cryptsdcardbackup
 Enter passphrase for /dev/loop2: raspberry
 ```
 
@@ -1239,7 +1574,7 @@ If the `LUKS` partition version is `1`, please upgrade it to version `2` first, 
 If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please `proceed with` [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1) and then `skip to` [Re-encrypting the partition](#re-encrypting-the-partition).
 
 ### Creating a backup of the SD card
-Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
+Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512b" conv="fsync" status="progress"
 ```
