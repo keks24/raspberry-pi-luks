@@ -130,7 +130,7 @@ gpg:                 aka "Ramon Fischer (ramon@sharkoon) <Ramon_Fischer@hotmail.
 ## Copying the image to the SD card
 Copy the image to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512" conv="fsync" status="progress"
 ```
 
 ## Extending the root partition
@@ -139,7 +139,7 @@ When copying the image to other data storage devices with `higher capacity`, the
 ### Creating a backup of the SD card
 Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_extending.img" bs="512b" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_extending.img" bs="512" conv="fsync" status="progress"
 ```
 
 ### Analysing the root partition
@@ -337,7 +337,7 @@ $ xz --decompress --verbose "2024-11-19-raspios-bookworm-arm64-lite.img.xz"
 
 Copy the image `2024-11-19-raspios-bookworm-arm64-lite.img` to the `SD card`:
 ```bash
-$ dd if="2024-11-19-raspios-bookworm-arm64-lite.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
+$ dd if="2024-11-19-raspios-bookworm-arm64-lite.img" of="/dev/sdx" bs="512" conv="fsync" status="progress"
 ```
 
 Since `Debian Bullseye` a user needs to be added [manually](https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/), in order to be able to log in. Therefore the `boot partition` needs to be mounted:
@@ -414,7 +414,7 @@ ii  linux-image-rpi-v8                       1:6.6.74-1+rpt1 arm64        Linux 
 
 Next, create a `backup` of the `SD card`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512b" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512" conv="fsync" status="progress"
 ```
 
 Analyse the image for its partition `start sectors` and the `logical sector size`:
@@ -759,7 +759,7 @@ $ losetup --list
 # Installing the modified image
 The image is now prepared and can be copied to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512" conv="fsync" status="progress"
 ```
 
 On boot there should be a message to decrypt the `root partition`:
@@ -1297,7 +1297,7 @@ $ losetup --list
 ### Copying the modified image to the SD card
 Finally, copy the image to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" status="progress"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512" conv="fsync" status="progress"
 ```
 
 When booting into `Raspberry Pi OS (Debian)`, the `root partition` can be [`extended on-the-fly`](#extending-the-root-partition).
@@ -1461,7 +1461,7 @@ When using the `modified` or a `self-prepared` image on `several Raspberry Pis`,
 
 Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="512b" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="512" conv="fsync" status="progress"
 ```
 
 ### Installing necessary tools
@@ -1581,7 +1581,7 @@ If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `
 ### Creating a backup of the SD card
 Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512b" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512" conv="fsync" status="progress"
 ```
 
 ### Configuring the bootloader
