@@ -471,7 +471,7 @@ $ shred --iterations="1" --random-source="/dev/urandom" --zero --verbose "/dev/l
 
 The command `shred` overwrites the `root partition` with `random Bytes` first and then with `zeroes`; the latter `obfuscates` the shredding. The special character device [`/dev/urandom`](https://www.thomas-huehn.com/myths-about-urandom/) is used as preferred `entropy source`, since it behaves like `/dev/random` since [`Kernel version 5.6`](https://en.wikipedia.org/w/index.php?title=/dev/random&oldid=1268697417#Linux), but it will `not block` the process, if there is `insufficient entropy`. The command comes with an [internal pseudo-random generator](https://www.gnu.org/software/coreutils/manual/html_node/Random-sources.html#Random-sources), which will be used, if the parameter `--random-source` is left out; this would `accelerate` the write process, but it is `not true random`.
 
-Then `format` and `encrypt` the `root partition` via `cryptsetup`:
+After that, `format` and `encrypt` the `root partition` via `cryptsetup`:
 ```bash
 $ cryptsetup --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" --sector-size="4096" luksFormat "/dev/loop2"
 
