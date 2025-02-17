@@ -143,7 +143,7 @@ $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_extending.img" bs="1M" 
 ```
 
 ### Analysing the root partition
-After that, boot into `Raspberry Pi OS (Debian)` and check the partition structure via `parted`:
+After that, boot into `Raspberry Pi OS (Debian)` with [predefined user credentials](#user-credentials) and check the partition structure via `parted`:
 ```bash
 $ parted --list
 Model: Linux device-mapper (crypt) (dm)
