@@ -136,11 +136,10 @@ $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512b" conv="fsync" st
 ## Extending the root partition
 When copying the image to other data storage devices with `higher capacity`, the `encrypted root partition` will stay at `~3.3 GiB`. Therefore, it needs to be `extended`, in order to use the `unused free space`.
 
-### Creating a backup of the image
+### Creating a backup of the SD card
 Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
-$ cp --archive --verbose raspberrypi_sd_card_backup{,_before_extending}.img
-'raspberrypi_sd_card_backup' -> 'raspberrypi_sd_card_backup_before_extending.img'
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_extending.img" bs="512b" conv="fsync" status="progress"
 ```
 
 ### Analysing the root partition
@@ -1246,7 +1245,7 @@ Pass 5: Checking group summary information
 
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
 
-**If this check `fails`, `one or more` of the above steps may have caused a `misalignment`; rendering the `root partition` unusable! Try to comprehend the above steps from the beginning once again.**
+If this check `fails`, `one or more` of the above steps may have caused a `misalignment`; **rendering the `root partition` unusable!** Try to comprehend the [above steps](#shrinking-the-modified-image) from the beginning once again.
 
 If the check was `successful`, the `root partition` should be `mountable`:
 ```bash
@@ -1545,7 +1544,7 @@ Number  Start     End         Size        Type     File system  Flags
  1      8192s     1056767s    1048576s    primary  fat32        lba
  2      1056768s  120176639s  119119872s  primary  ext4
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/root/tmp/raspberrypi_sd_card_backup.img" cryptsdcardbackup
+$ cryptsetup open "/dev/loop2" cryptsdcardbackup
 Enter passphrase for /dev/loop2: raspberry
 ```
 
