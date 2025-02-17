@@ -125,7 +125,7 @@ gpg:                 aka "Ramon Fischer (ramon@sharkoon) <Ramon_Fischer@hotmail.
 ## Copying the image to the SD card
 Copy the image to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512" conv="fsync" status="progress"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="1M" conv="fsync" status="progress"
 ```
 
 ## Resizing the root partition
@@ -134,7 +134,7 @@ When copying the image to another SD card with a `higher capacity`, the `encrypt
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="512" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="1M" conv="fsync" status="progress"
 ```
 
 ### Analysing the root partition
@@ -306,7 +306,7 @@ Archive:  2021-01-11-raspios-buster-armhf-lite.zip
 
 Copy the image `2021-01-11-raspios-buster-armhf-lite.img` to the `SD card`:
 ```bash
-$ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="512" conv="fsync" status="progress"
+$ dd if="2021-01-11-raspios-buster-armhf-lite.img" of="/dev/sdx" bs="1M" conv="fsync" status="progress"
 ```
 
 Boot into `Raspbian`, so the `root partition` is extended to its full capacity. Then, log in with the [predefined user credentials](#user-credentials) and update the kernel:
@@ -339,7 +339,7 @@ $ sudo poweroff
 
 After that, create a `backup` of the `SD card`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="512" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup.img" bs="1M" conv="fsync" status="progress"
 ```
 
 Analyse the image for its partition `start sectors` and the `logical sector size`:
@@ -699,7 +699,7 @@ $ losetup --list
 # Installing the modified image
 The image is now prepared and can be copied to the `SD card`:
 ```bash
-$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="512" conv="fsync" status="progress"
+$ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="1M" conv="fsync" status="progress"
 ```
 
 On boot there should be a message to decrypt the `root partition`:
@@ -1052,7 +1052,7 @@ When using the `modified` or a `self-prepared` image on `several Raspberry Pis`,
 
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="512" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_changing_uuid.img" bs="1M" conv="fsync" status="progress"
 ```
 
 ### Installing necessary tools
@@ -1179,7 +1179,7 @@ If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `
 ### Creating a backup of the SD card
 Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="512" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="1M" conv="fsync" status="progress"
 ```
 
 ### Configuring the bootloader
