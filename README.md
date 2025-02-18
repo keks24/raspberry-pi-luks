@@ -1035,7 +1035,7 @@ Number  Start     End         Size        Type     File system  Flags
  2      1056768s  120176639s  119119872s  primary
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ cryptsetup open "/dev/loop2" cryptsdcardbackup
-Enter passphrase for /dev/loop2: raspberry
+Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img: raspberry
 ```
 
 Once this is done, `verify the filesystem integrity` via `e2fsck`:
@@ -1215,7 +1215,7 @@ Number  Start     End         Size        Type     File system  Flags
  2      1056768s  120176639s  119119872s  primary
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ cryptsetup open "/dev/loop2" cryptsdcardbackup
-Enter passphrase for /dev/loop2: raspberry
+Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img: raspberry
 ```
 
 After that, `verify the filesystem integrity` via `e2fsck`:
@@ -1551,7 +1551,7 @@ Number  Start     End         Size        Type     File system  Flags
  2      1056768s  120176639s  119119872s  primary  ext4
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ cryptsetup open "/dev/loop2" cryptsdcardbackup
-Enter passphrase for /dev/loop2: raspberry
+Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img: raspberry
 ```
 
 After that, mount it like so:
