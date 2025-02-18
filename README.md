@@ -1271,7 +1271,7 @@ drwxr-xr-x  3 root root  4096 Feb 16 18:55 home
 
 For good measure, check the status of the `root partition` via `cryptsetup`:
 ```bash
-$ cryptsetup status "/dev/mapper/cryptsdcardbackup"
+$ cryptsetup status cryptsdcardbackup
 /dev/mapper/cryptsdcardbackup is active and is in use.
   type:    LUKS2
   cipher:  xchacha20,aes-adiantum-plain64
