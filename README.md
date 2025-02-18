@@ -1291,8 +1291,9 @@ $ cryptsetup status cryptsdcardbackup
 
 Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
-After that, `close` the `LUKS device` and `detach` the `loop device`:
+After that, unmount `/mnt/`, close the `LUKS device` and detach the `loop device`:
 ```bash
+$ umount "/mnt/"
 $ cryptsetup close cryptsdcardbackup
 $ losetup --detach "/dev/loop2"
 $ losetup --list
