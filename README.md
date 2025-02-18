@@ -1034,7 +1034,7 @@ Number  Start     End         Size        Type     File system  Flags
  1      8192s     1056767s    1048576s    primary  fat32        lba
  2      1056768s  120176639s  119119872s  primary
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/root/tmp/raspberrypi_sd_card_backup.img" cryptsdcardbackup
+$ cryptsetup open "/dev/loop2" cryptsdcardbackup
 Enter passphrase for /dev/loop2: raspberry
 ```
 
