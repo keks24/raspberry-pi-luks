@@ -109,7 +109,7 @@ util-linux
 * `Linux Kernel version 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * The capacity of the `SD card` must be greater than `3.3 GiB`.
 
-If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 ## Downloading the image
 Download the files from [gofile.io](https://gofile.io/d/3H8TnE).
@@ -304,7 +304,7 @@ linux-image-rpi-v8
 * `Linux Kernel version 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * Free space of at least `1.5 times` the capactiy of the `SD card`
 
-If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 ## Downloading the stock image
 Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum file:
@@ -484,7 +484,7 @@ Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img:
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 Bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of `512 bits` may be preferred.
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 Bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 The `LUKS header information` looks like so:
 ```bash
