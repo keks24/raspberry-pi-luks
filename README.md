@@ -258,6 +258,7 @@ The result differs slightly from the output of `parted`, since the unit is in `G
 For good measure, the command `dumpe2fs` can be used to see the `real sector size (block size)` and `real size (block count)` of the `decrypted root partition`:
 ```bash
 $ dumpe2fs "/dev/mapper/cryptroot" | grep "Block " | head --lines="2"
+dumpe2fs 1.47.0 (5-Feb-2023)
 Block count:              14884108
 Block size:               4096
 ```
