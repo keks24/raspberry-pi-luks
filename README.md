@@ -556,7 +556,7 @@ Creating journal (65536 blocks): done
 Writing superblocks and filesystem accounting information: done
 ```
 
-After that, it is possible to mount the encrypted partition `/dev/mapper/cryptroot`:
+After that, it is possible to mount the decrypted partition `/dev/mapper/cryptroot`:
 ```bash
 $ mount "/dev/mapper/cryptroot" "/mnt/"
 ```
@@ -747,7 +747,7 @@ Remove `qemu-aarch64-static` from `/mnt/usr/bin/`:
 $ rm "/mnt/usr/bin/qemu-aarch64-static"
 ```
 
-Unmount the encrypted `root partition` and detach all `loop devices`:
+Unmount the decrypted `root partition` and detach all `loop devices`:
 ```bash
 $ umount "/mnt/"
 $ cryptsetup close cryptroot
