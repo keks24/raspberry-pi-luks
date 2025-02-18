@@ -1167,6 +1167,8 @@ Number  Start      End          Size         Type     File system  Flags
 (parted) resizepart
 Partition number? 2
 End?  [3886448kiB]? 4414832
+Warning: Shrinking a partition can cause data loss, are you sure you want to continue?
+Yes/No? yes
 (parted) print
 Model:  (file)
 Disk /root/tmp/raspberrypi_sd_card_backup.img: 60088320kiB
