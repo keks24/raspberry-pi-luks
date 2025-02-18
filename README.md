@@ -1049,17 +1049,17 @@ Pass 3: Checking directory connectivity
 Pass 4: Checking reference counts
 Pass 5: Checking group summary information
 
-       82247 inodes used (2.21%, out of 3727360)
-          22 non-contiguous files (0.0%)
+       82281 inodes used (2.21%, out of 3727360)
+          45 non-contiguous files (0.1%)
           68 non-contiguous directories (0.1%)
              # of inodes with ind/dind/tind blocks: 0/0/0
-             Extent depth histogram: 76270/10
-      922976 blocks used (6.20%, out of 14885888)
+             Extent depth histogram: 76289/25
+      969148 blocks used (6.51%, out of 14885888)
            0 bad blocks
            1 large file
 
-       70052 regular files
-        6126 directories
+       70085 regular files
+        6127 directories
            8 character device files
            0 block device files
            0 fifos
@@ -1067,7 +1067,7 @@ Pass 5: Checking group summary information
         6052 symbolic links (5951 fast symbolic links)
            0 sockets
 ------------
-       82604 files
+       82638 files
 ```
 
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
@@ -1077,33 +1077,46 @@ Next, `determine` the lowest filesystem size possible via `resize2fs`. This comm
 ```bash
 $ resize2fs "/dev/mapper/cryptsdcardbackup" "1"
 resize2fs 1.47.1 (20-May-2024)
-resize2fs: New size smaller than minimum (889692)
+resize2fs: New size smaller than minimum (935787)
+$ dumpe2fs -h "/dev/mapper/cryptsdcardbackup" | grep "Block size"
+dumpe2fs 1.47.1 (20-May-2024)
+Block size:               4096
 ```
 
-This will return the `lowest filesystem size (889692)` in `4 Kibibyte sectors`, which was automatically determined by the underlying `ext4 filesystem`. **This value should not be used as is, since it is not taking the `LUKS header size` into consideration!**
+This will return the `lowest filesystem size (935787)` in `4 Kibibyte sectors`, which was automatically determined by the underlying `ext4 filesystem`. **This value should not be used as is, since it is not taking the `LUKS header size` into consideration!**
 
 Be aware, that the command was `intentionally` executed in a wrong way, since there is no available parameter for a `dry run`.
 
 Further information can be looked up at `man 8 resize2fs`.
 
-The following formula will be used to `determine` the `new filesystem size`:
+The following formula will be used to `determine` the `new filesystem size` using the `LUKS header information` from [above](#encrypting-the-root-partition):
 ```no-highlight
-(<luks_header_binary_size> + <luks_header_json_size> + <luks_header_keyslots_size>) + (<encrypted_partition_size>) = <new_size_of_the_root_partition>
+((<luks_header_primary_binary_header_size> + <luks_header_first_metadata_size>) + (<luks_header_secondary_binary_header_size> + <luks_header_second_metadata_size>) + <luks_header_keyslots_size> + <luks_header_alignment_padding_size>) + (<encrypted_partition_size>) = <new_size_of_the_root_filesystem>
+
+where
+
+<luks_header_alignment_padding_size> = <luks_header_data_segments_offset_size> - <luks_header_keyslots_size>
 ```
 
 That is:
 ```no-highlight
-(16,384 KiB + 16,384 KiB + 131,072 KiB) + (4 KiB * 889692) = 3,722,608 KiB
+((4 KiB + 16 KiB) + (4 KiB + 16 KiB) + 16,352 KiB + 32 KiB) + (4 KiB * 935,787) = 3,759,572 KiB
 ```
+
+The `header sizes` may `vary`, depending on how `LUKS` was initialised on the device.
 
 Using `Kibibytes` as unit is precise enough for the next steps. The values of the `LUKS header size` can be looked up in the diagram [below](#shrinking-the-root-partition).
 
 Now, `resize` the `filesystem`:
 ```bash
-$ resize2fs "/dev/mapper/cryptsdcardbackup" "3722608K"
+$ resize2fs "/dev/mapper/cryptsdcardbackup" "3759572K"
 resize2fs 1.47.1 (20-May-2024)
-Resizing the filesystem on /dev/mapper/cryptsdcardbackup to 930652 (4k) blocks.
-The filesystem on /dev/mapper/cryptsdcardbackup is now 930652 (4k) blocks long.
+Resizing the filesystem on /dev/mapper/cryptsdcardbackup to 939893 (4k) blocks.
+The filesystem on /dev/mapper/cryptsdcardbackup is now 939893 (4k) blocks long.
+$ dumpe2fs -h "/dev/mapper/cryptsdcardbackup" | grep "Block "
+dumpe2fs 1.47.1 (20-May-2024)
+Block count:              939893
+Block size:               4096
 ```
 
 ### Shrinking the root partition
@@ -1118,33 +1131,33 @@ $ losetup --list
 
 The following diagram shows the `partition structure` in `Kibibytes`, which will be used later on:
 ```no-highlight
-                      ┌────────────────────────────┐
-                      │        LUKS 2 header       │
-┌─────────┬───────────┼────────┬────────┬──────────┼────────────────┐
-│ Offset  │ Boot data │ Binary │  JSON  │ Keyslots │ Encrypted data │
-├─────────┼───────────┼────────┼────────┼──────────┼────────────────┤
-│  4,096  │  524,288  │ 16,384 │ 16,384 │ 131,072  │    3,722,608   │
-├─────────┴───────────┼────────┴────────┴──────────┴────────────────┤
-│ Boot partition (1)  │              Root partition (2)             │
-└─────────────────────┴─────────────────────────────────────────────┘
+                      ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+                      │                                                       LUKS 2 header                                                        │
+┌─────────┬───────────┼───────────────────────┬─────────────────────┬─────────────────────────┬─────────────────────┬──────────┬───────────────────┼────────────────┐
+│ Offset  │ Boot data │ Primary binary header │ 1st metadata (JSON) │ Secondary binary header │ 2nd metadata (JSON) │ Keyslots │ Alignment padding │ Encrypted data │
+├─────────┼───────────┼───────────────────────┼─────────────────────┼─────────────────────────┼─────────────────────┼──────────┼───────────────────┼────────────────┤
+│  4,096  │  524,288  │           4           │          16         │            4            │         16          │  16,352  │         32        │    3,759,572   │
+├─────────┴───────────┼───────────────────────┴─────────────────────┴─────────────────────────┴─────────────────────┴──────────┴───────────────────┴────────────────┤
+│ Boot partition (1)  │                                                              Root partition (2)                                                             │
+└─────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 [Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf#luks2-on-disk-format)
 
 As a side note: The [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/lib/luks2/luks2.h?ref_type=heads#L27) is `hardcoded` to `32`.
 
-The `LUKS header information` can also be dumped, as shown [above](#encrypting-the-root-partition).
+The `LUKS header information` can also be analysed, as shown [above](#encrypting-the-root-partition).
 
 The above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`.
 
 The following formula will be used, in order to `determine` the `end sector` of the `root partition` in `Kibibytes`:
 ```no-highlight
-(<boot_offset> + <boot_data_size>) + (<luks_header_binary_size> + <luks_header_json_size> + <luks_header_keyslots_size>) + <encrypted_data_size> = <new_size_of_the_root_partition>
+(<boot_offset_size> + <boot_data_size>) + ((<luks_header_primary_binary_header_size> + <luks_header_first_metadata_size>) + (<luks_header_secondary_binary_header_size> + <luks_header_second_metadata_size>) + <luks_header_keyslots_size> + <luks_header_alignment_padding_size>) + <encrypted_partition_size> = <new_size_of_the_root_partition>
 ```
 
 That is:
 ```no-highlight
-(4,096 + 524,288) + (16,384 KiB + 16,384 KiB + 131,072 KiB) + 3,722,608 KiB = 4,414,832 KiB
+(4,096 KiB + 524,288 KiB) + ((4 KiB + 16 KiB) + (4 KiB + 16 KiB) + 16,352 KiB + 32 KiB) + 3,759,572 KiB = 4,304,380 KiB
 ```
 
 Next, `shrink` the `root partition` via `parted`:
@@ -1153,7 +1166,8 @@ $ parted "raspberrypi_sd_card_backup.img"
 GNU Parted 3.6
 Using /root/tmp/raspberrypi_sd_card_backup.img
 Welcome to GNU Parted! Type 'help' to view a list of commands.
-(parted) unit kib
+(parted) unit
+Unit?  [compact]? kib
 (parted) print
 Model:  (file)
 Disk /root/tmp/raspberrypi_sd_card_backup.img: 60088320kiB
@@ -1167,7 +1181,7 @@ Number  Start      End          Size         Type     File system  Flags
 
 (parted) resizepart
 Partition number? 2
-End?  [3886448kiB]? 4414832
+End?  [3886448kiB]? 4304380
 Warning: Shrinking a partition can cause data loss, are you sure you want to continue?
 Yes/No? yes
 (parted) print
@@ -1179,28 +1193,28 @@ Disk Flags:
 
 Number  Start      End         Size        Type     File system  Flags
  1      4096kiB    528384kiB   524288kiB   primary  fat32        lba
- 2      528384kiB  4414832kiB  3886448kiB  primary
+ 2      528384kiB  4304380kiB  3775996kiB  primary
 
 (parted) quit
 ```
 
 ### Truncating the modified image
-Once this is done, use the following formula, in order to `determine` the `total file size`:
+Once this is done, the image itself can now be `truncated`. The following formula will be used, in order to `determine` the `total file size`:
 ```no-highlight
 <boot_partition_end_sector> + <root_partition_end_sector> = <total_file_size>
 ```
 
 That is:
 ```no-highlight
-528,384 KiB + 4,414,832 KiB = 4,943,216 KiB
+528,384 KiB + 4,304,380 KiB = 4,832,764 KiB
 ```
 
-Finally, `truncate` the file to `its new total size`:
+Finally, `truncate` the image to `its new total size`:
 ```bash
-$ truncate --size="$(( 528384 + 4414832 ))K" "raspberrypi_sd_card_backup.img"
+$ truncate --size="4832764K" "raspberrypi_sd_card_backup.img"
 $ ls -l --block-size="K"
-total 4943224K
--rw-r--r-- 1 root root 4943216K Feb 16 22:08 raspberrypi_sd_card_backup.img
+total 4832772K
+-rw-r--r-- 1 root root 4832764K Feb 18 21:42 raspberrypi_sd_card_backup.img
 ```
 
 ### Verifying the data integrity
@@ -1233,17 +1247,17 @@ Pass 3: Checking directory connectivity
 Pass 4: Checking reference counts
 Pass 5: Checking group summary information
 
-       82247 inodes used (34.62%, out of 237568)
-         238 non-contiguous files (0.3%)
+       82281 inodes used (34.63%, out of 237568)
+         210 non-contiguous files (0.3%)
           68 non-contiguous directories (0.1%)
              # of inodes with ind/dind/tind blocks: 0/0/0
-             Extent depth histogram: 76229/51
-      698832 blocks used (75.09%, out of 930652)
+             Extent depth histogram: 76224/90
+      745028 blocks used (79.27%, out of 939893)
            0 bad blocks
            1 large file
 
-       70052 regular files
-        6126 directories
+       70085 regular files
+        6127 directories
            8 character device files
            0 block device files
            0 fifos
@@ -1251,19 +1265,18 @@ Pass 5: Checking group summary information
         6052 symbolic links (5951 fast symbolic links)
            0 sockets
 ------------
-       82604 files
+       82638 files
 ```
 
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
 
 If this check `fails`, `one or more` of the above steps may have caused a `misalignment`; **rendering the `root partition` unusable!** Try to comprehend the [above steps](#shrinking-the-modified-image) from the beginning once again.
-
 If the check was `successful`, the `root partition` should be `mountable`:
 ```bash
 $ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
 $ df --block-size="K" "/mnt/"
 Filesystem                    1K-blocks     Used Available Use% Mounted on
-/dev/mapper/cryptsdcardbackup  3368008K 2440728K   724776K  78% /mnt
+/dev/mapper/cryptsdcardbackup  3404972K 2625512K   575100K  83% /mnt
 $ ls -l "/mnt/"
 total 76
 lrwxrwxrwx  1 root root     7 Nov 19 14:30 bin -> usr/bin
@@ -1286,7 +1299,7 @@ $ cryptsetup status cryptsdcardbackup
   loop:    /root/tmp/raspberrypi_sd_card_backup.img
   sector size:  4096
   offset:  32768 sectors
-  size:    8796896 sectors
+  size:    8575992 sectors
   mode:    read/write
 ```
 
