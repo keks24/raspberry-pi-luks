@@ -767,7 +767,7 @@ On boot there should be a message to decrypt the `root partition`:
 Please unlock disk cryptroot: raspberry
 ```
 
-After entering the password, the `Raspberry Pi` should boot.
+After entering the password, the `Raspberry Pi` should boot into `Raspberry Pi OS (Debian)`.
 
 # Further steps
 ## Copying the modified image to smaller data storage devices
