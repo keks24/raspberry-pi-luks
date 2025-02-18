@@ -1305,7 +1305,7 @@ Finally, copy the image to the `SD card`:
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="1M" conv="fsync" status="progress"
 ```
 
-When booting into `Raspberry Pi OS (Debian)`, the `root partition` can be [`extended on-the-fly`](#extending-the-root-partition).
+When booting into `Raspberry Pi OS (Debian)`, the `root partition` can then be [`extended on-the-fly`](#extending-the-root-partition).
 
 # Debugging
 ## Examining the initramfs
