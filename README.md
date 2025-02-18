@@ -1132,7 +1132,9 @@ The following diagram shows the `partition structure` in `Kibibytes`, which will
 
 As a side note: The [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/lib/luks2/luks2.h?ref_type=heads#L27) is `hardcoded` to `32`.
 
-This above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`.
+The `LUKS header information` can also be seen, when dumping it like [above](#encrypting-the-root-partition).
+
+The above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`.
 
 The following formula will be used, in order to `determine` the `end sector` of the `root partition` in `Kibibytes`:
 ```no-highlight
