@@ -1639,6 +1639,8 @@ type:    LUKS2
   mode:    read/write
 ```
 
+Be aware, that the `size` is in `512-Byte-sectors`, even, if `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+
 The `USB stick` can now be disconnected.
 
 # Known issues
