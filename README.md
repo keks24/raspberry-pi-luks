@@ -1089,7 +1089,7 @@ Be aware, that the command was `intentionally` executed in a wrong way, since th
 
 Further information can be looked up at `man 8 resize2fs`.
 
-The following formula will be used to `determine` the `new filesystem size` using the `LUKS header information` from [above](#encrypting-the-root-partition):
+The following formula will be used to `determine` the `new filesystem size` using the `LUKS header information` from [above](#encrypting-the-root-partition) and the `diagram` [below](#shrinking-the-root-partition):
 ```no-highlight
 ((<luks_header_primary_binary_header_size> + <luks_header_first_metadata_size>) + (<luks_header_secondary_binary_header_size> + <luks_header_second_metadata_size>) + <luks_header_keyslots_size> + <luks_header_alignment_padding_size>) + (<encrypted_partition_size>) = <new_size_of_the_root_filesystem>
 
