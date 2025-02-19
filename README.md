@@ -1131,15 +1131,15 @@ $ losetup --list
 
 The following diagram shows the `partition structure` in `Kibibytes`, which will be used later on:
 ```no-highlight
-                      ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-                      │                                                       LUKS 2 header                                                        │
-┌─────────┬───────────┼───────────────────────┬─────────────────────┬─────────────────────────┬─────────────────────┬──────────┬───────────────────┼────────────────┐
-│ Offset  │ Boot data │ Primary binary header │ 1st metadata (JSON) │ Secondary binary header │ 2nd metadata (JSON) │ Keyslots │ Alignment padding │ Encrypted data │
-├─────────┼───────────┼───────────────────────┼─────────────────────┼─────────────────────────┼─────────────────────┼──────────┼───────────────────┼────────────────┤
-│  4,096  │  524,288  │           4           │          16         │            4            │         16          │  16,352  │         32        │    3,759,572   │
-├─────────┴───────────┼───────────────────────┴─────────────────────┴─────────────────────────┴─────────────────────┴──────────┴───────────────────┴────────────────┤
-│ Boot partition (1)  │                                                              Root partition (2)                                                             │
-└─────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+                      ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+                      │                                         LUKS 2 header                                          │
+┌─────────┬───────────┼────────────────┬──────────────┬──────────────────┬──────────────┬──────────┬───────────────────┼────────────────┐
+│ Offset  │ Boot data │ Primary header │ 1st metadata │ Secondary header │ 2nd metadata │ Keyslots │ Alignment padding │ Encrypted data │
+├─────────┼───────────┼────────────────┼──────────────┼──────────────────┼──────────────┼──────────┼───────────────────┼────────────────┤
+│  4,096  │  524,288  │       4        │      16      │        4         │      16      │  16,352  │         32        │    3,743,148   │
+├─────────┴───────────┼────────────────┴──────────────┴──────────────────┴──────────────┴──────────┴───────────────────┴────────────────┤
+│ Boot partition (1)  │                                               Root partition (2)                                                │
+└─────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 [Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf#luks2-on-disk-format)
@@ -1152,12 +1152,12 @@ The above diagram indicates, that the `boot partition size` and the `LUKS header
 
 The following formula will be used, in order to `determine` the `end sector` of the `root partition` in `Kibibytes`:
 ```no-highlight
-(<boot_offset_size> + <boot_data_size>) + ((<luks_header_primary_binary_header_size> + <luks_header_first_metadata_size>) + (<luks_header_secondary_binary_header_size> + <luks_header_second_metadata_size>) + <luks_header_keyslots_size> + <luks_header_alignment_padding_size>) + <encrypted_partition_size> = <new_size_of_the_root_partition>
+(<boot_offset_size> + <boot_data_size>) + ((<luks_header_primary_binary_header_size> + <luks_header_first_metadata_size>) + (<luks_header_secondary_binary_header_size> + <luks_header_second_metadata_size>) + <luks_header_keyslots_size> + <luks_header_alignment_padding_size>) + <encrypted_partition_size> = <end_sector_of_the_root_partition>
 ```
 
 That is:
 ```no-highlight
-(4,096 KiB + 524,288 KiB) + ((4 KiB + 16 KiB) + (4 KiB + 16 KiB) + 16,352 KiB + 32 KiB) + 3,759,572 KiB = 4,304,380 KiB
+(4,096 KiB + 524,288 KiB) + ((4 KiB + 16 KiB) + (4 KiB + 16 KiB) + 16,352 KiB + 32 KiB) + 3,743,148 KiB = 4,287,956 KiB
 ```
 
 Next, `shrink` the `root partition` via `parted`:
@@ -1181,19 +1181,19 @@ Number  Start      End          Size         Type     File system  Flags
 
 (parted) resizepart
 Partition number? 2
-End?  [3886448kiB]? 4304380
+End?  [3886448kiB]? 4287956
 Warning: Shrinking a partition can cause data loss, are you sure you want to continue?
 Yes/No? yes
 (parted) print
 Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 60088320kiB
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 4832764kiB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start      End         Size        Type     File system  Flags
  1      4096kiB    528384kiB   524288kiB   primary  fat32        lba
- 2      528384kiB  4304380kiB  3775996kiB  primary
+ 2      528384kiB  4287956kiB  3759572kiB  primary
 
 (parted) quit
 ```
@@ -1206,15 +1206,15 @@ Once this is done, the image itself can now be `truncated`. The following formul
 
 That is:
 ```no-highlight
-528,384 KiB + 4,304,380 KiB = 4,832,764 KiB
+528,384 KiB + 4,287,956 KiB = 4,816,340 KiB
 ```
 
 Finally, `truncate` the image to `its new total size`:
 ```bash
-$ truncate --size="4832764K" "raspberrypi_sd_card_backup.img"
+$ truncate --size="4816340K" "raspberrypi_sd_card_backup.img"
 $ ls -l --block-size="K"
-total 4832772K
--rw-r--r-- 1 root root 4832764K Feb 18 21:42 raspberrypi_sd_card_backup.img
+total 4816348K
+-rw-r--r-- 1 root root 4816340K Feb 19 17:42 raspberrypi_sd_card_backup.img
 ```
 
 ### Verifying the data integrity
@@ -1299,7 +1299,7 @@ $ cryptsetup status cryptsdcardbackup
   loop:    /root/tmp/raspberrypi_sd_card_backup.img
   sector size:  4096
   offset:  32768 sectors
-  size:    8575992 sectors
+  size:    8543144 sectors
   mode:    read/write
 ```
 
