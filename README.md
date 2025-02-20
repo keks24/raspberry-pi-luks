@@ -1246,17 +1246,17 @@ Pass 3: Checking directory connectivity
 Pass 4: Checking reference counts
 Pass 5: Checking group summary information
 
-       82247 inodes used (34.62%, out of 237568)
-         238 non-contiguous files (0.3%)
+       82281 inodes used (34.63%, out of 237568)
+         210 non-contiguous files (0.3%)
           68 non-contiguous directories (0.1%)
              # of inodes with ind/dind/tind blocks: 0/0/0
-             Extent depth histogram: 76229/51
-      698832 blocks used (74.35%, out of 939893)
+             Extent depth histogram: 76224/90
+      745028 blocks used (79.27%, out of 939893)
            0 bad blocks
            1 large file
 
-       70052 regular files
-        6126 directories
+       70085 regular files
+        6127 directories
            8 character device files
            0 block device files
            0 fifos
@@ -1264,7 +1264,7 @@ Pass 5: Checking group summary information
         6052 symbolic links (5951 fast symbolic links)
            0 sockets
 ------------
-       82604 files
+       82638 files
 ```
 
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
@@ -1275,7 +1275,7 @@ If the check was `successful`, the `root partition` should be `mountable`:
 $ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
 $ df --block-size="K" "/mnt/"
 Filesystem                    1K-blocks     Used Available Use% Mounted on
-/dev/mapper/cryptsdcardbackup  3404972K 2440728K   759892K  77% /mnt
+/dev/mapper/cryptsdcardbackup  3404972K 2625512K   575100K  83% /mnt
 $ ls -l "/mnt/"
 total 76
 lrwxrwxrwx  1 root root     7 Nov 19 14:30 bin -> usr/bin
