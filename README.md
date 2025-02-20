@@ -1212,8 +1212,7 @@ That is:
 Finally, `truncate` the image to `its new total size`:
 ```bash
 $ truncate --size="4816340K" "raspberrypi_sd_card_backup.img"
-$ ls -l --block-size="K"
-total 4816348K
+$ ls -l --block-size="K" "raspberrypi_sd_card_backup.img"
 -rw-r--r-- 1 root root 4816340K Feb 19 17:42 raspberrypi_sd_card_backup.img
 ```
 
