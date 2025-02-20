@@ -112,7 +112,7 @@ util-linux
 If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 ## Downloading the image
-Download the files from [gofile.io](https://gofile.io/d/3H8TnE).
+Download the files from [gofile.io](https://gofile.io/d/H9UUIe).
 
 If the links are dead, due to infrequent downloads, please `proceed with` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
 
