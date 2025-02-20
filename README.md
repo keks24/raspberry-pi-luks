@@ -1223,14 +1223,14 @@ Therefore, the `root partition` needs to be `mounted again`:
 ```bash
 $ parted "raspberrypi_sd_card_backup.img" "unit s print"
 Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 120176640s
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 9632680s
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
-Number  Start     End         Size        Type     File system  Flags
- 1      8192s     1056767s    1048576s    primary  fat32        lba
- 2      1056768s  120176639s  119119872s  primary
+Number  Start     End       Size      Type     File system  Flags
+ 1      8192s     1056767s  1048576s  primary  fat32        lba
+ 2      1056768s  8575911s  7519144s  primary
 $ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
 $ cryptsetup open "/dev/loop2" cryptsdcardbackup
 Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img: raspberry
