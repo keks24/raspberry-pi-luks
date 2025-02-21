@@ -1073,7 +1073,7 @@ Pass 5: Checking group summary information
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
 
 ### Shrinking the filesystem
-Next, `determine` the lowest filesystem size possible via `resize2fs`. This command can handle the `filesystem type ext4`. Moreover, it is capable of `moving data on-demand`, so defragmentation before this process via `e4defrag` is **not needed**:
+Next, `determine` the lowest filesystem size possible via `resize2fs`. This command can handle `ext filesystem types`. Moreover, it is capable of `moving data on-demand`, so defragmentation before this process via `e4defrag` is **not needed**:
 ```bash
 $ resize2fs "/dev/mapper/cryptsdcardbackup" "1"
 resize2fs 1.47.1 (20-May-2024)
