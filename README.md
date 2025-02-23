@@ -1073,73 +1073,48 @@ Pass 5: Checking group summary information
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
 
 ### Shrinking the filesystem
-Next, `determine` the lowest filesystem size possible via `resize2fs`. This command can handle `ext filesystem types`. Moreover, it is capable of `moving data on-demand`, so defragmentation before this process via `e4defrag` is **not needed**:
+Next, `shrink` the `root filesystem` to its `lowest size possible` via `resize2fs`; this command can handle `ext filesystem types`. Moreover, it is capable of `moving data on-demand`, so defragmentation before this process via `e4defrag` is **not needed**:
 ```bash
-$ resize2fs "/dev/mapper/cryptsdcardbackup" "1"
+$ resize2fs "/dev/mapper/cryptsdcardbackup" -M
 resize2fs 1.47.1 (20-May-2024)
-resize2fs: New size smaller than minimum (935787)
-$ dumpe2fs -h "/dev/mapper/cryptsdcardbackup" | grep "Block size"
+Resizing the filesystem on /dev/mapper/cryptsdcardbackup to 935787 (4k) blocks.
+The filesystem on /dev/mapper/cryptsdcardbackup is now 935787 (4k) blocks long.
+$ dumpe2fs -h "/dev/mapper/cryptsdcardbackup" | grep "Block "
 dumpe2fs 1.47.1 (20-May-2024)
+Block count:              935787
 Block size:               4096
 ```
 
-This will return the `lowest filesystem size (935787)` in `4 Kibibyte sectors`, which was automatically determined by the underlying `ext4 filesystem`. **This value should not be used as is, since it is not taking the `LUKS header size` into consideration!**
+This will also return the `lowest filesystem size (935787)` in `4096 Byte sectors (4 Kibibyte)`, which was automatically determined by the underlying `ext4 filesystem`.
 
-Be aware, that the command was `intentionally` executed in a wrong way, since there is no available parameter for a `dry run`.
+The `filesystem size` can be calculated like so:
+```no-highlight
+4,096 Bytes/sector * 935,787 sectors = 3,832,983,552 Bytes = 3,743,148 Kibibytes
+```
 
 Further information can be looked up at `man 8 resize2fs`.
 
-The following formula will be used to `determine` the `new filesystem size` using the `LUKS header information` from [above](#encrypting-the-root-partition) and the `diagram` [below](#shrinking-the-root-partition):
-```no-highlight
-((<luks_header_primary_binary_header_size> + <luks_header_first_metadata_size>) + (<luks_header_secondary_binary_header_size> + <luks_header_second_metadata_size>) + <luks_header_keyslots_size> + <luks_header_alignment_padding_size>) + (<encrypted_partition_size>) = <new_size_of_the_root_filesystem>
-
-where
-
-<luks_header_alignment_padding_size> = <luks_header_data_segments_offset_size> - <luks_header_keyslots_size>
-```
-
-That is:
-```no-highlight
-((4 KiB + 16 KiB) + (4 KiB + 16 KiB) + 16,352 KiB + 32 KiB) + (4 KiB * 935,787) = 3,759,572 KiB
-```
-
-The `header sizes` may `vary`, depending on how `LUKS` was initialised on the device.
-
-Using `Kibibytes` as unit is precise enough for the next steps. The values of the `LUKS header size` can be looked up in the diagram [below](#shrinking-the-root-partition).
-
-Now, `resize` the `filesystem`:
-```bash
-$ resize2fs "/dev/mapper/cryptsdcardbackup" "3759572K"
-resize2fs 1.47.1 (20-May-2024)
-Resizing the filesystem on /dev/mapper/cryptsdcardbackup to 939893 (4k) blocks.
-The filesystem on /dev/mapper/cryptsdcardbackup is now 939893 (4k) blocks long.
-$ dumpe2fs -h "/dev/mapper/cryptsdcardbackup" | grep "Block "
-dumpe2fs 1.47.1 (20-May-2024)
-Block count:              939893
-Block size:               4096
-```
-
 ### Shrinking the root partition
-Once this is done, the `partition information` need to be `adjusted` to the `new filesystem size`.
+Once this is done, the `partition information` need to be `adjusted` to the `new root filesystem size`.
 
-Before doing so, `close` the `LUKS device` and `detach` the `loop device`, in order to not have any other activity to the image:
+Before doing so, `close` the `LUKS device` and `detach` the `loop device`, in order to not have `any other activity` to the image:
 ```bash
 $ cryptsetup close cryptsdcardbackup
 $ losetup --detach "/dev/loop2"
 $ losetup --list
 ```
 
-The following diagram shows the `partition structure` in `Kibibytes`, which will be used later on:
+The following diagram shows the `partition structure` in `Kibibytes`, since this unit provides `sufficient precision` to work with:
 ```no-highlight
-                      ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-                      │                                         LUKS 2 header                                          │
-┌─────────┬───────────┼────────────────┬──────────────┬──────────────────┬──────────────┬──────────┬───────────────────┼────────────────┐
-│ Offset  │ Boot data │ Primary header │ 1st metadata │ Secondary header │ 2nd metadata │ Keyslots │ Alignment padding │ Encrypted data │
-├─────────┼───────────┼────────────────┼──────────────┼──────────────────┼──────────────┼──────────┼───────────────────┼────────────────┤
-│  4,096  │  524,288  │       4        │      16      │        4         │      16      │  16,352  │         32        │    3,743,148   │
-├─────────┴───────────┼────────────────┴──────────────┴──────────────────┴──────────────┴──────────┴───────────────────┴────────────────┤
-│ Boot partition (1)  │                                               Root partition (2)                                                │
-└─────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+                     ┌──────────────────────────────────────────────────┬────────────────┐
+                     │                   LUKS 2 header                  │   Filesystem   │
+┌────────┬───────────┼──────────────────┬────────────────────┬──────────┼────────────────┤
+│ Offset │ Boot data │ Primary metadata │ Secondary metadata │ Keyslots │ Encrypted data │
+├────────┼───────────┼──────────────────┼────────────────────┼──────────┼────────────────┤
+│  4,096 │  524,288  │        16        │         16         │  16,352  │    3,743,148   │
+├────────┴───────────┼──────────────────┴────────────────────┴──────────┴────────────────┤
+│ Boot partition (1) │                        Root partition (2)                         │
+└────────────────────┴───────────────────────────────────────────────────────────────────┘
 ```
 
 [Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf#luks2-on-disk-format)
@@ -1148,16 +1123,31 @@ As a side note: The [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/
 
 The `LUKS header information` can also be analysed, as shown [above](#encrypting-the-root-partition).
 
-The above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`.
+The above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`. **The `header sizes` may `vary`, depending on how `LUKS` was initialised on the device!**
 
 The following formula will be used, in order to `determine` the `end sector` of the `root partition` in `Kibibytes`:
 ```no-highlight
-(<boot_offset_size> + <boot_data_size>) + ((<luks_header_primary_binary_header_size> + <luks_header_first_metadata_size>) + (<luks_header_secondary_binary_header_size> + <luks_header_second_metadata_size>) + <luks_header_keyslots_size> + <luks_header_alignment_padding_size>) + <encrypted_partition_size> = <end_sector_of_the_root_partition>
+(<boot_offset_size> + <boot_data_size>) + (<luks_header_primary_metadata_size> + <luks_header_secondary_metadata_size> + <luks_header_keyslots_size>) + <encrypted_data_size> = <end_sector_of_the_root_partition>
+
+or:
+
+(<boot_offset_size> + <boot_data_size>) + <luks_header_data_segments_crypt_offset_size> + <encrypted_data_size> = <end_sector_of_the_root_partition>
 ```
 
 That is:
 ```no-highlight
-(4,096 KiB + 524,288 KiB) + ((4 KiB + 16 KiB) + (4 KiB + 16 KiB) + 16,352 KiB + 32 KiB) + 3,743,148 KiB = 4,287,956 KiB
+  luks_header_primary_metadata_size                         =        16,384 Bytes   =        16 Kibibytes
++ luks_header_secondary_metadata_size                       =        16,384 Bytes   =        16 Kibibytes
++ luks_header_keyslots_size                                 =    16,744,448 Bytes   =    16,352 Kibibytes
+= luks_header_data_segments_crypt_offset_size               =    16,777,216 Bytes   =    16,384 Kibibytes
+
+encrypted_data_size = 4,096 Bytes * 935,787 sectors         = 3,832,983,552 Bytes   = 3,743,148 Kibibytes
+
+(4,096 KiB + 524,288 KiB) + (16 KiB + 16 KiB + 16,352 KiB) + 3,743,148 KiB = 4,287,916 KiB
+
+or:
+
+(4,096 KiB + 524,288 KiB) + 16,384 KiB + 3,743,148 KiB = 4,287,916 KiB
 ```
 
 Next, `shrink` the `root partition` via `parted`:
@@ -1181,19 +1171,19 @@ Number  Start      End          Size         Type     File system  Flags
 
 (parted) resizepart
 Partition number? 2
-End?  [3886448kiB]? 4287956
+End?  [3886448kiB]? 4287916
 Warning: Shrinking a partition can cause data loss, are you sure you want to continue?
 Yes/No? yes
 (parted) print
 Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 4832764kiB
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 60088320kiB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start      End         Size        Type     File system  Flags
  1      4096kiB    528384kiB   524288kiB   primary  fat32        lba
- 2      528384kiB  4287956kiB  3759572kiB  primary
+ 2      528384kiB  4287916kiB  3759532kiB  primary
 
 (parted) quit
 ```
@@ -1201,19 +1191,19 @@ Number  Start      End         Size        Type     File system  Flags
 ### Truncating the modified image
 Once this is done, the image itself can now be `truncated`. The following formula will be used, in order to `determine` the `total file size`:
 ```no-highlight
-<boot_partition_end_sector> + <root_partition_end_sector> = <total_file_size>
+<boot_partition_end_sector_size> + <root_partition_end_sector_size> = <total_file_size>
 ```
 
 That is:
 ```no-highlight
-528,384 KiB + 4,287,956 KiB = 4,816,340 KiB
+528,384 KiB + 4,287,916 KiB = 4,816,300 KiB
 ```
 
 Finally, `truncate` the image to `its new total size`:
 ```bash
-$ truncate --size="4816340K" "raspberrypi_sd_card_backup.img"
+$ truncate --size="4816300K" "raspberrypi_sd_card_backup.img"
 $ ls -l --block-size="K" "raspberrypi_sd_card_backup.img"
--rw-r--r-- 1 root root 4816340K Feb 19 17:42 raspberrypi_sd_card_backup.img
+-rw-r--r-- 1 root root 4816300K Feb 21 17:53 raspberrypi_sd_card_backup.img
 ```
 
 ### Verifying the data integrity
@@ -1223,18 +1213,24 @@ Therefore, the `root partition` needs to be `mounted again`:
 ```bash
 $ parted "raspberrypi_sd_card_backup.img" "unit s print"
 Model:  (file)
-Disk /root/tmp/raspberrypi_sd_card_backup.img: 9632680s
+Disk /root/tmp/raspberrypi_sd_card_backup.img: 9632600s
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start     End       Size      Type     File system  Flags
  1      8192s     1056767s  1048576s  primary  fat32        lba
- 2      1056768s  8575911s  7519144s  primary
-$ losetup --offset="$(( 512 * 1056768 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/dev/loop2" cryptsdcardbackup
-Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img: raspberry
+ 2      1056768s  8575831s  7519064s  primary
+$ losetup --partscan "/dev/loop0" "raspberrypi_sd_card_backup.img"
+$ ls /dev/loop0*
+/dev/loop0  /dev/loop0p1  /dev/loop0p2
+$ cryptsetup open "/dev/loop0p2" cryptsdcardbackup
+Enter passphrase for /dev/loop0p2: raspberry
 ```
+
+This time, the parameter `--partscan` of the command `losetup` was used, in order to `force` the kernel to `scan the partition table` of the newly created loop device. This will create the `block device` `/dev/loop0p1`, which is the `boot partition` and `/dev/loop0p2`, which is the `root partition`.
+
+Be aware, that this parameter `assumes` the default sector size of `512 Bytes`. If it differs, the parameter `--sector-size` needs to be `added` as well.
 
 After that, `verify the filesystem integrity` via `e2fsck`:
 ```bash
@@ -1251,7 +1247,7 @@ Pass 5: Checking group summary information
           68 non-contiguous directories (0.1%)
              # of inodes with ind/dind/tind blocks: 0/0/0
              Extent depth histogram: 76224/90
-      745028 blocks used (79.27%, out of 939893)
+      745028 blocks used (79.62%, out of 935787)
            0 bad blocks
            1 large file
 
@@ -1275,7 +1271,7 @@ If the check was `successful`, the `root partition` should be `mountable`:
 $ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
 $ df --block-size="K" "/mnt/"
 Filesystem                    1K-blocks     Used Available Use% Mounted on
-/dev/mapper/cryptsdcardbackup  3404972K 2625512K   575100K  83% /mnt
+/dev/mapper/cryptsdcardbackup  3388548K 2625512K   559496K  83% /mnt
 $ ls -l "/mnt/"
 total 76
 lrwxrwxrwx  1 root root     7 Nov 19 14:30 bin -> usr/bin
@@ -1294,21 +1290,28 @@ $ cryptsetup status cryptsdcardbackup
   cipher:  xchacha20,aes-adiantum-plain64
   keysize: 256 bits
   key location: keyring
-  device:  /dev/loop2
-  loop:    /root/tmp/raspberrypi_sd_card_backup.img
+  device:  /dev/loop0p2
   sector size:  4096
   offset:  32768 sectors
-  size:    8543144 sectors
+  size:    7486296 sectors
   mode:    read/write
 ```
 
 Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
+Additionally, the command `dumpe2fs` can be used to see the `real sector size (block size)` and `real size (block count)`:
+```bash
+$ dumpe2fs "/dev/mapper/cryptsdcardbackup" | grep "Block "
+dumpe2fs 1.47.1 (20-May-2024)
+Block count:              935787
+Block size:               4096
+```
+
 After that, unmount `/mnt/`, close the `LUKS device` and detach the `loop device`:
 ```bash
 $ umount "/mnt/"
 $ cryptsetup close cryptsdcardbackup
-$ losetup --detach "/dev/loop2"
+$ losetup --detach "/dev/loop0"
 $ losetup --list
 ```
 
