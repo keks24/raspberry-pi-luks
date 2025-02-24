@@ -1227,9 +1227,9 @@ $ cryptsetup open "/dev/loop0p2" cryptsdcardbackup
 Enter passphrase for /dev/loop0p2: raspberry
 ```
 
-This time, the parameter `--partscan` of the command `losetup` was used, in order to `force` the kernel to `scan the partition table` of the newly created loop device. This will create the `block device` `/dev/loop0p1`, which is the `boot partition` and `/dev/loop0p2`, which is the `root partition`.
+This time, the parameter `--partscan` of the command `losetup` was used, in order to `force` the kernel to `scan the partition table` of the newly created loop device. This will create the `block devices` `/dev/loop0p1`, which is the `boot partition` and `/dev/loop0p2`, which is the `root partition`.
 
-Be aware, that this parameter `assumes` the default sector size of `512 Bytes`. If it differs, the parameter `--sector-size` needs to be `added` as well.
+Be aware, that this parameter `assumes` the default sector size of `512 Bytes`. If it differs, the parameter `--sector-size` needs to be `used` as well.
 
 After that, `verify the filesystem integrity` via `e2fsck`:
 ```bash
