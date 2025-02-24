@@ -206,7 +206,7 @@ Number  Start   End     Size    Type     File system  Flags
 The command `resizepart` is used to `extend` the partition, where `-1` defines the `last sector` of the SD card.
 
 ### Calculating new LUKS device size
-After `extending` the partition via `parted`, the new `LUKS device size` needs to be `calculated` via `cryptsetup` as well:
+After `extending` the partition via `parted`, the new `LUKS device size` needs to be `calculated` via `cryptsetup` as well, if a reboot is not desired:
 ```bash
 $ cryptsetup resize cryptroot
 Enter passphrase for /dev/mmcblk0p2: raspberry
