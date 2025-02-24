@@ -147,14 +147,13 @@ After that, boot into `Raspberry Pi OS (Debian)` with [predefined user credentia
 ```bash
 $ parted --list
 Model: Linux device-mapper (crypt) (dm)
-Disk /dev/mapper/cryptroot: 3963MB
+Disk /dev/mapper/cryptroot: 3833MB
 Sector size (logical/physical): 4096B/4096B
 Partition Table: loop
 Disk Flags:
 
 Number  Start  End     Size    File system  Flags
- 1      0.00B  3963MB  3963MB  ext4
-
+ 1      0.00B  3833MB  3833MB  ext4
 
 Model: SD SC64G (sd/mmc)
 Disk /dev/mmcblk0: 61.5GB
@@ -164,7 +163,7 @@ Disk Flags:
 
 Number  Start   End     Size    Type     File system  Flags
  1      4194kB  541MB   537MB   primary  fat32        lba
- 2      541MB   4521MB  3980MB  primary
+ 2      541MB   4391MB  3850MB  primary
 ```
 
 This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `~4 GB`, but the SD card's total capacity is `61.5 GB`.
@@ -185,7 +184,7 @@ Disk Flags:
 
 Number  Start   End     Size    Type     File system  Flags
  1      4194kB  541MB   537MB   primary  fat32        lba
- 2      541MB   4521MB  3980MB  primary
+ 2      541MB   4391MB  3850MB  primary
 
 (parted) resizepart
 Partition number? 2
@@ -219,7 +218,7 @@ Once this is done, use `resize2fs` to `extend` the filesystem:
 $ resize2fs "/dev/mapper/cryptroot"
 resize2fs 1.47.0 (5-Feb-2023)
 Filesystem at /dev/mapper/cryptroot is mounted on /; on-line resizing required
-old_desc_blocks = 1, new_desc_blocks = 1
+old_desc_blocks = 1, new_desc_blocks = 8
 The filesystem on /dev/mapper/cryptroot is now 14884108 (4k) blocks long.
 ```
 
@@ -250,7 +249,7 @@ To check, if the values are correct, the following formula can be used:
 
 That is:
 ```no-highlight
-(512 Bytes * 119072864) / 1024^3 = ~56.78 GiB
+(512 Bytes/sector * 119,072,864 sectors) / 1024^3 = ~56.78 GiB
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
@@ -265,7 +264,7 @@ Block size:               4096
 
 Which leads to the `same result` as above:
 ```no-highlight
-(4096 Bytes * 14884108) / 1024^3 = ~56.78 GiB
+(4096 Bytes/sector * 14,884,108 sectors) / 1024^3 = ~56.78 GiB
 ```
 
 ## Further steps
