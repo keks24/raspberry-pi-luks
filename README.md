@@ -107,12 +107,12 @@ parted
 util-linux
 ```
 * `Linux Kernel version 5.0` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
-* The capacity of the `SD card` must be greater than `3.3 GiB`.
+* The capacity of the `SD card` must be greater than `3.9 GiB`.
 
 If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 ## Downloading the image
-Download the files from [gofile.io](https://gofile.io/d/H9UUIe).
+Download the files from [gofile.io](https://gofile.io/d/6mjAQV).
 
 If the links are dead, due to infrequent downloads, please `proceed with` [Encrypting the root partition manually](#encrypting-the-root-partition-manually).
 
