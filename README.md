@@ -134,7 +134,7 @@ $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="1M" conv="fsync" stat
 ```
 
 ## Extending the root partition
-When copying the image to other data storage devices with `higher capacity`, the `encrypted root partition` will stay at `~3.3 GiB`. Therefore, it needs to be `extended`, in order to use the `unused free space`.
+When copying the image to other data storage devices with `higher capacity`, the `encrypted root partition` will stay at `~3.9 GiB`. Therefore, it needs to be `extended`, in order to use the `unused free space`.
 
 ### Creating a backup of the SD card
 Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
@@ -166,7 +166,7 @@ Number  Start   End     Size    Type     File system  Flags
  2      541MB   4391MB  3850MB  primary
 ```
 
-This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `~4 GB`, but the SD card's total capacity is `61.5 GB`.
+This indicates, that `/dev/mmcblk0p2` (`/dev/mapper/cryptroot`) only has a size of `~3.9 GB`, but the SD card's total capacity is `61.5 GB`.
 
 ### Extending the root partition
 In order to `extend` the `second partition`, execute the following commands:
