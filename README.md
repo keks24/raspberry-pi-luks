@@ -819,7 +819,7 @@ Enter same passphrase again: <some_password>
 Your identification has been saved in /home/<some_username>/.ssh/dropbear_root_ed25519
 Your public key has been saved in /home/<some_username>/.ssh/dropbear_root_ed25519.pub
 The key fingerprint is:
-SHA256:ZJmQeVDrJpSM+URlKV16DIxM+dhDkjrMXn33Al/FRvs <some_username>@<some_hostname>
+SHA256:<some_alphanumeric_characters> <some_username>@<some_hostname>
 The key's randomart image is:
 +--[ED25519 256]--+
 |     o=%=o.    o.|
