@@ -1266,6 +1266,7 @@ Pass 5: Checking group summary information
 The parameter `-f` `forces` the filesystem check, even, if it is clean.
 
 If this check `fails`, `one or more` of the above steps may have caused a `misalignment`; **rendering the `root partition` unusable!** Try to comprehend the [above steps](#shrinking-the-modified-image) from the beginning once again.
+
 If the check was `successful`, the `root partition` should be `mountable`:
 ```bash
 $ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
