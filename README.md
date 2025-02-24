@@ -264,7 +264,7 @@ Block size:               4096
 
 Which leads to the `same result` as above:
 ```no-highlight
-(4096 Bytes/sector * 14,884,108 sectors) / 1024^3 = ~56.78 GiB
+(4,096 Bytes/sector * 14,884,108 sectors) / 1024^3 = ~56.78 GiB
 ```
 
 ## Further steps
