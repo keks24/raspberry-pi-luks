@@ -1140,7 +1140,7 @@ That is:
 + luks_header_keyslots_size                                 =    16,744,448 Bytes   =    16,352 Kibibytes
 = luks_header_data_segments_crypt_offset_size               =    16,777,216 Bytes   =    16,384 Kibibytes
 
-encrypted_data_size = 4,096 Bytes * 935,787 sectors         = 3,832,983,552 Bytes   = 3,743,148 Kibibytes
+encrypted_data_size = 4,096 Bytes/sector * 935,787 sectors  = 3,832,983,552 Bytes   = 3,743,148 Kibibytes
 
 (4,096 KiB + 524,288 KiB) + (16 KiB + 16 KiB + 16,352 KiB) + 3,743,148 KiB = 4,287,916 KiB
 
