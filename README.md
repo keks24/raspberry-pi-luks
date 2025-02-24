@@ -1142,11 +1142,11 @@ That is:
 
 encrypted_data_size = 4,096 Bytes/sector * 935,787 sectors  = 3,832,983,552 Bytes   = 3,743,148 Kibibytes
 
-(4,096 KiB + 524,288 KiB) + (16 KiB + 16 KiB + 16,352 KiB) + 3,743,148 KiB = 4,287,916 KiB
+(4,096 KiB + 524,288 KiB) + (16 KiB + 16 KiB + 16,352 KiB)  + 3,743,148 KiB = 4,287,916 KiB
 
 or:
 
-(4,096 KiB + 524,288 KiB) + 16,384 KiB + 3,743,148 KiB = 4,287,916 KiB
+(4,096 KiB + 524,288 KiB) + 16,384 KiB                      + 3,743,148 KiB = 4,287,916 KiB
 ```
 
 Next, `shrink` the `root partition` via `parted`:
