@@ -1003,7 +1003,7 @@ Please unlock disk cryptroot: raspberry
 ```
 
 ## Shrinking the modified image
-Please go to [Shrinking the modified image](https://codeberg.org/keks24/raspberry-pi-luks/src/tag/v4.10.6#shrinking-the-modified-image), which was done for `Raspberry Pi OS (Debian 12 Bookworm)`.
+Please go to [Shrinking the modified image](https://codeberg.org/keks24/raspberry-pi-luks/src/tag/v4.11.0#shrinking-the-modified-image), which was done for `Raspberry Pi OS (Debian 12 Bookworm)`.
 
 # Debugging
 ## Examining the initramfs
