@@ -1,7 +1,5 @@
 Table of Contents
 =================
-
-* [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Using the modified image](#using-the-modified-image)
     * [Prerequisites](#prerequisites)
@@ -38,7 +36,7 @@ Table of Contents
             * [Generating the initramfs](#generating-the-initramfs)
             * [Exiting the chroot environment](#exiting-the-chroot-environment)
     * [Installing the modified image](#installing-the-modified-image)
-* [Further steps](#further-steps-1)
+    * [Further steps](#further-steps-1)
         * [Mandatory](#mandatory-1)
             * [Updating all installed packages](#updating-all-installed-packages-1)
             * [Changing the user password](#changing-the-user-password-1)
@@ -778,7 +776,7 @@ Please unlock disk cryptroot: raspberry
 
 After entering the password, the `Raspberry Pi` should boot into `Raspbian`.
 
-# Further steps
+## Further steps
 ### Mandatory
 #### Updating all installed packages
 Since only some of the above mentioned packages have been upgraded, the probability is very high, that `new packages` are available. Update them using the following commands:
