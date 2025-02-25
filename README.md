@@ -57,6 +57,7 @@ Table of Contents
             * [Generating a fancy ASCII banner](#generating-a-fancy-ascii-banner)
             * [Rebuilding the initramfs](#rebuilding-the-initramfs-1)
             * [Rebooting](#rebooting-1)
+    * [Shrinking the modified image](#shrinking-the-modified-image)
 * [Debugging](#debugging)
     * [Examining the initramfs](#examining-the-initramfs)
     * [Unarchiving the initramfs](#unarchiving-the-initramfs)
@@ -794,7 +795,7 @@ See [Changing the LUKS password](#changing-the-luks-password-2) below!
 
 ### Optional
 #### Copying the modified image to smaller data storage devices
-In order to copy the modified image to `smaller` data storage devices, the `filesystem` and `partition information` and the `image size` need to be `adjusted` accordingly; see [Shrinking the modified image](https://codeberg.org/keks24/raspberry-pi-luks/src/tag/v4.10.5#shrinking-the-modified-image), which was done for `Raspberry Pi OS (Debian 12 Bookworm)`.
+In order to copy the modified image to `smaller` data storage devices, the `filesystem` and `partition information` and the `image size` need to be `adjusted` accordingly; see [Shrinking the modified image](#shrinking-the-modified-image), below.
 
 #### Decrypting the root partition via SSH
 See [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-2) below.
@@ -995,6 +996,9 @@ $ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rs
 
 Please unlock disk cryptroot: raspberry
 ```
+
+## Shrinking the modified image
+Please go to [Shrinking the modified image](https://codeberg.org/keks24/raspberry-pi-luks/src/tag/v4.10.6#shrinking-the-modified-image), which was done for `Raspberry Pi OS (Debian 12 Bookworm)`.
 
 # Debugging
 ## Examining the initramfs
