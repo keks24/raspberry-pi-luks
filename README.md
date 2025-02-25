@@ -1689,7 +1689,7 @@ Finally, `verify`, if the re-encryption was successful:
 ```bash
 $ cryptsetup status cryptroot
 /dev/mapper/cryptroot is active and is in use.
-type:    LUKS2
+  type:    LUKS2
   cipher:  xchacha20,aes-adiantum-plain64
   keysize: 256 bits
   key location: keyring
