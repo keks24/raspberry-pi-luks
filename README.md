@@ -1,80 +1,96 @@
 Table of Contents
 =================
+
+* [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Using the modified image](#using-the-modified-image)
-   * [Prerequisites](#prerequisites)
-   * [Downloading the image](#downloading-the-image)
-   * [Copying the image to the SD card](#copying-the-image-to-the-sd-card)
-   * [Resizing the root partition](#resizing-the-root-partition)
-      * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card)
-      * [Analysing the root partition](#analysing-the-root-partition)
-      * [Extending the root partition](#extending-the-root-partition)
-      * [Extending the filesystem](#extending-the-filesystem)
-      * [Rebooting and verifying](#rebooting-and-verifying)
-   * [Further steps](#further-steps)
-      * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
-      * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
+    * [Prerequisites](#prerequisites)
+    * [Downloading the image](#downloading-the-image)
+    * [Copying the image to the SD card](#copying-the-image-to-the-sd-card)
+    * [Extending the root partition](#extending-the-root-partition)
+        * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card)
+        * [Analysing the root partition](#analysing-the-root-partition)
+        * [Extending the root partition](#extending-the-root-partition-1)
+        * [Calculating new LUKS device size](#calculating-new-luks-device-size)
+        * [Extending the filesystem](#extending-the-filesystem)
+        * [Verifying the filesystem](#verifying-the-filesystem)
+    * [Further steps](#further-steps)
+        * [Mandatory](#mandatory)
+            * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
+            * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
+            * [Changing the user password](#changing-the-user-password)
+            * [Changing the LUKS password](#changing-the-luks-password)
+            * [Updating all installed packages](#updating-all-installed-packages)
+        * [Optional](#optional)
+            * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
-   * [Prerequisites](#prerequisites-1)
-      * [Separate system](#separate-system)
-      * [Raspberry Pi](#raspberry-pi)
-   * [Downloading the stock image](#downloading-the-stock-image)
-   * [Configuration](#configuration)
-      * [Preparation](#preparation)
-      * [Encrypting the root partition](#encrypting-the-root-partition)
-      * [Entering the chroot environment](#entering-the-chroot-environment)
-         * [Installing necessary tools](#installing-necessary-tools)
-         * [Configuration](#configuration-1)
-         * [Generating the initramfs](#generating-the-initramfs)
-         * [Exiting the chroot environment](#exiting-the-chroot-environment)
-* [Installing the modified image](#installing-the-modified-image)
+    * [Prerequisites](#prerequisites-1)
+        * [Separate system](#separate-system)
+        * [Raspberry Pi](#raspberry-pi)
+    * [Downloading the stock image](#downloading-the-stock-image)
+    * [Configuration](#configuration)
+        * [Preparation](#preparation)
+        * [Encrypting the root partition](#encrypting-the-root-partition)
+        * [Entering the chroot environment](#entering-the-chroot-environment)
+            * [Installing necessary tools](#installing-necessary-tools)
+            * [Configuration](#configuration-1)
+            * [Configuration](#configuration-2)
+            * [Generating the initramfs](#generating-the-initramfs)
+            * [Exiting the chroot environment](#exiting-the-chroot-environment)
+    * [Installing the modified image](#installing-the-modified-image)
 * [Further steps](#further-steps-1)
-   * [Updating all installed packages](#updating-all-installed-packages)
+        * [Mandatory](#mandatory-1)
+            * [Updating all installed packages](#updating-all-installed-packages-1)
+            * [Changing the user password](#changing-the-user-password-1)
+            * [Changing the LUKS password](#changing-the-luks-password-1)
+        * [Optional](#optional-1)
+            * [Copying the modified image to smaller data storage devices](#copying-the-modified-image-to-smaller-data-storage-devices)
+            * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-1)
 * [Optional steps](#optional-steps)
-   * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
-      * [Install dropbear-initramfs](#install-dropbear-initramfs)
-      * [Configure dropbear](#configure-dropbear)
-      * [Configuring kernel parameters](#configuring-kernel-parameters)
-      * [Rebuilding the initramfs](#rebuilding-the-initramfs)
-      * [Rebooting](#rebooting)
-      * [Testing remote decryption](#testing-remote-decryption)
-      * [Optional fancy SSH ASCII banner](#optional-fancy-ssh-ascii-banner)
-         * [Configuring dropbear](#configuring-dropbear)
-         * [Generating a fancy ASCII banner](#generating-a-fancy-ascii-banner)
-         * [Rebuilding the initramfs](#rebuilding-the-initramfs-1)
-         * [Rebooting](#rebooting-1)
+    * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-2)
+        * [Install dropbear-initramfs](#install-dropbear-initramfs)
+        * [Configure dropbear](#configure-dropbear)
+        * [Configuring kernel parameters](#configuring-kernel-parameters)
+        * [Rebuilding the initramfs](#rebuilding-the-initramfs)
+        * [Rebooting](#rebooting)
+        * [Testing remote decryption](#testing-remote-decryption)
+        * [Optional fancy SSH ASCII banner](#optional-fancy-ssh-ascii-banner)
+            * [Configuring dropbear](#configuring-dropbear)
+            * [Generating a fancy ASCII banner](#generating-a-fancy-ascii-banner)
+            * [Rebuilding the initramfs](#rebuilding-the-initramfs-1)
+            * [Rebooting](#rebooting-1)
 * [Debugging](#debugging)
-   * [Examining the initramfs](#examining-the-initramfs)
-   * [Unarchiving the initramfs](#unarchiving-the-initramfs)
-      * [Easy method](#easy-method)
-      * [Elaborated method](#elaborated-method)
+    * [Examining the initramfs](#examining-the-initramfs)
+    * [Unarchiving the initramfs](#unarchiving-the-initramfs)
+        * [Easy method](#easy-method)
+        * [Elaborated method](#elaborated-method)
 * [Additional information](#additional-information)
-   * [Credentials](#credentials)
-      * [LUKS password](#luks-password)
-      * [User credentials](#user-credentials)
-      * [Changing the user password](#changing-the-user-password)
-      * [Changing the LUKS password](#changing-the-luks-password)
-   * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
-      * [Installing necessary tools](#installing-necessary-tools-1)
-      * [Changing the UUID](#changing-the-uuid)
-      * [Verifying the modification](#verifying-the-modification)
-      * [Adapting configuration files](#adapting-configuration-files)
-      * [Rebuilding the initramfs](#rebuilding-the-initramfs-2)
-      * [Rebooting](#rebooting-2)
-   * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
-   * [Re-encrypting the root partition](#re-encrypting-the-root-partition-1)
-      * [Prerequisites](#prerequisites-2)
-      * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1)
-      * [Configuring the bootloader](#configuring-the-bootloader)
-      * [Adapting the modifications of the bootloader](#adapting-the-modifications-of-the-bootloader)
-      * [Re-encrypting the partition](#re-encrypting-the-partition)
-      * [Reverting the modifications of the bootloader](#reverting-the-modifications-of-the-bootloader)
-      * [Verifying the new cipher method](#verifying-the-new-cipher-method)
+    * [Credentials](#credentials)
+        * [LUKS password](#luks-password)
+        * [User credentials](#user-credentials)
+        * [Changing the user password](#changing-the-user-password-2)
+        * [Changing the LUKS password](#changing-the-luks-password-2)
+    * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
+        * [Installing necessary tools](#installing-necessary-tools-1)
+        * [Changing the UUID](#changing-the-uuid)
+        * [Verifying the modification](#verifying-the-modification)
+        * [Adapting configuration files](#adapting-configuration-files)
+        * [Rebuilding the initramfs](#rebuilding-the-initramfs-2)
+        * [Rebooting](#rebooting-2)
+    * [Decrypting the root partition from the image](#decrypting-the-root-partition-from-the-image)
+    * [Re-encrypting the root partition](#re-encrypting-the-root-partition-1)
+        * [Prerequisites](#prerequisites-2)
+        * [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1)
+        * [Configuring the bootloader](#configuring-the-bootloader)
+        * [Adapting the modifications of the bootloader](#adapting-the-modifications-of-the-bootloader)
+        * [Re-encrypting the partition](#re-encrypting-the-partition)
+        * [Reverting the modifications of the bootloader](#reverting-the-modifications-of-the-bootloader)
+        * [Verifying the new cipher method](#verifying-the-new-cipher-method)
 * [Known issues](#known-issues)
-   * [Compatibility](#compatibility)
+    * [Compatibility](#compatibility)
 
 # Introduction
-This repository shall describe all necessary steps in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`.
+This repository shall describe all necessary steps, in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`.
 
 The instructions are adaptable for `other Raspberry Pi revisions` as well. They should also work on `image files with partition information` in general.
 
@@ -128,17 +144,17 @@ Copy the image to the `SD card`:
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="1M" conv="fsync" status="progress"
 ```
 
-## Resizing the root partition
-When copying the image to another SD card with a `higher capacity`, the `encrypted root partition` will stay at `~8 GiB`. Therefore, it needs to be `extended` in order to use the `unused free space`.
+## Extending the root partition
+When copying the image to other data storage devices with `higher capacity`, the `encrypted root partition` will stay at `~8 GiB`. Therefore, it needs to be `extended`, in order to use the `unused free space`.
 
 ### Creating a backup of the SD card
-Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
+Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
-$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_resize.img" bs="1M" conv="fsync" status="progress"
+$ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_extending.img" bs="1M" conv="fsync" status="progress"
 ```
 
 ### Analysing the root partition
-After that, boot into `Raspbian` and check the partition structure via `parted`:
+After that, boot into `Raspbian` with [predefined user credentials](#user-credentials) and check the partition structure via `parted`:
 ```bash
 $ parted --list
 Model: Linux device-mapper (crypt) (dm)
@@ -199,10 +215,10 @@ Number  Start   End     Size    Type     File system  Flags
 (parted) quit
 ```
 
-The command `resizepart` will be used to `extend` the partition, where `-1` defines the last sector of the SD card.
+The command `resizepart` is used to `extend` the partition, where `-1` defines the `last sector` of the SD card.
 
 ### Calculating new LUKS device size
-After `extending` the partition via `parted`, the new `LUKS device size` needs to be `calculated` via `cryptsetup` as well:
+After `extending` the partition via `parted`, the new `LUKS device size` needs to be `calculated` via `cryptsetup` as well, if a reboot is not desired:
 ```bash
 $ cryptsetup resize cryptroot
 Enter passphrase for /dev/mmcblk0p2: raspberry
@@ -218,12 +234,11 @@ old_desc_blocks = 1, new_desc_blocks = 4
 The filesystem on /dev/mapper/cryptroot is now 7720844 (4k) blocks long.
 ```
 
-Note, that the filesystem size of `7720844 Bytes (~8 GB)` is still indicated.
+Note, that the filesystem size is now `~29.45 GiB`.
 
-### Rebooting and verifying
-After rebooting, all changes are applied properly:
+### Verifying the filesystem
+All changes are now applied properly:
 ```bash
-$ reboot
 $ cryptsetup status cryptroot
 /dev/mapper/cryptroot is active and is in use.
   type:    LUKS2
@@ -237,6 +252,8 @@ $ cryptsetup status cryptroot
   mode:    read/write
 ```
 
+Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+
 To check, if the values are correct, the following formula can be used:
 ```no-highlight
 (<sector_size> * <size>) / 1024^3 = <size_in_gib>
@@ -244,17 +261,49 @@ To check, if the values are correct, the following formula can be used:
 
 That is:
 ```no-highlight
-(4096 Bytes * 7720844) / 1024^3 = 29.45 GiB
+(512 Bytes/sector * 7,720,844 sectors) / 1024^3 = 29.45 GiB
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
 
-## Further steps
-### Re-encrypting the root partition
-**It is mandatory to proceed with [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below!**
+For good measure, the command `dumpe2fs` can be used to see the `real sector size (block size)` and `real size (block count)` of the `decrypted root partition`:
+```bash
+$ dumpe2fs "/dev/mapper/cryptroot" | grep "Block " | head --lines="2"
+dumpe2fs 1.44.5 (15-Dec-2018)
+Block count:              7720844
+Block size:               4096
+```
 
-### Changing the UUID of the root partition
-After that, proceed with [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
+Which leads to the `same result` as above:
+```no-highlight
+(4,096 Bytes/sector * 7,720,844 sectors) / 1024^3 = ~29.45 GiB
+```
+
+## Further steps
+### Mandatory
+#### Re-encrypting the root partition
+See [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below!
+
+#### Changing the UUID of the root partition
+See [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below!
+
+#### Changing the user password
+See [Changing the user password](#changing-the-user-password-2) below!
+
+#### Changing the LUKS password
+See [Changing the LUKS password](#changing-the-luks-password-2) below!
+
+#### Updating all installed packages
+As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:
+```bash
+$ apt update
+$ apt list --upgradable
+$ apt upgrade
+```
+
+### Optional
+#### Decrypting the root partition via SSH
+See [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-2) below.
 
 # Encrypting the root partition manually
 ## Prerequisites
@@ -265,6 +314,7 @@ aria2c
 coreutils
 cryptsetup-2.0.6 or higher
 e2fsprogs
+
 parted
 qemu-user-static
 unzip
@@ -281,6 +331,8 @@ raspberrypi-kernel-1.20200527-1 or higher
 * `qemu-user-static` is needed, if one is working on a `non-ARM operating system`.
 * `raspberrypi-kernel-1.20200527-1 (Linux Kernel 5.0)` or higher and `cryptsetup-2.0.6` or higher are required to support the fast `software-based` encryption method `aes-adiantum-plain64`, since the Raspberry Pi's CPU does not support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
 * Free space of at least `1.5 times` the capactiy of the `SD card`
+
+If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 ## Downloading the stock image
 Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum:
@@ -396,10 +448,16 @@ $ umount "/mnt/"
 ```
 
 ### Encrypting the root partition
-Since the preparation is done, the `root partition` can now be `formatted and encrypted` via `cryptsetup`:
+Since the preparation is done, the `root partition` can now be `overwritten with random Bytes` before formatting, in order to `decrease the chance of external recovery` from `third parties`:
+```bash
+$ shred --iterations="1" --random-source="/dev/urandom" --zero --verbose "/dev/loop2"
+```
+
+The command `shred` overwrites the `root partition` with `random Bytes` first and then with `zeroes`; the latter `obfuscates` the shredding. The special character device [`/dev/urandom`](https://www.thomas-huehn.com/myths-about-urandom/) is used as preferred `entropy source`, since it behaves like `/dev/random` since [`Kernel version 5.6`](https://en.wikipedia.org/w/index.php?title=/dev/random&oldid=1268697417#Linux), but it will `not block` the process, if there is `insufficient entropy`. The command comes with an [internal pseudo-random generator](https://www.gnu.org/software/coreutils/manual/html_node/Random-sources.html#Random-sources), which will be used, if the parameter `--random-source` is left out; this would `accelerate` the write process, but it is `not true random`.
+
+After that, `format` and `encrypt` the `root partition` via `cryptsetup`:
 ```bash
 $ cryptsetup --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" --sector-size="4096" luksFormat "/dev/loop2"
-WARNING: Device /dev/loop2 already contains a 'ext4' superblock signature.
 
 WARNING!
 ========
@@ -410,7 +468,7 @@ Enter passphrase for /dev/loop2: raspberry
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`).
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 Bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 The `LUKS header information` looks like so:
 ```bash
@@ -481,7 +539,7 @@ Creating journal (8192 blocks): done
 Writing superblocks and filesystem accounting information: done
 ```
 
-After that, it is possible to mount the encrypted partition `/dev/mapper/cryptroot`:
+After that, it is possible to mount the decrypted partition `/dev/mapper/cryptroot`:
 ```bash
 $ mount "/dev/mapper/cryptroot" "/mnt/"
 ```
@@ -512,7 +570,7 @@ $ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 
 **`qemu-arm-static` is mandatory, if one is working on a `non-ARM operating system`!**
 
-`/etc/resolv.conf` contains entries of `DNS name servers`, which are required within the `chroot environment` in order to make `reverse DNS lookups` possible.
+`/etc/resolv.conf` contains entries of `DNS name servers`, which are required within the `chroot environment`, in order to make `reverse DNS lookups` possible.
 
 Enter the new environment:
 ```bash
@@ -523,7 +581,7 @@ $ export PS1="(chroot) ${PS1}"
 ```
 
 #### Installing necessary tools
-An `initramfs` is needed in order to decrypt the `root partition` on boot. The following packages will provide all tools to build it:
+An `initramfs` is needed, in order to decrypt the `root partition` on boot. The following packages will provide all tools to build it:
 ```bash
 (chroot) $ apt update
 (chroot) $ apt install busybox cryptsetup initramfs-tools
@@ -602,6 +660,7 @@ Be aware, that the hook script directories `/etc/kernel/postinst.d/5.10.17+/` an
 
 Note, that the custom hook script `/etc/kernel/preinst.d/01-rpi-initramfs-tools` silently fails, if working on a different system in a `chroot environment`, since it uses `uname` to determine the `current kernel version` and compares its `suffix` with the `suffix` of the `package kernel version` in order to copy the `post-install` and `post-remove` hook scripts into their respective directories. If one is using a `Raspberry Pi` for this setup, make sure, that the `kernel version` of the `Raspberry Pi` and within the `chroot environment` are identical.
 
+#### Configuration
 Next, get the `UUID` of `/dev/loop2`, which will be used later on:
 ```bash
 (chroot) $ blkid "/dev/loop2"
@@ -652,7 +711,10 @@ Adding module /lib/modules/5.10.17+/kernel/drivers/usb/roles/roles.ko
 (chroot) $ mv "/boot/initrd.img-5.10.17+" "/boot/initramfs.cpio.gz"
 ```
 
-For this setup, the `first method is preferred` in order to test the hook scripts in `preinst.d`, `postrm.d` and `postinst.d`.
+For this setup, the `first method is preferred`, in order to test the hook scripts in `/etc/kernel/preinst.d/`, `/etc/kernel/postrm.d/` and `/etc/kernel/postinst.d/`. This can be executed now:
+```bash
+(chroot) $ apt install raspberrypi-kernel --reinstall
+```
 
 After the reinstallation has been completed, there should be the entry `initramfs initramfs.cpio.gz followkernel` in the configuration file `/boot/config.txt`:
 ```bash
@@ -676,7 +738,7 @@ usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
 usr/sbin/cryptsetup
 ```
 
-Also make sure, that the content of `cryptroot/crypttab` is correct.
+Also make sure, that the content of `/cryptroot/crypttab` is correct.
 
 Detailed debugging is explained [below](#debugging).
 
@@ -694,7 +756,7 @@ Remove `qemu-arm-static` from `/mnt/usr/bin/`:
 $ rm "/mnt/usr/bin/qemu-arm-static"
 ```
 
-Unmount the encrypted `root partition` and detach all `loop devices`:
+Unmount the decrypted `root partition` and detach all `loop devices`:
 ```bash
 $ umount "/mnt/"
 $ cryptsetup close cryptroot
@@ -703,7 +765,7 @@ $ losetup --detach "/dev/loop2"
 $ losetup --list
 ```
 
-# Installing the modified image
+## Installing the modified image
 The image is now prepared and can be copied to the `SD card`:
 ```bash
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="1M" conv="fsync" status="progress"
@@ -714,16 +776,30 @@ On boot there should be a message to decrypt the `root partition`:
 Please unlock disk cryptroot: raspberry
 ```
 
-After entering the password, the `Raspberry Pi` should boot.
+After entering the password, the `Raspberry Pi` should boot into `Raspbian`.
 
 # Further steps
-## Updating all installed packages
-As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:
+### Mandatory
+#### Updating all installed packages
+Since only some of the above mentioned packages have been upgraded, the probability is very high, that `new packages` are available. Update them using the following commands:
 ```bash
 $ apt update
 $ apt list --upgradable
 $ apt upgrade
 ```
+
+#### Changing the user password
+See [Changing the user password](#changing-the-user-password-2) below!
+
+#### Changing the LUKS password
+See [Changing the LUKS password](#changing-the-luks-password-2) below!
+
+### Optional
+#### Copying the modified image to smaller data storage devices
+In order to copy the modified image to `smaller` data storage devices, the `filesystem` and `partition information` and the `image size` need to be `adjusted` accordingly; see [Shrinking the modified image](https://codeberg.org/keks24/raspberry-pi-luks/src/tag/v4.10.5#shrinking-the-modified-image), which was done for `Raspberry Pi OS (Debian 12 Bookworm)`.
+
+#### Decrypting the root partition via SSH
+See [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-2) below.
 
 # Optional steps
 ## Decrypting the root partition via SSH
@@ -766,7 +842,7 @@ Enter same passphrase again:
 Your identification has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192
 Your public key has been saved in /home/<some_username>/.ssh/dropbear_root_rsa8192.pub
 The key fingerprint is:
-SHA256:XaASDCS2YOFPyNQzO7IalEvMC8EE7ZZhrpzPFRymwjI <some_username>@<some_hostname>
+SHA256:<some_alphanumeric_characters> <some_username>@<some_hostname>
 The key's randomart image is:
 +---[RSA 8192]----+
 |           o++.  |
@@ -795,6 +871,7 @@ Make sure, that the `SSH public key` is copied correctly, since `logins via pass
 ### Configuring kernel parameters
 In order to make the `initramfs` available in the network on boot, set a `static IP address` via kernel parameters. Append the following line in `/boot/cmdline.txt`:
 ```bash
+$ vi "/boot/cmdline.txt"
 ip=192.168.1.80:::255.255.255.0
 ```
 
@@ -807,7 +884,7 @@ ip=<client_ip>:<server_ip>:<gateway_ip>:<netmask>:<hostname>:<network_interface>
 
 This will set the `private Class C IP address` to `192.168.1.80` and the `subnet mask` to `255.255.255.0`; these values may differ depending on the network infrastructure. The `initramfs` does not have any connection to the `internet`, since no `gateway IP address` is set.
 
-Make sure, that the `Raspberry Pi` and the `host` from which the partition should be decrypted, are in the same network.
+Make sure, that the `Raspberry Pi` and the `host`, from which the partition should be decrypted, are in the same network.
 
 ### Rebuilding the initramfs
 `Rebuild` the `initramfs` to adapt all changes:
@@ -815,7 +892,7 @@ Make sure, that the `Raspberry Pi` and the `host` from which the partition shoul
 $ mkinitramfs -o "/boot/initramfs.cpio.gz"
 ```
 
-Make sure, that the binary `dropbear` and its `configuration files` are present in the file `initramfs.cpio.gz`:
+Make sure, that the binary `dropbear` and its `configuration files` are present in the file `/boot/initramfs.cpio.gz`:
 ```bash
 $ lsinitramfs "/boot/initramfs.cpio.gz" | grep --extended-regexp "dropbear|authorized_keys"
 etc/dropbear
@@ -829,6 +906,10 @@ scripts/init-premount/dropbear
 usr/sbin/dropbear
 ```
 
+Also make sure, that the content of `/root-<some_random_alphanumeric_characters>/.ssh/authorized_keys` and `/etc/dropbear/config` are correct.
+
+Detailed debugging is explained [here](#debugging).
+
 ### Rebooting
 After that, `reboot` the `Raspberry Pi`:
 ```bash
@@ -839,6 +920,12 @@ $ reboot
 The `initramfs` should be now accessable via `SSH` on `port 22222`, which can be accessed like so:
 ```bash
 $ ssh -p 22222 root@192.168.1.80 -i "/home/<some_username>/.ssh/dropbear_root_rsa8192"
+The authenticity of host '[192.168.1.80]:22222 ([192.168.1.80]:22222)' can't be established.
+ED25519 key fingerprint is SHA256:<some_random_alphanumeric_characters>.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[192.168.1.80]:22222' (RSA) to the list of known hosts.
+Enter passphrase for key '/home/<some_username>/.ssh/dropbear_root_ed25519': <some_password>
 ```
 
 The following message should appear:
@@ -852,6 +939,12 @@ cryptsetup: cryptroot set up successfully
 Shared connection to 192.168.1.80 closed.
 ```
 
+Logging in via `SSH (port 22)` should now be possible:
+```bash
+$ ssh pi@192.168.1.80
+pi@192.168.1.80's password: raspberry
+```
+
 ### Optional fancy SSH ASCII banner
 `dropbear` allows to set a custom `ASCII banner`, which is shown, when connecting to the `initramfs`.
 
@@ -862,7 +955,7 @@ $ vi "/etc/dropbear-initramfs/config"
 DROPBEAR_OPTIONS="-p 22222 -I 60 -sjk -b etc/dropbear/ssh_banner.net"
 ```
 
-Leaving out the `leading slash` is important.
+**Leaving out the `leading slash` is important!**
 
 #### Generating a fancy ASCII banner
 Then, generate a `fancy ASCII banner` via `figlet` and save it to `/etc/dropbear-initramfs/ssh_banner.net`:
@@ -912,10 +1005,10 @@ There is a tool, called `lsinitramfs`, which can output the content of a compres
 $ lsinitramfs "/boot/initramfs.cpio.gz" | less
 ```
 
-This is useful, if one wants to check a recent-built `initramfs` in a quick way.
+This is useful, if one wants to check a `recent-built initramfs` in a quick way.
 
 ## Unarchiving the initramfs
-The `initramfs` can be unarchived on the system in order to analyse its content.
+The `initramfs` can be unarchived on the system, in order to analyse its content.
 
 ### Easy method
 The following command `unarchives` the `initramfs` directly to the `current working directory`:
@@ -1109,7 +1202,7 @@ $ blkid "/dev/mmcblk0p2"
 ```
 
 ### Adapting configuration files
-After that, adapt the entries in `/boot/cmdline` and `/etc/crypttab`
+After that, adapt the entries in `/boot/cmdline.txt` and `/etc/crypttab`
 ```bash
 $ vi "/boot/cmdline.txt"
 root=/dev/mapper/cryptroot cryptdevice=UUID=a00be720-f82f-452c-96cf-669601d1d57e:cryptroot
@@ -1131,7 +1224,7 @@ usr/lib/modules/5.10.17+/kernel/crypto/adiantum.ko
 usr/sbin/cryptsetup
 ```
 
-Also make sure, that the content of `cryptroot/crypttab` is correct.
+Also make sure, that the content of `/cryptroot/crypttab` is correct.
 
 Detailed debugging is explained [here](#debugging).
 
@@ -1155,17 +1248,17 @@ Number  Start    End        Size       Type     File system  Flags
  1      8192s    532479s    524288s    primary  fat32        lba
  2      532480s  15523839s  14991360s  primary
 $ losetup --offset="$(( 512 * 532480 ))" "/dev/loop2" "raspberrypi_sd_card_backup.img"
-$ cryptsetup open "/dev/loop2" cryptsdcard
+$ cryptsetup open "/dev/loop2" cryptsdcardbackup
 Enter passphrase for /dev/loop2: raspberry
 ```
 
 After that, mount it like so:
 ```bash
-$ mount "/dev/mapper/cryptsdcard" "/mnt/"
+$ mount "/dev/mapper/cryptsdcardbackup" "/mnt/"
 ```
 
 ## Re-encrypting the root partition
-When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `key slot hashes and salts` are identical. **It is mandatory to change these.**
+When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `key slot hashes and salts` are identical. **It is mandatory to change these!**
 
 This method can also be used to apply a `new cipher method` to the `root partition`.
 
@@ -1184,7 +1277,7 @@ If the `LUKS` partition version is `1`, please upgrade it to version `2` first, 
 If one does not use a `Raspberry Pi 4` with an on-board `EEPROM`, on which the `bootloader` is installed, but a separate Linux system, please `proceed with` [Creating a backup of the SD card](#creating-a-backup-of-the-sd-card-1) and then `skip to` [Re-encrypting the partition](#re-encrypting-the-partition).
 
 ### Creating a backup of the SD card
-Before doing any changes, create a `backup` of the SD card, since the following commands can corrupt data:
+Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
 $ dd if="/dev/sdx" of="raspberrypi_sd_card_backup_before_reencrypt.img" bs="1M" conv="fsync" status="progress"
 ```
@@ -1229,7 +1322,7 @@ $ reboot
 ```
 
 ### Verifying the new cipher method
-Finally, verify, if the re-encryption was successful:
+Finally, `verify`, if the re-encryption was successful:
 ```bash
 $ cryptsetup status cryptroot
 /dev/mapper/cryptroot is active and is in use.
@@ -1243,6 +1336,8 @@ $ cryptsetup status cryptroot
   size:    7720844 sectors
   mode:    read/write
 ```
+
+Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
 The `USB stick` can now be disconnected.
 
