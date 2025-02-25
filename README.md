@@ -18,6 +18,7 @@ Table of Contents
             * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
             * [Changing the user password](#changing-the-user-password)
             * [Changing the LUKS password](#changing-the-luks-password)
+            * [Generating new SSH host keys](#generating-new-ssh-host-keys)
             * [Updating all installed packages](#updating-all-installed-packages)
         * [Optional](#optional)
             * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
@@ -75,6 +76,7 @@ Table of Contents
         * [User credentials](#user-credentials)
         * [Changing the user password](#changing-the-user-password-2)
         * [Changing the LUKS password](#changing-the-luks-password-2)
+        * [Generating new SSH host keys](#generating-new-ssh-host-keys-1)
     * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
         * [Installing necessary tools](#installing-necessary-tools-1)
         * [Changing the UUID](#changing-the-uuid)
@@ -290,6 +292,9 @@ See [Changing the user password](#changing-the-user-password-2) below!
 
 #### Changing the LUKS password
 See [Changing the LUKS password](#changing-the-luks-password-2) below!
+
+#### Generating new SSH host keys
+See [Generating new SSH host keys](#generating-new-ssh-host-keys-1) below!
 
 #### Updating all installed packages
 As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:
@@ -1515,6 +1520,55 @@ $ cryptsetup luksChangeKey "/dev/mmcblk0p2"
 Enter passphrase to be changed: raspberry
 Enter new passphrase: <some_strong_personal_password>
 Verify passphrase: <some_strong_personal_password>
+```
+
+### Generating new SSH host keys
+When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `SSH host keys` are identical. **It is mandatory to change these!**
+
+First, `all` existing host keys need to be `removed`:
+```bash
+$ rm --verbose "/etc/ssh/ssh_host_"*
+removed '/etc/ssh/ssh_host_ecdsa_key'
+removed '/etc/ssh/ssh_host_ecdsa_key.pub'
+removed '/etc/ssh/ssh_host_ed25519_key'
+removed '/etc/ssh/ssh_host_ed25519_key.pub'
+removed '/etc/ssh/ssh_host_rsa_key'
+removed '/etc/ssh/ssh_host_rsa_key.pub'
+```
+
+After that, use the command `dpkg-reconfigure`, in order to reconfigure the installed package `openssh-server`. This will `generate` new host keys:
+```bash
+$ dpkg-reconfigure openssh-server
+Creating SSH2 RSA key; this may take some time ...
+3072 SHA256:<some_alphanumeric_characters> root@raspberrypi (RSA)
+Creating SSH2 ECDSA key; this may take some time ...
+256 SHA256:<some_alphanumeric_characters> root@raspberrypi (ECDSA)
+Creating SSH2 ED25519 key; this may take some time ...
+256 SHA256:<some_alphanumeric_characters> root@raspberrypi (ED25519)
+rescue-ssh.target is a disabled or a static unit not running, not starting it.
+ssh.socket is a disabled or a static unit not running, not starting it.
+```
+
+Finally, `restart` the `SSH daemon` to adapt the changes:
+```bash
+$ systemctl restart ssh
+$ systemctl status ssh
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2025-02-25 14:15:02 GMT; 17ms ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 2260 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 2261 (sshd)
+      Tasks: 1 (limit: 8740)
+        CPU: 79ms
+     CGroup: /system.slice/ssh.service
+             └─2261 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+
+Feb 25 14:15:02 raspberrypi systemd[1]: Starting ssh.service - OpenBSD Secure Shell server...
+Feb 25 14:15:02 raspberrypi sshd[2261]: Server listening on 0.0.0.0 port 22.
+Feb 25 14:15:02 raspberrypi sshd[2261]: Server listening on :: port 22.
+Feb 25 14:15:02 raspberrypi systemd[1]: Started ssh.service - OpenBSD Secure Shell server.
 ```
 
 ## Changing the UUID of the root partition
