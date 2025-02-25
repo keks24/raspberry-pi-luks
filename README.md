@@ -412,7 +412,7 @@ In this case, it is `192.168.1.80`.
 After that, `establish an SSH connection` to the Raspberry Pi, `log in` with the [predefined user credentials](#user-credentials) and `update the kernel`:
 ```bash
 $ ssh pi@192.168.1.80
-pi@192.168.0.30's password: raspberry
+pi@192.168.1.80's password: raspberry
 [...]
 $ sudo apt update
 $ uname --kernel-release
@@ -980,8 +980,8 @@ Shared connection to 192.168.1.80 closed.
 
 Logging in via `SSH (port 22)` should now be possible:
 ```bash
-$ ssh pi@192.168.0.30
-pi@192.168.0.30's password: raspberry
+$ ssh pi@192.168.1.80
+pi@192.168.1.80's password: raspberry
 ```
 
 ### Optional fancy SSH ASCII banner
