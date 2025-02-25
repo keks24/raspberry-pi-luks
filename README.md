@@ -1,5 +1,6 @@
 Table of Contents
 =================
+
 * [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Using the modified image](#using-the-modified-image)
@@ -14,8 +15,14 @@ Table of Contents
         * [Extending the filesystem](#extending-the-filesystem)
         * [Verifying the filesystem](#verifying-the-filesystem)
     * [Further steps](#further-steps)
-        * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
-        * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
+        * [Mandatory](#mandatory)
+            * [Re-encrypting the root partition](#re-encrypting-the-root-partition)
+            * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition)
+            * [Changing the user password](#changing-the-user-password)
+            * [Changing the LUKS password](#changing-the-luks-password)
+            * [Updating all installed packages](#updating-all-installed-packages)
+        * [Optional](#optional)
+            * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
 * [Encrypting the root partition manually](#encrypting-the-root-partition-manually)
     * [Prerequisites](#prerequisites-1)
         * [Separate system](#separate-system)
@@ -29,12 +36,17 @@ Table of Contents
             * [Configuration](#configuration-1)
             * [Generating the initramfs](#generating-the-initramfs)
             * [Exiting the chroot environment](#exiting-the-chroot-environment)
-* [Installing the modified image](#installing-the-modified-image)
-* [Further steps](#further-steps-1)
-    * [Copying the modified image to smaller data storage devices](#copying-the-modified-image-to-smaller-data-storage-devices)
-    * [Updating all installed packages](#updating-all-installed-packages)
+    * [Installing the modified image](#installing-the-modified-image)
+    * [Further steps](#further-steps-1)
+        * [Mandatory](#mandatory-1)
+            * [Updating all installed packages](#updating-all-installed-packages-1)
+            * [Changing the user password](#changing-the-user-password-1)
+            * [Changing the LUKS password](#changing-the-luks-password-1)
+        * [Optional](#optional-1)
+            * [Copying the modified image to smaller data storage devices](#copying-the-modified-image-to-smaller-data-storage-devices)
+            * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-1)
 * [Optional steps](#optional-steps)
-    * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh)
+    * [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-2)
         * [Install dropbear-initramfs](#install-dropbear-initramfs)
         * [Configure dropbear](#configure-dropbear)
         * [Configuring kernel parameters](#configuring-kernel-parameters)
@@ -63,8 +75,8 @@ Table of Contents
     * [Credentials](#credentials)
         * [LUKS password](#luks-password)
         * [User credentials](#user-credentials)
-        * [Changing the user password](#changing-the-user-password)
-        * [Changing the LUKS password](#changing-the-luks-password)
+        * [Changing the user password](#changing-the-user-password-2)
+        * [Changing the LUKS password](#changing-the-luks-password-2)
     * [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1)
         * [Installing necessary tools](#installing-necessary-tools-1)
         * [Changing the UUID](#changing-the-uuid)
@@ -268,11 +280,30 @@ Which leads to the `same result` as above:
 ```
 
 ## Further steps
-### Re-encrypting the root partition
-**It is mandatory to proceed with [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below!**
+### Mandatory
+#### Re-encrypting the root partition
+**See [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below!**
 
-### Changing the UUID of the root partition
-After that, proceed with [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below for further instructions.
+#### Changing the UUID of the root partition
+**See [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below!**
+
+#### Changing the user password
+**See [Changing the user password](#changing-the-user-password-2) below!**
+
+#### Changing the LUKS password
+**See [Changing the LUKS password](#changing-the-luks-password-2) below!**
+
+#### Updating all installed packages
+**As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:**
+```bash
+$ apt update
+$ apt list --upgradable
+$ apt upgrade
+```
+
+### Optional
+#### Decrypting the root partition via SSH
+See [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-2) below.
 
 # Encrypting the root partition manually
 ## Prerequisites
@@ -756,7 +787,7 @@ $ losetup --detach "/dev/loop2"
 $ losetup --list
 ```
 
-# Installing the modified image
+## Installing the modified image
 The image is now prepared and can be copied to the `SD card`:
 ```bash
 $ dd if="raspberrypi_sd_card_backup.img" of="/dev/sdx" bs="1M" conv="fsync" status="progress"
@@ -769,17 +800,28 @@ Please unlock disk cryptroot: raspberry
 
 After entering the password, the `Raspberry Pi` should boot into `Raspberry Pi OS (Debian)`.
 
-# Further steps
-## Copying the modified image to smaller data storage devices
-In order to copy the modified image to `smaller` data storage devices, the `filesystem` and `partition information` and the `image size` need to be `adjusted` accordingly; see [Shrinking the modified image](#shrinking-the-modified-image) below.
-
-## Updating all installed packages
+## Further steps
+### Mandatory
+#### Updating all installed packages
 Since only some of the above mentioned packages have been upgraded, the probability is very high, that `new packages` are available. Update them using the following commands:
 ```bash
 $ apt update
 $ apt list --upgradable
 $ apt upgrade
 ```
+
+#### Changing the user password
+**See [Changing the user password](#changing-the-user-password-2) below!**
+
+#### Changing the LUKS password
+**See [Changing the LUKS password](#changing-the-luks-password-2) below!**
+
+### Optional
+#### Copying the modified image to smaller data storage devices
+In order to copy the modified image to `smaller` data storage devices, the `filesystem` and `partition information` and the `image size` need to be `adjusted` accordingly; see [Shrinking the modified image](#shrinking-the-modified-image) below.
+
+#### Decrypting the root partition via SSH
+See [Decrypting the root partition via SSH](#decrypting-the-root-partition-via-ssh-2) below.
 
 # Optional steps
 ## Decrypting the root partition via SSH
