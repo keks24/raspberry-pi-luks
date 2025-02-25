@@ -282,19 +282,19 @@ Which leads to the `same result` as above:
 ## Further steps
 ### Mandatory
 #### Re-encrypting the root partition
-**See [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below!**
+See [Re-encrypting the root partition](#re-encrypting-the-root-partition-1) below!
 
 #### Changing the UUID of the root partition
-**See [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below!**
+See [Changing the UUID of the root partition](#changing-the-uuid-of-the-root-partition-1) below!
 
 #### Changing the user password
-**See [Changing the user password](#changing-the-user-password-2) below!**
+See [Changing the user password](#changing-the-user-password-2) below!
 
 #### Changing the LUKS password
-**See [Changing the LUKS password](#changing-the-luks-password-2) below!**
+See [Changing the LUKS password](#changing-the-luks-password-2) below!
 
 #### Updating all installed packages
-**As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:**
+As time progresses, the probability is very high, that `new packages` are available. Update them using the following commands:
 ```bash
 $ apt update
 $ apt list --upgradable
@@ -811,10 +811,10 @@ $ apt upgrade
 ```
 
 #### Changing the user password
-**See [Changing the user password](#changing-the-user-password-2) below!**
+See [Changing the user password](#changing-the-user-password-2) below!
 
 #### Changing the LUKS password
-**See [Changing the LUKS password](#changing-the-luks-password-2) below!**
+See [Changing the LUKS password](#changing-the-luks-password-2) below!
 
 ### Optional
 #### Copying the modified image to smaller data storage devices
