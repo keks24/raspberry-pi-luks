@@ -1572,7 +1572,7 @@ Feb 25 14:15:02 raspberrypi systemd[1]: Started ssh.service - OpenBSD Secure She
 ```
 
 ## Changing the UUID of the root partition
-When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `UUIDs` are identical. There might be the need to change these.
+When using the `modified` or a `self-prepared` image on `several Raspberry Pis`, all `UUIDs` are identical. **It is mandatory to change these!**
 
 Before making any changes, create a `backup` of the SD card, since the following commands `can corrupt data`:
 ```bash
