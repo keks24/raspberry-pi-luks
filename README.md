@@ -1,5 +1,7 @@
 Table of Contents
 =================
+
+* [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Using the modified image](#using-the-modified-image)
     * [Prerequisites](#prerequisites)
@@ -89,6 +91,8 @@ Table of Contents
         * [Verifying the new cipher method](#verifying-the-new-cipher-method)
 * [Known issues](#known-issues)
     * [Compatibility](#compatibility)
+* [See also](#see-also)
+    * [Optimised configurations for headless usage](#optimised-configurations-for-headless-usage)
 
 # Introduction
 This repository shall describe all necessary steps, in order to encrypt the `root partition` of the Raspberry Pi stock image `Raspberry Pi OS Lite` of `Debian 10 (Buster)` on a `Raspberry Pi Model B Rev 2`.
@@ -1404,3 +1408,7 @@ The `USB stick` can now be disconnected.
 So, using an image, where the `root partition` was previously resized on a `Raspberry Pi Model B Rev 2` is **incompatible** with a `Raspberry Pi 4 Model B Rev 1.4`.
 
 It will boot into the `initramfs`, but the `root partition` cannot be decrypted. Skipping [Resizing the root partition](#resizing-the-root-partition) will also preserve the partition size and its `UUID`, but it still will not work.
+
+# See also
+## Optimised configurations for headless usage
+* [Optimised configurations for headless usage](https://codeberg.org/keks24/raspberry-pi-headless/src/branch/master)
