@@ -254,7 +254,7 @@ $ cryptsetup status cryptroot
   mode:    read/write
 ```
 
-Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+Be aware, that the `size` is in `512-byte-sectors`, even, if the `sector size` is indicated as `4096 bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
 To check, if the values are correct, the following formula can be used:
 ```no-highlight
@@ -263,7 +263,7 @@ To check, if the values are correct, the following formula can be used:
 
 That is:
 ```no-highlight
-(512 Bytes/sector * 119,072,864 sectors) / 1024^3 = ~56.78 GiB
+(512 bytes/sector * 119,072,864 sectors) / 1024^3 = ~56.78 GiB
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
@@ -278,7 +278,7 @@ Block size:               4096
 
 Which leads to the `same result` as above:
 ```no-highlight
-(4,096 Bytes/sector * 14,884,108 sectors) / 1024^3 = ~56.78 GiB
+(4,096 bytes/sector * 14,884,108 sectors) / 1024^3 = ~56.78 GiB
 ```
 
 ## Further steps
@@ -467,7 +467,7 @@ Number  Start     End         Size        Type     File system  Flags
  2      1056768s  120176639s  119119872s  primary  ext4
 ```
 
-In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 1056768`. The `logical sector size` is `512 Bytes`.
+In this case, the `first partition (boot)` starts at `sector 8192` and the `second partition (root)` at `sector 1056768`. The `logical sector size` is `512 bytes`.
 
 These values can be used to mount the partitions from the image.
 
@@ -500,12 +500,12 @@ $ umount "/mnt/"
 ```
 
 ### Encrypting the root partition
-Since the preparation is done, the `root partition` can now be `overwritten with random Bytes` before formatting, in order to `decrease the chance of external recovery` from `third parties`:
+Since the preparation is done, the `root partition` can now be `overwritten with random bytes` before formatting, in order to `decrease the chance of external recovery` from `third parties`:
 ```bash
 $ shred --iterations="1" --random-source="/dev/urandom" --zero --verbose "/dev/loop2"
 ```
 
-The command `shred` overwrites the `root partition` with `random Bytes` first and then with `zeroes`; the latter `obfuscates` the shredding. The special character device [`/dev/urandom`](https://www.thomas-huehn.com/myths-about-urandom/) is used as preferred `entropy source`, since it behaves like `/dev/random` since [`Kernel version 5.6`](https://en.wikipedia.org/w/index.php?title=/dev/random&oldid=1268697417#Linux), but it will `not block` the process, if there is `insufficient entropy`. The command comes with an [internal pseudo-random generator](https://www.gnu.org/software/coreutils/manual/html_node/Random-sources.html#Random-sources), which will be used, if the parameter `--random-source` is left out; this would `accelerate` the write process, but it is `not true random`.
+The command `shred` overwrites the `root partition` with `random bytes` first and then with `zeroes`; the latter `obfuscates` the shredding. The special character device [`/dev/urandom`](https://www.thomas-huehn.com/myths-about-urandom/) is used as preferred `entropy source`, since it behaves like `/dev/random` since [`Kernel version 5.6`](https://en.wikipedia.org/w/index.php?title=/dev/random&oldid=1268697417#Linux), but it will `not block` the process, if there is `insufficient entropy`. The command comes with an [internal pseudo-random generator](https://www.gnu.org/software/coreutils/manual/html_node/Random-sources.html#Random-sources), which will be used, if the parameter `--random-source` is left out; this would `accelerate` the write process, but it is `not true random`.
 
 After that, `format` and `encrypt` the `root partition` via `cryptsetup`:
 ```bash
@@ -520,7 +520,7 @@ Enter passphrase for /root/tmp/raspberrypi_sd_card_backup.img:
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 Bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 The `LUKS header information` looks like so:
 ```bash
@@ -1131,11 +1131,11 @@ Block count:              935787
 Block size:               4096
 ```
 
-This will also return the `lowest filesystem size (935787)` in `4096 Byte sectors (4 Kibibyte)`, which was automatically determined by the underlying `ext4 filesystem`.
+This will also return the `lowest filesystem size (935787)` in `4096 byte sectors (4 Kibibyte)`, which was automatically determined by the underlying `ext4 filesystem`.
 
 The `filesystem size` can be calculated like so:
 ```no-highlight
-4,096 Bytes/sector * 935,787 sectors = 3,832,983,552 Bytes = 3,743,148 Kibibytes
+4,096 bytes/sector * 935,787 sectors = 3,832,983,552 bytes = 3,743,148 Kibibytes
 ```
 
 Further information can be looked up at `man 8 resize2fs`.
@@ -1182,12 +1182,12 @@ or:
 
 That is:
 ```no-highlight
-  luks_header_primary_metadata_size                         =        16,384 Bytes   =        16 Kibibytes
-+ luks_header_secondary_metadata_size                       =        16,384 Bytes   =        16 Kibibytes
-+ luks_header_keyslots_size                                 =    16,744,448 Bytes   =    16,352 Kibibytes
-= luks_header_data_segments_crypt_offset_size               =    16,777,216 Bytes   =    16,384 Kibibytes
+  luks_header_primary_metadata_size                         =        16,384 bytes   =        16 Kibibytes
++ luks_header_secondary_metadata_size                       =        16,384 bytes   =        16 Kibibytes
++ luks_header_keyslots_size                                 =    16,744,448 bytes   =    16,352 Kibibytes
+= luks_header_data_segments_crypt_offset_size               =    16,777,216 bytes   =    16,384 Kibibytes
 
-encrypted_data_size = 4,096 Bytes/sector * 935,787 sectors  = 3,832,983,552 Bytes   = 3,743,148 Kibibytes
+encrypted_data_size = 4,096 bytes/sector * 935,787 sectors  = 3,832,983,552 bytes   = 3,743,148 Kibibytes
 
 (4,096 KiB + 524,288 KiB) + (16 KiB + 16 KiB + 16,352 KiB)  + 3,743,148 KiB = 4,287,916 KiB
 
@@ -1276,7 +1276,7 @@ Enter passphrase for /dev/loop0p2: raspberry
 
 This time, the parameter `--partscan` of the command `losetup` was used, in order to `force` the kernel to `scan the partition table` of the newly created loop device `/dev/loop0`. This will create the `block devices` `/dev/loop0p1`, which is the `boot partition` and `/dev/loop0p2`, which is the `root partition`.
 
-Be aware, that this parameter `assumes` the default sector size of `512 Bytes`. If it differs, the parameter `--sector-size` needs to be `used` as well.
+Be aware, that this parameter `assumes` the default sector size of `512 bytes`. If it differs, the parameter `--sector-size` needs to be `used` as well.
 
 After that, `verify the filesystem integrity` via `e2fsck`:
 ```bash
@@ -1344,7 +1344,7 @@ $ cryptsetup status cryptsdcardbackup
   mode:    read/write
 ```
 
-Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+Be aware, that the `size` is in `512-byte-sectors`, even, if the `sector size` is indicated as `4096 bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
 Additionally, the command `dumpe2fs` can be used to see the `real sector size (block size)` and `real size (block count)`:
 ```bash
@@ -1756,7 +1756,7 @@ $ cryptsetup status cryptroot
   mode:    read/write
 ```
 
-Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+Be aware, that the `size` is in `512-byte-sectors`, even, if the `sector size` is indicated as `4096 bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
 The `USB stick` can now be disconnected.
 
