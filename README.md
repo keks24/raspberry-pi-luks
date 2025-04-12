@@ -257,7 +257,7 @@ $ cryptsetup status cryptroot
   mode:    read/write
 ```
 
-Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+Be aware, that the `size` is in `512-byte-sectors`, even, if the `sector size` is indicated as `4096 bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
 To check, if the values are correct, the following formula can be used:
 ```no-highlight
@@ -266,7 +266,7 @@ To check, if the values are correct, the following formula can be used:
 
 That is:
 ```no-highlight
-(512 Bytes/sector * 7,720,844 sectors) / 1024^3 = 29.45 GiB
+(512 bytes/sector * 7,720,844 sectors) / 1024^3 = 29.45 GiB
 ```
 
 The result differs slightly from the output of `parted`, since the unit is in `Gibibyte (base 2)` and not `Gigabyte (base 10)`.
@@ -281,7 +281,7 @@ Block size:               4096
 
 Which leads to the `same result` as above:
 ```no-highlight
-(4,096 Bytes/sector * 7,720,844 sectors) / 1024^3 = ~29.45 GiB
+(4,096 bytes/sector * 7,720,844 sectors) / 1024^3 = ~29.45 GiB
 ```
 
 ## Further steps
@@ -456,12 +456,12 @@ $ umount "/mnt/"
 ```
 
 ### Encrypting the root partition
-Since the preparation is done, the `root partition` can now be `overwritten with random Bytes` before formatting, in order to `decrease the chance of external recovery` from `third parties`:
+Since the preparation is done, the `root partition` can now be `overwritten with random bytes` before formatting, in order to `decrease the chance of external recovery` from `third parties`:
 ```bash
 $ shred --iterations="1" --random-source="/dev/urandom" --zero --verbose "/dev/loop2"
 ```
 
-The command `shred` overwrites the `root partition` with `random Bytes` first and then with `zeroes`; the latter `obfuscates` the shredding. The special character device [`/dev/urandom`](https://www.thomas-huehn.com/myths-about-urandom/) is used as preferred `entropy source`, since it behaves like `/dev/random` since [`Kernel version 5.6`](https://en.wikipedia.org/w/index.php?title=/dev/random&oldid=1268697417#Linux), but it will `not block` the process, if there is `insufficient entropy`. The command comes with an [internal pseudo-random generator](https://www.gnu.org/software/coreutils/manual/html_node/Random-sources.html#Random-sources), which will be used, if the parameter `--random-source` is left out; this would `accelerate` the write process, but it is `not true random`.
+The command `shred` overwrites the `root partition` with `random bytes` first and then with `zeroes`; the latter `obfuscates` the shredding. The special character device [`/dev/urandom`](https://www.thomas-huehn.com/myths-about-urandom/) is used as preferred `entropy source`, since it behaves like `/dev/random` since [`Kernel version 5.6`](https://en.wikipedia.org/w/index.php?title=/dev/random&oldid=1268697417#Linux), but it will `not block` the process, if there is `insufficient entropy`. The command comes with an [internal pseudo-random generator](https://www.gnu.org/software/coreutils/manual/html_node/Random-sources.html#Random-sources), which will be used, if the parameter `--random-source` is left out; this would `accelerate` the write process, but it is `not true random`.
 
 After that, `format` and `encrypt` the `root partition` via `cryptsetup`:
 ```bash
@@ -476,7 +476,7 @@ Enter passphrase for /dev/loop2: raspberry
 Verify passphrase: raspberry
 ```
 
-It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 Bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
+It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 The `LUKS header information` looks like so:
 ```bash
@@ -1397,7 +1397,7 @@ $ cryptsetup status cryptroot
   mode:    read/write
 ```
 
-Be aware, that the `size` is in `512-Byte-sectors`, even, if the `sector size` is indicated as `4096 Bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
+Be aware, that the `size` is in `512-byte-sectors`, even, if the `sector size` is indicated as `4096 bytes`. ["This is a relict from the time, when only `512-byte-sectors` were supported"](https://gitlab.com/cryptsetup/cryptsetup/-/issues/884#note_1899199290).
 
 The `USB stick` can now be disconnected.
 
