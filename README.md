@@ -736,8 +736,8 @@ For this setup, the `third method is preferred`, which can be executed now.
 
 The file `modification date and time` of the `initramfs` can be checked with the command `stat`:
 ```bash
-$ (chroot) stat "/boot/firmware/initramfs8" | grep "Modify"
-Modify: 2025-02-07 21:37:16.000000000 +0000
+$ (chroot) stat --format="%y" "/boot/firmware/initramfs8"
+2025-02-07 21:37:16.000000000 +0000
 ```
 
 After the reinstallation has been completed, add the entry `initramfs initramfs8 followkernel` at the end of the configuration file `/boot/firmware/config.txt`:
