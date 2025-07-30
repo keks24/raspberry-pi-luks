@@ -343,7 +343,7 @@ linux-image-rpi-v8
 If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 ## Downloading the stock image
-Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum file:
+Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-64-bit) and also save its `SHA256` checksum file:
 
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential="true" \
@@ -570,7 +570,7 @@ Digests:
                     eb 44 63 b7 91 c1 7e 77 c4 e3 d6 b0 ca 6b 64 39
 ```
 
-Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#cipher-and-hash-specification-registry).
+Other `encryption methods` are supported as well and can be looked up [here (`B. CIPHER AND HASH SPECIFICATION REGISTRY`)](https://cdn.kernel.org/pub/linux/utils/cryptsetup/LUKS_docs/on-disk-format.pdf#page=15).
 
 If the encryption method `aes-xts-plain64` is preferred, make absolutely sure, that the `key size` is `at least 512 bits`, [since `XTS` splits the key size in half](https://wiki.archlinux.org/index.php/dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode).
 
@@ -1163,9 +1163,9 @@ The following diagram shows the `partition structure` in `Kibibytes`, since this
 └────────────────────┴───────────────────────────────────────────────────────────────────┘
 ```
 
-[Source](https://gitlab.com/cryptsetup/LUKS2-docs/-/blob/main/luks2_doc_wip.pdf#luks2-on-disk-format)
+[Source (`2 LUKS2 On-Disk Format`)](https://gitlab.com/cryptsetup/LUKS2-docs/-/raw/a81aa2fef8d176debdbec297c1e0b74bb50cfee8/luks2_doc_wip.pdf#page=3)
 
-As a side note: The [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/lib/luks2/luks2.h?ref_type=heads#L27) is `hardcoded` to `32`.
+As a side note: The [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/-/blob/6c7c8d36bbeb2370e377313a216177e208901966/lib/luks2/luks2.h#L27) is `hardcoded` to `32`.
 
 The `LUKS header information` can also be analysed, as shown [above](#encrypting-the-root-partition).
 
