@@ -343,7 +343,7 @@ raspberrypi-kernel-1.20200527-1 or higher
 If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
 ## Downloading the stock image
-Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.org/software/operating-systems/) and also save its `SHA256` checksum:
+Download the image `Raspberry Pi OS Lite` from the [official page](https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-legacy) and also save its `SHA256` checksum:
 
 ```bash
 $ aria2c --min-split-size="20M" --split="4" --max-connection-per-server="8" --force-sequential="true" \
@@ -526,7 +526,7 @@ Digests:
 	            08 56 1c 92 fb e7 6a 48 37 64 73 7d 61 e9 8c 0f
 ```
 
-Other `encryption methods` are supported as well and can be looked up [here](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf#Cipher%20and%20Hash%20specification%20registry).
+Other `encryption methods` are supported as well and can be looked up [here (`B. CIPHER AND HASH SPECIFICATION REGISTRY`)](https://cdn.kernel.org/pub/linux/utils/cryptsetup/LUKS_docs/on-disk-format.pdf#page=15).
 
 If the encryption method `aes-xts-plain64` is preferred, make absolutely sure, that the `key size` is `at least 512 bits`, [since `XTS` splits the key size in half](https://wiki.archlinux.org/index.php/dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode).
 
