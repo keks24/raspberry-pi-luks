@@ -465,7 +465,7 @@ The command `shred` overwrites the `root partition` with `random bytes` first an
 
 After that, `format` and `encrypt` the `root partition` via `cryptsetup`:
 ```bash
-$ cryptsetup --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" --sector-size="4096" luksFormat "/dev/loop2"
+$ cryptsetup luksFormat --cipher="xchacha20,aes-adiantum-plain64" --key-size="256" --sector-size="4096" "/dev/loop2"
 
 WARNING!
 ========
@@ -1245,7 +1245,7 @@ Next, generate a `new random UUID` via `uuidgen` and `modify` the `root partitio
 ```bash
 $ uuidgen --random
 a00be720-f82f-452c-96cf-669601d1d57e
-$ cryptsetup --uuid="a00be720-f82f-452c-96cf-669601d1d57e" luksUUID "/dev/mmcblk0p2"
+$ cryptsetup luksUUID --uuid="a00be720-f82f-452c-96cf-669601d1d57e" "/dev/mmcblk0p2"
 
 WARNING!
 ========
