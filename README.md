@@ -1152,15 +1152,15 @@ $ losetup --list
 
 The following diagram shows the `partition structure` in `Kibibytes`, since this unit provides `sufficient precision` to work with:
 ```no-highlight
-                     ┌──────────────────────────────────────────────────┬────────────────┐
-                     │                   LUKS 2 header                  │   Filesystem   │
-┌────────┬───────────┼──────────────────┬────────────────────┬──────────┼────────────────┤
-│ Offset │ Boot data │ Primary metadata │ Secondary metadata │ Keyslots │ Encrypted data │
-├────────┼───────────┼──────────────────┼────────────────────┼──────────┼────────────────┤
-│  4,096 │  524,288  │        16        │         16         │  16,352  │    3,743,148   │
-├────────┴───────────┼──────────────────┴────────────────────┴──────────┴────────────────┤
-│ Boot partition (1) │                        Root partition (2)                         │
-└────────────────────┴───────────────────────────────────────────────────────────────────┘
+                              ┌──────────────────────────────────────────────────┬────────────────┐
+                              │                   LUKS 2 header                  │   Filesystem   │
+┌────────┬────────────────────┼──────────────────┬────────────────────┬──────────┼────────────────┤
+│ Offset │     Boot data      │ Primary metadata │ Secondary metadata │ Keyslots │ Encrypted data │
+├────────┼────────────────────┼──────────────────┼────────────────────┼──────────┼────────────────┤
+│  4,096 │      524,288       │        16        │         16         │  16,352  │    3,743,148   │
+├────────┼────────────────────┼──────────────────┴────────────────────┴──────────┴────────────────┤
+│        │ Boot partition (1) │                        Root partition (2)                         │
+└────────┴────────────────────┴───────────────────────────────────────────────────────────────────┘
 ```
 
 [Source (`2 LUKS2 On-Disk Format`)](https://gitlab.com/cryptsetup/LUKS2-docs/-/raw/a81aa2fef8d176debdbec297c1e0b74bb50cfee8/luks2_doc_wip.pdf#page=3)
@@ -1169,7 +1169,7 @@ As a side note: The [`keyslots limit`](https://gitlab.com/cryptsetup/cryptsetup/
 
 The `LUKS header information` can also be analysed, as shown [above](#encrypting-the-root-partition).
 
-The above diagram indicates, that the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`. **The `header sizes` may `vary`, depending on how `LUKS` was initialised on the device!**
+The above diagram indicates, that the `offset`, the `boot partition size` and the `LUKS header size` need to be considered, when `shrinking` the `root partition`. **The `header sizes` may `vary`, depending on how `LUKS` was initialised on the device!**
 
 The following formula will be used, in order to `determine` the `end sector` of the `root partition` in `Kibibytes`:
 ```no-highlight
