@@ -617,8 +617,8 @@ $ mount --rbind "/sys" "/mnt/sys/"
 $ mount --make-rslave "/mnt/sys/"
 $ mount --rbind "/dev/" "/mnt/dev/"
 $ mount --make-rslave "/mnt/dev/"
+$ mount --bind "/etc/resolv.conf" "/mnt/etc/resolv.conf"
 $ cp "/usr/bin/qemu-aarch64-static" "/mnt/usr/bin/"
-$ cp --dereference "/etc/resolv.conf" "/mnt/etc/"
 ```
 
 **`qemu-aarch64-static` is mandatory, if one is working on a `non-ARM operating system`!**
