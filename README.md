@@ -522,7 +522,7 @@ Verify passphrase: raspberry
 
 It is recommended to use `aes-adiantum-plain64`, since the CPU does **not** support `hardware accelerated AES` (`grep "Features" "/proc/cpuinfo"`). The `sector size` of `4096 bytes` is preferred, since it comes with a [performance gain](https://lwn.net/Articles/776959/). If one is using a `Raspberry Pi 5`, the encryption method `aes-xts-plain64` with a `key size` of [`512 bits`](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encryption_options_for_LUKS_mode) may be preferred.
 
-The `LUKS header information` looks like so:
+The `LUKS header information` looks like so. **Be aware, that these information are sensitive!!**:
 ```bash
 $ cryptsetup luksDump "/dev/loop2"
 LUKS header information
