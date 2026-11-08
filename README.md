@@ -15,4 +15,4 @@ And hey, if you want to show your support in a fun way, you can buy me a cookie!
 
 Your kindness will help fuel my efforts to keep this project strong and sustainable.
 
-:cookie: [Click here to buy me a cookie!](https://buymeacoffee.com/keks24) :cookie:
+:cookie: [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B4A0261HPB) :cookie:
